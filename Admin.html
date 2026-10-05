@@ -2,11 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-
-<meta
-  name="viewport"
-  content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
->
+<meta name="viewport"
+      content="width=device-width,initial-scale=1.0">
 
 <title>Telegram Bot Admin</title>
 
@@ -17,34 +14,144 @@
 
 body{
   margin:0;
-  background:#f2f4f8;
+  background:#f3f4f8;
   font-family:Arial,Helvetica,sans-serif;
-  color:#151827;
+  color:#171923;
 }
 
 button,
 input,
-textarea,
-select{
+select,
+textarea{
   font:inherit;
 }
 
-button{
+.app{
+  width:100%;
+  max-width:520px;
+  margin:auto;
+  padding:16px;
+}
+
+.card{
+  background:#fff;
+  border-radius:18px;
+  padding:18px;
+  margin-bottom:14px;
+  box-shadow:0 8px 25px rgba(0,0,0,.07);
+}
+
+h1{
+  font-size:22px;
+  margin:0 0 5px;
+}
+
+h2{
+  font-size:18px;
+  margin:0 0 14px;
+}
+
+h3{
+  font-size:15px;
+  margin:0 0 10px;
+}
+
+label{
+  display:block;
+  font-size:13px;
+  font-weight:bold;
+  margin:12px 0 6px;
+}
+
+input,
+select,
+textarea{
+  width:100%;
+  border:1px solid #dddfe7;
+  border-radius:11px;
+  padding:11px;
+  outline:none;
+  background:#fafbfc;
+}
+
+textarea{
+  min-height:90px;
+  resize:vertical;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+  border-color:#6c45ff;
+  background:#fff;
+}
+
+.btn{
+  border:0;
+  border-radius:11px;
+  padding:11px 15px;
   cursor:pointer;
+  font-weight:bold;
+  margin-top:10px;
+}
+
+.primary{
+  background:#6842ee;
+  color:#fff;
+}
+
+.secondary{
+  background:#eef0f5;
+  color:#222;
+}
+
+.danger{
+  background:#ffe9e7;
+  color:#c52b21;
+}
+
+.success{
+  background:#e6f7ef;
+  color:#087f5b;
+}
+
+.row{
+  display:flex;
+  gap:8px;
+}
+
+.row>*{
+  flex:1;
+}
+
+.switch{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 0;
+}
+
+.switch input{
+  width:auto;
+  transform:scale(1.3);
 }
 
 .hidden{
   display:none!important;
 }
 
-.app{
-  width:100%;
-  max-width:900px;
-  margin:auto;
-  min-height:100vh;
+.small{
+  font-size:12px;
+  color:#74798a;
 }
 
-/* LOGIN */
+.status{
+  padding:10px;
+  border-radius:10px;
+  background:#f1f2f6;
+  font-size:13px;
+  margin-top:10px;
+}
 
 .login{
   min-height:100vh;
@@ -54,349 +161,545 @@ button{
   padding:20px;
 }
 
-.login-card{
+.loginBox{
   width:100%;
-  max-width:380px;
-  background:#fff;
-  border-radius:22px;
-  padding:25px;
-  box-shadow:0 15px 45px rgba(0,0,0,.12);
+  max-width:400px;
 }
 
-.logo{
-  width:70px;
-  height:70px;
-  border-radius:20px;
-  background:linear-gradient(135deg,#7b40f2,#5824c6);
-  color:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:32px;
-  margin:0 auto 15px;
-}
-
-.login-card h2{
+.header{
   text-align:center;
-  margin:5px 0;
+  margin-bottom:18px;
 }
 
-.login-card p{
-  text-align:center;
-  color:#7f879d;
-  margin-bottom:22px;
-}
-
-/* INPUT */
-
-input,
-textarea,
-select{
+.sectionBtn{
   width:100%;
-  border:1px solid #e1e4eb;
-  background:#f8f9fb;
-  border-radius:12px;
-  padding:12px;
-  outline:none;
-}
-
-textarea{
-  min-height:90px;
-  resize:vertical;
-}
-
-input:focus,
-textarea:focus,
-select:focus{
-  border-color:#7b40f2;
+  text-align:left;
   background:#fff;
-}
-
-/* BUTTON */
-
-.btn{
-  border:0;
-  border-radius:12px;
-  padding:12px 16px;
-  background:#7b40f2;
-  color:#fff;
-  font-weight:bold;
-}
-
-.btn:hover{
-  opacity:.92;
-}
-
-.btn-danger{
-  background:#d92d20;
-}
-
-.btn-success{
-  background:#087f5b;
-}
-
-.btn-gray{
-  background:#e9ebf1;
-  color:#333;
-}
-
-/* ADMIN */
-
-.admin{
-  padding:15px;
-}
-
-.topbar{
-  background:#fff;
-  border-radius:18px;
-  padding:15px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:15px;
-  box-shadow:0 8px 25px rgba(0,0,0,.06);
-}
-
-.topbar h2{
-  margin:0;
-  font-size:19px;
-}
-
-.small{
-  font-size:12px;
-  color:#7f879d;
-}
-
-.section{
-  background:#fff;
-  border-radius:18px;
-  padding:16px;
-  margin-bottom:15px;
-  box-shadow:0 8px 25px rgba(0,0,0,.05);
-}
-
-.section-title{
-  font-size:17px;
-  font-weight:bold;
-  margin-bottom:15px;
-}
-
-.field{
-  margin-bottom:12px;
-}
-
-.field label{
-  display:block;
-  font-size:13px;
-  font-weight:bold;
-  margin-bottom:6px;
-}
-
-.row{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-
-@media(max-width:600px){
-  .row{
-    grid-template-columns:1fr;
-  }
-}
-
-/* SWITCH */
-
-.switch-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  background:#f7f8fa;
-  padding:11px 12px;
-  border-radius:12px;
-  margin-bottom:10px;
-}
-
-.switch{
-  position:relative;
-  width:48px;
-  height:27px;
-}
-
-.switch input{
-  opacity:0;
-  width:0;
-  height:0;
-}
-
-.slider{
-  position:absolute;
-  inset:0;
-  background:#cfd3dc;
-  border-radius:30px;
-  transition:.2s;
-}
-
-.slider:before{
-  content:"";
-  position:absolute;
-  width:21px;
-  height:21px;
-  left:3px;
-  top:3px;
-  background:#fff;
-  border-radius:50%;
-  transition:.2s;
-}
-
-.switch input:checked + .slider{
-  background:#7b40f2;
-}
-
-.switch input:checked + .slider:before{
-  transform:translateX(21px);
-}
-
-/* ITEM */
-
-.item{
-  border:1px solid #e6e8ee;
-  border-radius:16px;
+  border:1px solid #e2e3e9;
+  border-radius:13px;
   padding:14px;
-  margin-bottom:12px;
+  margin-bottom:8px;
+  cursor:pointer;
+  font-weight:bold;
 }
 
-.item-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:12px;
+.sectionBtn.active{
+  background:#eeeaff;
+  border-color:#7552ee;
 }
 
-.item-header strong{
-  font-size:15px;
-}
-
-/* BUTTON CONFIG */
-
-.button-config{
-  background:#f7f8fa;
-  border-radius:14px;
-  padding:12px;
+.settings{
   margin-top:10px;
 }
 
-.button-config-title{
-  font-size:13px;
+.slot{
+  border:1px solid #e3e4e9;
+  border-radius:14px;
+  padding:14px;
+  margin-top:12px;
+  background:#fafbfc;
+}
+
+.slotTitle{
   font-weight:bold;
-  margin-bottom:9px;
+  margin-bottom:10px;
 }
 
-/* SAVE */
-
-.bottom-save{
-  position:sticky;
-  bottom:10px;
-  background:#fff;
-  padding:10px;
-  border-radius:18px;
-  box-shadow:0 8px 30px rgba(0,0,0,.15);
-  display:flex;
-  gap:8px;
-  margin-bottom:15px;
+hr{
+  border:0;
+  border-top:1px solid #eee;
+  margin:18px 0;
 }
-
-.bottom-save button{
-  flex:1;
-}
-
-/* PREVIEW */
 
 .preview{
-  background:#111;
-  border-radius:20px;
-  padding:18px;
-  color:#fff;
+  background:#eef0f5;
+  border-radius:16px;
+  padding:15px;
 }
 
-.preview-box{
+.previewMessage{
   background:#fff;
-  color:#222;
-  border-radius:16px;
+  border-radius:13px;
   padding:14px;
 }
 
-.preview-name{
-  font-weight:bold;
-  margin-bottom:7px;
-}
-
-.preview-text{
-  white-space:pre-wrap;
-  margin-bottom:12px;
-}
-
-.preview-btn{
+.previewButton{
   display:block;
-  background:#229ed9;
-  color:#fff;
-  text-decoration:none;
-  padding:9px;
-  border-radius:9px;
-  text-align:center;
+  width:100%;
   margin-top:7px;
-  font-size:13px;
-}
-
-/* TOAST */
-
-.toast{
-  position:fixed;
-  left:50%;
-  bottom:25px;
-  transform:translateX(-50%);
-  background:#151827;
+  border:0;
+  background:#6b45ee;
   color:#fff;
-  padding:11px 17px;
-  border-radius:30px;
-  display:none;
-  z-index:999;
-  font-size:13px;
+  border-radius:9px;
+  padding:9px;
 }
 
-.toast.show{
-  display:block;
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:15px;
+}
+
+.fileBox{
+  border:1px dashed #bbbfc9;
+  border-radius:11px;
+  padding:12px;
+  background:#fafafa;
+}
+
+.fileBox button{
+  width:100%;
+}
+
+.codeBox{
+  font-size:20px;
+  letter-spacing:3px;
+  text-align:center;
+  padding:13px;
+  background:#f0edff;
+  border-radius:11px;
+  margin-top:10px;
+  font-weight:bold;
 }
 </style>
 </head>
 
 <body>
 
+<!-- LOGIN -->
+
 <div id="loginPage" class="login">
+  <div class="loginBox">
 
-  <div class="login-card">
+    <div class="card">
 
-    <div class="logo">🤖</div>
+      <div class="header">
+        <h1>🤖 Telegram Bot</h1>
+        <div class="small">
+          Admin Panel Login
+        </div>
+      </div>
 
-    <h2>Telegram Bot Admin</h2>
-
-    <p>Login to control your bot system</p>
-
-    <div class="field">
       <label>Admin Password</label>
 
       <input
         id="loginPassword"
         type="password"
-        placeholder="Enter password"
-      >
+        placeholder="Enter password">
+
+      <button
+        class="btn primary"
+        onclick="login()">
+        LOGIN
+      </button>
+
+      <div id="loginStatus"
+           class="status hidden"></div>
+
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ADMIN -->
+
+<div id="adminPage"
+     class="app hidden">
+
+  <div class="topbar">
+
+    <div>
+      <h1>Admin Panel</h1>
+      <div class="small">
+        Telegram Bot Control System
+      </div>
     </div>
 
     <button
-      class="btn"
-      style="width:100%"
-      onclick="login()"
-    >
-      🔐 LOGIN
+      class="btn danger"
+      onclick="logout()">
+      Logout
+    </button>
+
+  </div>
+
+
+  <!-- CONNECTION -->
+
+  <div class="card">
+
+    <h2>🔗 Telegram Admin Connection</h2>
+
+    <div id="connectionStatus"
+         class="status">
+      Checking...
+    </div>
+
+    <button
+      class="btn primary"
+      onclick="generateCode()">
+      CONNECT TELEGRAM
+    </button>
+
+    <div id="connectResult"
+         class="hidden">
+
+      <div class="small"
+           style="margin-top:10px">
+        Open your bot and send this command:
+      </div>
+
+      <div id="connectCode"
+           class="codeBox"></div>
+
+    </div>
+
+  </div>
+
+
+  <!-- MENU -->
+
+  <div class="card">
+
+    <button class="sectionBtn"
+            onclick="openSection('welcome',this)">
+      👋 Welcome Settings
+    </button>
+
+    <button class="sectionBtn"
+            onclick="openSection('main',this)">
+      🏠 Main Buttons
+    </button>
+
+    <button class="sectionBtn"
+            onclick="openSection('ai',this)">
+      🤖 AI HACK
+    </button>
+
+    <button class="sectionBtn"
+            onclick="openSection('categories',this)">
+      📂 Categories
+    </button>
+
+    <button class="sectionBtn"
+            onclick="openSection('audio',this)">
+      🎧 Audio
+    </button>
+
+    <button class="sectionBtn"
+            onclick="openSection('system',this)">
+      ⚙️ System
+    </button>
+
+    <button class="sectionBtn"
+            onclick="openSection('preview',this)">
+      👁️ All System View
+    </button>
+
+  </div>
+
+
+  <!-- WELCOME -->
+
+  <div id="welcomeSection"
+       class="card settings hidden">
+
+    <h2>👋 Welcome Settings</h2>
+
+    <div class="switch">
+      <span>Welcome ON/OFF</span>
+      <input
+        id="welcomeEnabled"
+        type="checkbox">
+    </div>
+
+    <div class="switch">
+      <span>Profile Photo ON/OFF</span>
+      <input
+        id="profilePhoto"
+        type="checkbox">
+    </div>
+
+    <label>Welcome Text</label>
+
+    <textarea
+      id="welcomeText"></textarea>
+
+    <label>Welcome Text Size</label>
+
+    <select id="welcomeTextSize">
+      <option value="small">Small</option>
+      <option value="medium">Medium</option>
+      <option value="large">Large</option>
+    </select>
+
+    <label>Welcome Media Type</label>
+
+    <select id="welcomeMediaType">
+      <option value="none">None</option>
+      <option value="photo">Image</option>
+      <option value="video">Video</option>
+      <option value="audio">Audio</option>
+    </select>
+
+    <div class="fileBox">
+
+      <label>Upload Welcome Media</label>
+
+      <input
+        id="welcomeMediaFile"
+        type="file">
+
+      <button
+        class="btn secondary"
+        onclick="uploadWelcomeMedia()">
+        UPLOAD MEDIA
+      </button>
+
+      <div
+        id="welcomeMediaStatus"
+        class="small">
+      </div>
+
+    </div>
+
+    <button
+      class="btn primary"
+      onclick="saveSettings()">
+      SAVE WELCOME
+    </button>
+
+  </div>
+
+
+  <!-- MAIN -->
+
+  <div id="mainSection"
+       class="card settings hidden">
+
+    <h2>🏠 Main Buttons</h2>
+
+    <div id="mainButtons"></div>
+
+    <button
+      class="btn primary"
+      onclick="saveSettings()">
+      SAVE MAIN BUTTONS
+    </button>
+
+  </div>
+
+
+  <!-- AI -->
+
+  <div id="aiSection"
+       class="card settings hidden">
+
+    <h2>🤖 AI HACK</h2>
+
+    <div class="small">
+      Maximum 10 content slots.
+    </div>
+
+    <div id="aiSlots"></div>
+
+    <button
+      class="btn secondary"
+      onclick="addAISlot()">
+      + ADD AI HACK SLOT
+    </button>
+
+    <button
+      class="btn primary"
+      onclick="saveSettings()">
+      SAVE AI HACK
+    </button>
+
+  </div>
+
+
+  <!-- CATEGORIES -->
+
+  <div id="categoriesSection"
+       class="card settings hidden">
+
+    <h2>📂 Categories</h2>
+
+    <div id="categoryContainer"></div>
+
+    <button
+      class="btn primary"
+      onclick="saveSettings()">
+      SAVE CATEGORIES
+    </button>
+
+  </div>
+
+
+  <!-- AUDIO -->
+
+  <div id="audioSection"
+       class="card settings hidden">
+
+    <h2>🎧 Audio Section</h2>
+
+    <div class="switch">
+      <span>Audio ON/OFF</span>
+      <input
+        id="audioEnabled"
+        type="checkbox">
+    </div>
+
+    <label>Audio Text</label>
+
+    <textarea id="audioText"></textarea>
+
+    <div class="fileBox">
+
+      <label>Audio Image</label>
+
+      <input
+        id="audioImageFile"
+        type="file">
+
+      <button
+        class="btn secondary"
+        onclick="uploadAudioImage()">
+        UPLOAD IMAGE
+      </button>
+
+      <div
+        id="audioImageStatus"
+        class="small">
+      </div>
+
+    </div>
+
+    <div class="fileBox">
+
+      <label>Audio File</label>
+
+      <input
+        id="audioFile"
+        type="file">
+
+      <button
+        class="btn secondary"
+        onclick="uploadAudio()">
+        UPLOAD AUDIO
+      </button>
+
+      <div
+        id="audioStatus"
+        class="small">
+      </div>
+
+    </div>
+
+    <div id="audioButtons"></div>
+
+    <button
+      class="btn primary"
+      onclick="saveSettings()">
+      SAVE AUDIO
+    </button>
+
+  </div>
+
+
+  <!-- SYSTEM -->
+
+  <div id="systemSection"
+       class="card settings hidden">
+
+    <h2>⚙️ System</h2>
+
+    <label>Auto Delete</label>
+
+    <select id="autoDelete">
+      <option value="0">OFF</option>
+      <option value="30">30 Seconds</option>
+      <option value="60">1 Minute</option>
+      <option value="120">2 Minutes</option>
+      <option value="300">5 Minutes</option>
+      <option value="600">10 Minutes</option>
+      <option value="900">15 Minutes</option>
+    </select>
+
+    <hr>
+
+    <h3>Admin Password</h3>
+
+    <div class="small">
+      Password is controlled by Render Environment Variables.
+    </div>
+
+    <button
+      class="btn secondary"
+      onclick="alert('Change ADMIN_PASSWORD from Render Environment Variables.')">
+      PASSWORD SETTINGS
+    </button>
+
+    <hr>
+
+    <button
+      class="btn primary"
+      onclick="saveSettings()">
+      SAVE SYSTEM
+    </button>
+
+    <button
+      class="btn danger"
+      onclick="resetSystem()">
+      ALL WELCOME SYSTEM RESET
+    </button>
+
+  </div>
+
+
+  <!-- PREVIEW -->
+
+  <div id="previewSection"
+       class="card settings hidden">
+
+    <h2>👁️ All System View</h2>
+
+    <div class="preview">
+
+      <div class="previewMessage">
+
+        <div
+          id="previewProfile"
+          style="
+          width:45px;
+          height:45px;
+          border-radius:50%;
+          background:#ddd;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          margin-bottom:10px;">
+          👤
+        </div>
+
+        <div
+          id="previewText">
+        </div>
+
+        <div
+          id="previewButtons">
+        </div>
+
+      </div>
+
+    </div>
+
+    <button
+      class="btn primary"
+      onclick="saveSettings()">
+      ALL WELCOME SYSTEM SAVE
     </button>
 
   </div>
@@ -404,578 +707,215 @@ select:focus{
 </div>
 
 
-<div id="adminPage" class="app hidden">
-
-  <div class="admin">
-
-    <div class="topbar">
-
-      <div>
-        <h2>🤖 Telegram Bot Admin</h2>
-        <div class="small">
-          Control everything inside your Telegram Bot
-        </div>
-      </div>
-
-      <button
-        class="btn btn-gray"
-        onclick="logout()"
-      >
-        Logout
-      </button>
-
-    </div>
-
-
-    <!-- WELCOME -->
-
-    <div class="section">
-
-      <div class="section-title">
-        👋 Welcome System
-      </div>
-
-      <div class="switch-row">
-
-        <span>Welcome ON/OFF</span>
-
-        <label class="switch">
-          <input
-            id="welcomeEnabled"
-            type="checkbox"
-          >
-          <span class="slider"></span>
-        </label>
-
-      </div>
-
-      <div class="switch-row">
-
-        <span>User Profile Photo</span>
-
-        <label class="switch">
-          <input
-            id="profilePhoto"
-            type="checkbox"
-          >
-          <span class="slider"></span>
-        </label>
-
-      </div>
-
-      <div class="field">
-
-        <label>Welcome Text</label>
-
-        <textarea
-          id="welcomeText"
-          placeholder="Welcome message"
-        ></textarea>
-
-      </div>
-
-      <div class="field">
-
-        <label>Welcome Text Size</label>
-
-        <select id="welcomeTextSize">
-          <option value="small">Small</option>
-          <option value="medium">Medium</option>
-          <option value="large">Large</option>
-        </select>
-
-      </div>
-
-      <div class="field">
-
-        <label>Welcome Image URL (optional)</label>
-
-        <input
-          id="welcomeImageUrl"
-          placeholder="https://..."
-        >
-
-      </div>
-
-      <button
-        class="btn btn-success"
-        onclick="saveAll()"
-      >
-        💾 SAVE WELCOME
-      </button>
-
-    </div>
-
-
-    <!-- MAIN BUTTONS -->
-
-    <div class="section">
-
-      <div class="section-title">
-        🔘 Main Menu Buttons
-      </div>
-
-      <div id="mainButtons"></div>
-
-      <button
-        class="btn btn-success"
-        onclick="saveAll()"
-      >
-        💾 SAVE MAIN BUTTONS
-      </button>
-
-    </div>
-
-
-    <!-- AI HACK -->
-
-    <div class="section">
-
-      <div class="section-title">
-        🤖 AI HACK — 1 to 10
-      </div>
-
-      <div id="aiHack"></div>
-
-      <button
-        class="btn"
-        onclick="addAIHack()"
-      >
-        ➕ Add AI HACK Slot
-      </button>
-
-    </div>
-
-
-    <!-- CATEGORY -->
-
-    <div class="section">
-
-      <div class="section-title">
-        📂 Other Categories
-      </div>
-
-      <div id="categories"></div>
-
-    </div>
-
-
-    <!-- AUDIO -->
-
-    <div class="section">
-
-      <div class="section-title">
-        🎵 Audio System
-      </div>
-
-      <div class="switch-row">
-
-        <span>Audio ON/OFF</span>
-
-        <label class="switch">
-          <input
-            id="audioEnabled"
-            type="checkbox"
-          >
-          <span class="slider"></span>
-        </label>
-
-      </div>
-
-      <div class="field">
-
-        <label>Audio Text</label>
-
-        <textarea id="audioText"></textarea>
-
-      </div>
-
-      <div class="field">
-
-        <label>Audio URL</label>
-
-        <input
-          id="audioUrl"
-          placeholder="https://..."
-        >
-
-      </div>
-
-      <div class="field">
-
-        <label>Audio File ID</label>
-
-        <input
-          id="audioFileId"
-          placeholder="Telegram file_id"
-        >
-
-      </div>
-
-      <div class="button-config">
-
-        <div class="button-config-title">
-          Audio Button 1
-        </div>
-
-        <input
-          id="audioB1Text"
-          placeholder="Button text"
-        >
-
-        <br><br>
-
-        <input
-          id="audioB1Url"
-          placeholder="Button URL"
-        >
-
-      </div>
-
-      <div class="button-config">
-
-        <div class="button-config-title">
-          Audio Button 2
-        </div>
-
-        <input
-          id="audioB2Text"
-          placeholder="Button text"
-        >
-
-        <br><br>
-
-        <input
-          id="audioB2Url"
-          placeholder="Button URL"
-        >
-
-      </div>
-
-    </div>
-
-
-    <!-- AUTO DELETE -->
-
-    <div class="section">
-
-      <div class="section-title">
-        🗑️ Auto Delete
-      </div>
-
-      <div class="field">
-
-        <label>Delete welcome after</label>
-
-        <select id="autoDelete">
-
-          <option value="0">OFF</option>
-          <option value="30">30 Seconds</option>
-          <option value="60">1 Minute</option>
-          <option value="120">2 Minutes</option>
-          <option value="300">5 Minutes</option>
-          <option value="600">10 Minutes</option>
-          <option value="900">15 Minutes</option>
-
-        </select>
-
-      </div>
-
-    </div>
-
-
-    <!-- PREVIEW -->
-
-    <div class="section">
-
-      <div class="section-title">
-        👁️ All System Preview
-      </div>
-
-      <div class="preview">
-
-        <div class="preview-box">
-
-          <div class="preview-name">
-            👤 User Name
-          </div>
-
-          <div
-            id="previewText"
-            class="preview-text"
-          >
-            Welcome message
-          </div>
-
-          <div id="previewButtons"></div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <!-- BOTTOM -->
-
-    <div class="bottom-save">
-
-      <button
-        class="btn btn-success"
-        onclick="saveAll()"
-      >
-        💾 ALL SYSTEM SAVE
-      </button>
-
-      <button
-        class="btn btn-danger"
-        onclick="resetSystem()"
-      >
-        ♻️ RESET
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
-
-
-<div id="toast" class="toast"></div>
-
-
 <script>
-
-let PASSWORD = "";
+let password = "";
 let settings = null;
 
 
 /* =========================================================
-   UTIL
+   AUTH
 ========================================================= */
 
-function $(id){
-  return document.getElementById(id);
-}
+function login(){
 
-function toast(message){
+  const value =
+    document.getElementById(
+      "loginPassword"
+    ).value.trim();
 
-  const el = $("toast");
-
-  el.textContent = message;
-  el.classList.add("show");
-
-  setTimeout(()=>{
-    el.classList.remove("show");
-  },2500);
-}
-
-
-/* =========================================================
-   LOGIN
-========================================================= */
-
-async function login(){
-
-  const password =
-    $("loginPassword").value.trim();
-
-  if(!password){
-    toast("Enter password");
+  if(!value){
+    showLoginStatus(
+      "Enter password."
+    );
     return;
   }
 
-  try{
+  fetch("/api/login",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+      password:value
+    })
+  })
+  .then(async r=>{
+    const data=await r.json();
 
-    const response =
-      await fetch("/api/login",{
-
-        method:"POST",
-
-        headers:{
-          "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-          password
-        })
-
-      });
-
-    const data =
-      await response.json();
-
-    if(!data.ok){
-
-      toast("Wrong password");
-      return;
-
+    if(!r.ok){
+      throw new Error(
+        data.error || "Login failed"
+      );
     }
 
-    PASSWORD = password;
+    password=value;
 
-    localStorage.setItem(
-      "botAdminPassword",
+    sessionStorage.setItem(
+      "adminPassword",
       password
     );
 
-    $("loginPage")
-      .classList.add("hidden");
+    document.getElementById(
+      "loginPage"
+    ).classList.add("hidden");
 
-    $("adminPage")
-      .classList.remove("hidden");
+    document.getElementById(
+      "adminPage"
+    ).classList.remove("hidden");
 
-    await loadSettings();
-
-  }catch(error){
-
-    toast(error.message);
-
-  }
+    loadSettings();
+    checkConnection();
+  })
+  .catch(err=>{
+    showLoginStatus(
+      err.message
+    );
+  });
 }
 
 
-/* =========================================================
-   AUTO LOGIN
-========================================================= */
+function showLoginStatus(text){
 
-async function autoLogin(){
-
-  const password =
-    localStorage.getItem(
-      "botAdminPassword"
+  const el=
+    document.getElementById(
+      "loginStatus"
     );
 
-  if(!password) return;
-
-  PASSWORD = password;
-
-  try{
-
-    const response =
-      await fetch("/api/settings",{
-
-        headers:{
-          "x-admin-password":
-            PASSWORD
-        }
-
-      });
-
-    if(response.ok){
-
-      $("loginPage")
-        .classList.add("hidden");
-
-      $("adminPage")
-        .classList.remove("hidden");
-
-      const data =
-        await response.json();
-
-      settings = data.settings;
-
-      render();
-
-    }
-
-  }catch(e){}
-
+  el.textContent=text;
+  el.classList.remove("hidden");
 }
 
-
-/* =========================================================
-   LOGOUT
-========================================================= */
 
 function logout(){
 
-  localStorage.removeItem(
-    "botAdminPassword"
+  sessionStorage.removeItem(
+    "adminPassword"
   );
 
-  PASSWORD = "";
+  location.reload();
+}
 
-  $("adminPage")
-    .classList.add("hidden");
 
-  $("loginPage")
-    .classList.remove("hidden");
+function authHeaders(){
 
+  return {
+    "Content-Type":"application/json",
+    "x-admin-password":password
+  };
 }
 
 
 /* =========================================================
-   LOAD
+   LOAD SETTINGS
 ========================================================= */
 
-async function loadSettings(){
+function loadSettings(){
 
-  const response =
-    await fetch("/api/settings",{
+  fetch("/api/settings",{
+    headers:authHeaders()
+  })
+  .then(async r=>{
 
-      headers:{
-        "x-admin-password":
-          PASSWORD
-      }
+    const data=
+      await r.json();
 
+    if(!r.ok){
+      throw new Error(
+        data.error ||
+        "Cannot load settings"
+      );
+    }
+
+    settings=data.settings;
+
+    renderAll();
+  })
+  .catch(err=>{
+    alert(err.message);
+  });
+}
+
+
+/* =========================================================
+   OPEN SECTION
+========================================================= */
+
+function openSection(name,button){
+
+  document
+    .querySelectorAll(".settings")
+    .forEach(x=>{
+      x.classList.add("hidden");
     });
 
-  if(!response.ok){
+  document
+    .querySelectorAll(".sectionBtn")
+    .forEach(x=>{
+      x.classList.remove("active");
+    });
 
-    logout();
+  document
+    .getElementById(
+      name+"Section"
+    )
+    .classList.remove("hidden");
 
-    return;
-
+  if(button){
+    button.classList.add("active");
   }
 
-  const data =
-    await response.json();
-
-  settings = data.settings;
-
-  render();
-
+  if(name==="preview"){
+    updatePreview();
+  }
 }
 
 
 /* =========================================================
-   RENDER
+   RENDER ALL
 ========================================================= */
 
-function render(){
+function renderAll(){
 
-  const w =
-    settings.welcome;
+  if(!settings) return;
 
-  $("welcomeEnabled").checked =
-    !!w.enabled;
+  document.getElementById(
+    "welcomeEnabled"
+  ).checked =
+    !!settings.welcome.enabled;
 
-  $("profilePhoto").checked =
-    !!w.profilePhoto;
+  document.getElementById(
+    "profilePhoto"
+  ).checked =
+    !!settings.welcome.profilePhoto;
 
-  $("welcomeText").value =
-    w.text || "";
+  document.getElementById(
+    "welcomeText"
+  ).value =
+    settings.welcome.text || "";
 
-  $("welcomeTextSize").value =
-    w.textSize || "medium";
+  document.getElementById(
+    "welcomeTextSize"
+  ).value =
+    settings.welcome.textSize ||
+    "medium";
 
-  $("welcomeImageUrl").value =
-    w.imageUrl || "";
+  document.getElementById(
+    "welcomeMediaType"
+  ).value =
+    settings.welcome.mediaType ||
+    "none";
 
-  renderMainButtons();
-
-  renderAI();
-
-  renderCategories();
-
-  renderAudio();
-
-  $("autoDelete").value =
+  document.getElementById(
+    "autoDelete"
+  ).value =
     String(settings.autoDelete || 0);
 
-  updatePreview();
+  renderMainButtons();
+  renderAISlots();
+  renderCategories();
+  renderAudio();
 
+  updatePreview();
 }
 
 
@@ -985,306 +925,293 @@ function render(){
 
 function renderMainButtons(){
 
-  const box =
-    $("mainButtons");
+  const box=
+    document.getElementById(
+      "mainButtons"
+    );
 
-  box.innerHTML = "";
+  box.innerHTML="";
 
-  const buttons =
-    settings.welcome.buttons || [];
+  (settings.mainButtons || [])
+    .forEach((b,i)=>{
 
-  buttons.forEach((b,i)=>{
+      const div=
+        document.createElement(
+          "div"
+        );
 
-    box.innerHTML += `
+      div.className="slot";
 
-      <div class="item">
+      div.innerHTML=`
 
-        <div class="item-header">
-
-          <strong>
-            Main Button ${i+1}
-          </strong>
-
-          <label class="switch">
-
-            <input
-              type="checkbox"
-              data-main-enabled="${i}"
-              ${b.enabled ? "checked":""}
-            >
-
-            <span class="slider"></span>
-
-          </label>
-
+        <div class="slotTitle">
+          Main Button ${i+1}
         </div>
 
-        <div class="field">
-
-          <label>Button Text</label>
-
+        <div class="switch">
+          <span>ON / OFF</span>
           <input
-            data-main-text="${i}"
-            value="${escapeHtml(b.text || "")}"
-          >
-
+            type="checkbox"
+            data-main-enabled="${i}"
+            ${b.enabled?"checked":""}>
         </div>
 
-        <div class="field">
+        <label>Button Text</label>
 
-          <label>URL</label>
+        <input
+          data-main-text="${i}"
+          value="${esc(b.text)}">
 
-          <input
-            data-main-url="${i}"
-            value="${escapeHtml(b.url || "")}"
-          >
+        <label>Action</label>
 
-        </div>
+        <select
+          data-main-action="${i}">
 
-      </div>
+          <option
+            value="category"
+            ${b.action==="category"?"selected":""}>
+            Open Bot Category
+          </option>
 
-    `;
+          <option
+            value="url"
+            ${b.action==="url"?"selected":""}>
+            Open URL
+          </option>
 
-  });
+        </select>
 
+        <label>Category</label>
+
+        <select
+          data-main-category="${i}">
+
+          <option value="aiHack">
+            AI HACK
+          </option>
+
+          <option value="vip">
+            VIP GROUP
+          </option>
+
+          <option value="support">
+            SUPPORT
+          </option>
+
+          <option value="official">
+            OFFICIAL CHANNEL
+          </option>
+
+          <option value="bonus">
+            BONUS
+          </option>
+
+          <option value="admin">
+            ADMIN
+          </option>
+
+        </select>
+
+        <label>URL</label>
+
+        <input
+          data-main-url="${i}"
+          value="${esc(b.url)}"
+          placeholder="https://example.com">
+      `;
+
+      box.appendChild(div);
+
+      const cat=
+        div.querySelector(
+          `[data-main-category="${i}"]`
+        );
+
+      cat.value =
+        b.category ||
+        "aiHack";
+    });
 }
 
 
 /* =========================================================
-   AI HACK
+   AI
 ========================================================= */
 
-function renderAI(){
+function renderAISlots(){
 
-  const box =
-    $("aiHack");
+  const box=
+    document.getElementById(
+      "aiSlots"
+    );
 
-  box.innerHTML = "";
+  box.innerHTML="";
 
-  const items =
-    settings.aiHack || [];
+  (settings.aiHack || [])
+    .forEach((item,i)=>{
 
-  items.forEach((item,i)=>{
+      const div=
+        document.createElement(
+          "div"
+        );
 
-    box.innerHTML += `
+      div.className="slot";
 
-      <div class="item">
+      div.innerHTML=`
 
-        <div class="item-header">
-
-          <strong>
-            🤖 AI HACK ${i+1}
-          </strong>
-
-          <label class="switch">
-
-            <input
-              type="checkbox"
-              data-ai-enabled="${i}"
-              ${item.enabled ? "checked":""}
-            >
-
-            <span class="slider"></span>
-
-          </label>
-
+        <div class="slotTitle">
+          🤖 AI HACK Slot ${i+1}
         </div>
 
-        <div class="field">
-
-          <label>Text</label>
-
-          <textarea
-            data-ai-text="${i}"
-          >${escapeHtml(item.text || "")}</textarea>
-
+        <div class="switch">
+          <span>ON / OFF</span>
+          <input
+            type="checkbox"
+            data-ai-enabled="${i}"
+            ${item.enabled!==false?"checked":""}>
         </div>
 
-        <div class="field">
+        <label>Media Type</label>
 
-          <label>Media Type</label>
+        <select
+          data-ai-type="${i}">
 
-          <select data-ai-type="${i}">
+          <option value="none">None</option>
+          <option value="photo">Image</option>
+          <option value="video">Video</option>
+          <option value="audio">Audio</option>
 
-            <option
-              value="none"
-              ${item.mediaType==="none"?"selected":""}
-            >
-              No Media
-            </option>
+        </select>
 
-            <option
-              value="video"
-              ${item.mediaType==="video"?"selected":""}
-            >
-              🎥 Video
-            </option>
+        <label>Text</label>
 
-            <option
-              value="photo"
-              ${item.mediaType==="photo"?"selected":""}
-            >
-              📸 Image
-            </option>
+        <textarea
+          data-ai-text="${i}">${esc(item.text||"")}</textarea>
 
-            <option
-              value="audio"
-              ${item.mediaType==="audio"?"selected":""}
-            >
-              🎵 Audio
-            </option>
-
-          </select>
-
-        </div>
-
-        <div class="field">
-
-          <label>Telegram File ID</label>
+        <div class="fileBox">
 
           <input
-            data-ai-file="${i}"
-            value="${escapeHtml(item.fileId || "")}"
-            placeholder="Telegram file_id"
-          >
+            type="file"
+            id="aiFile${i}">
 
-        </div>
+          <button
+            class="btn secondary"
+            onclick="uploadAISlot(${i})">
+            UPLOAD MEDIA
+          </button>
 
-        <div class="button-config">
-
-          <div class="button-config-title">
-            Button 1
+          <div
+            id="aiStatus${i}"
+            class="small">
           </div>
 
-          <input
-            data-ai-b1-text="${i}"
-            value="${escapeHtml(
-              item.buttons?.[0]?.text || ""
-            )}"
-            placeholder="Button text"
-          >
-
-          <br><br>
-
-          <input
-            data-ai-b1-url="${i}"
-            value="${escapeHtml(
-              item.buttons?.[0]?.url || ""
-            )}"
-            placeholder="Button URL"
-          >
-
         </div>
 
-        <div class="button-config">
+        <label>Button 1 Text</label>
 
-          <div class="button-config-title">
-            Button 2
-          </div>
+        <input
+          data-ai-b1-text="${i}"
+          value="${esc(
+            item.buttons?.[0]?.text || ""
+          )}">
 
+        <label>Button 1 URL</label>
+
+        <input
+          data-ai-b1-url="${i}"
+          value="${esc(
+            item.buttons?.[0]?.url || ""
+          )}">
+
+        <div class="switch">
+          <span>Button 1 ON / OFF</span>
           <input
-            data-ai-b2-text="${i}"
-            value="${escapeHtml(
-              item.buttons?.[1]?.text || ""
-            )}"
-            placeholder="Button text"
-          >
+            type="checkbox"
+            data-ai-b1-enabled="${i}"
+            ${item.buttons?.[0]?.enabled!==false?"checked":""}>
+        </div>
 
-          <br><br>
+        <label>Button 2 Text</label>
 
+        <input
+          data-ai-b2-text="${i}"
+          value="${esc(
+            item.buttons?.[1]?.text || ""
+          )}">
+
+        <label>Button 2 URL</label>
+
+        <input
+          data-ai-b2-url="${i}"
+          value="${esc(
+            item.buttons?.[1]?.url || ""
+          )}">
+
+        <div class="switch">
+          <span>Button 2 ON / OFF</span>
           <input
-            data-ai-b2-url="${i}"
-            value="${escapeHtml(
-              item.buttons?.[1]?.url || ""
-            )}"
-            placeholder="Button URL"
-          >
-
+            type="checkbox"
+            data-ai-b2-enabled="${i}"
+            ${item.buttons?.[1]?.enabled?"checked":""}>
         </div>
 
         <button
-          class="btn btn-danger"
-          onclick="removeAI(${i})"
-        >
-          🗑️ Remove
+          class="btn danger"
+          onclick="removeAISlot(${i})">
+          REMOVE SLOT
         </button>
+      `;
 
-      </div>
+      box.appendChild(div);
 
-    `;
-
-  });
-
+      div.querySelector(
+        `[data-ai-type="${i}"]`
+      ).value =
+        item.mediaType ||
+        "none";
+    });
 }
 
 
-/* =========================================================
-   ADD AI
-========================================================= */
+function addAISlot(){
 
-function addAIHack(){
-
-  if(!settings.aiHack){
-    settings.aiHack = [];
-  }
-
-  if(settings.aiHack.length >= 10){
-
-    toast("Maximum 10 AI HACK slots");
+  if(
+    settings.aiHack.length>=10
+  ){
+    alert(
+      "Maximum 10 AI HACK slots."
+    );
     return;
-
   }
 
   settings.aiHack.push({
-
     enabled:true,
-
-    text:"",
-
     mediaType:"none",
-
-    fileId:"",
-
+    mediaFileId:"",
+    text:"",
     buttons:[
-
       {
         enabled:true,
         text:"🤖 AI HACK Open Click",
         url:""
       },
-
       {
         enabled:true,
         text:"💬 Support Admin",
         url:""
       }
-
     ]
-
   });
 
-  renderAI();
-
+  renderAISlots();
 }
 
 
-/* =========================================================
-   REMOVE AI
-========================================================= */
+function removeAISlot(i){
 
-function removeAI(index){
+  settings.aiHack.splice(i,1);
 
-  if(!confirm(
-    "Remove this AI HACK item?"
-  )) return;
-
-  settings.aiHack.splice(
-    index,
-    1
-  );
-
-  renderAI();
-
+  renderAISlots();
 }
 
 
@@ -1294,12 +1221,14 @@ function removeAI(index){
 
 function renderCategories(){
 
-  const box =
-    $("categories");
+  const box=
+    document.getElementById(
+      "categoryContainer"
+    );
 
-  box.innerHTML = "";
+  box.innerHTML="";
 
-  const names = [
+  const names=[
     ["vip","🔥 VIP GROUP"],
     ["support","💬 SUPPORT"],
     ["official","📢 OFFICIAL CHANNEL"],
@@ -1307,109 +1236,133 @@ function renderCategories(){
     ["admin","👨‍💻 ADMIN"]
   ];
 
-  names.forEach(([key,title])=>{
+  names.forEach(pair=>{
 
-    const c =
+    const key=pair[0];
+
+    const c=
       settings.categories[key];
 
-    box.innerHTML += `
+    const div=
+      document.createElement(
+        "div"
+      );
 
-      <div class="item">
+    div.className="slot";
 
-        <div class="item-header">
+    div.innerHTML=`
 
-          <strong>${title}</strong>
+      <div class="slotTitle">
+        ${pair[1]}
+      </div>
 
-          <label class="switch">
+      <div class="switch">
+        <span>ON / OFF</span>
+        <input
+          type="checkbox"
+          data-cat-enabled="${key}"
+          ${c.enabled?"checked":""}>
+      </div>
 
-            <input
-              type="checkbox"
-              data-cat-enabled="${key}"
-              ${c.enabled ? "checked":""}
-            >
+      <label>Title</label>
 
-            <span class="slider"></span>
+      <input
+        data-cat-title="${key}"
+        value="${esc(c.title||"")}">
 
-          </label>
+      <label>Media Type</label>
 
-        </div>
+      <select
+        data-cat-type="${key}">
 
-        <div class="field">
+        <option value="none">None</option>
+        <option value="photo">Image</option>
+        <option value="video">Video</option>
+        <option value="audio">Audio</option>
 
-          <label>Title</label>
+      </select>
 
-          <input
-            data-cat-title="${key}"
-            value="${escapeHtml(c.text || "")}"
-          >
+      <label>Text</label>
 
-        </div>
+      <textarea
+        data-cat-text="${key}">${esc(c.text||"")}</textarea>
 
-        <div class="field">
+      <div class="fileBox">
 
-          <label>Message</label>
+        <input
+          type="file"
+          id="catFile_${key}">
 
-          <textarea
-            data-cat-message="${key}"
-          >${escapeHtml(c.message || "")}</textarea>
+        <button
+          class="btn secondary"
+          onclick="uploadCategory('${key}')">
+          UPLOAD MEDIA
+        </button>
 
-        </div>
-
-        <div class="field">
-
-          <label>Media Type</label>
-
-          <select data-cat-type="${key}">
-
-            <option
-              value="none"
-              ${c.mediaType==="none"?"selected":""}
-            >
-              No Media
-            </option>
-
-            <option
-              value="video"
-              ${c.mediaType==="video"?"selected":""}
-            >
-              🎥 Video
-            </option>
-
-            <option
-              value="photo"
-              ${c.mediaType==="photo"?"selected":""}
-            >
-              📸 Image
-            </option>
-
-            <option
-              value="audio"
-              ${c.mediaType==="audio"?"selected":""}
-            >
-              🎵 Audio
-            </option>
-
-          </select>
-
-        </div>
-
-        <div class="field">
-
-          <label>Telegram File ID</label>
-
-          <input
-            data-cat-file="${key}"
-            value="${escapeHtml(c.fileId || "")}"
-          >
-
+        <div
+          id="catStatus_${key}"
+          class="small">
         </div>
 
       </div>
 
+      <label>Button 1 Text</label>
+
+      <input
+        data-cat-b1-text="${key}"
+        value="${esc(
+          c.buttons?.[0]?.text||""
+        )}">
+
+      <label>Button 1 URL</label>
+
+      <input
+        data-cat-b1-url="${key}"
+        value="${esc(
+          c.buttons?.[0]?.url||""
+        )}">
+
+      <div class="switch">
+        <span>Button 1 ON / OFF</span>
+        <input
+          type="checkbox"
+          data-cat-b1-enabled="${key}"
+          ${c.buttons?.[0]?.enabled!==false?"checked":""}>
+      </div>
+
+      <label>Button 2 Text</label>
+
+      <input
+        data-cat-b2-text="${key}"
+        value="${esc(
+          c.buttons?.[1]?.text||""
+        )}">
+
+      <label>Button 2 URL</label>
+
+      <input
+        data-cat-b2-url="${key}"
+        value="${esc(
+          c.buttons?.[1]?.url||""
+        )}">
+
+      <div class="switch">
+        <span>Button 2 ON / OFF</span>
+        <input
+          type="checkbox"
+          data-cat-b2-enabled="${key}"
+          ${c.buttons?.[1]?.enabled?"checked":""}>
+      </div>
     `;
 
-  });
+    box.appendChild(div);
 
+    div.querySelector(
+      `[data-cat-type="${key}"]`
+    ).value =
+      c.mediaType ||
+      "none";
+  });
 }
 
 
@@ -1419,93 +1372,128 @@ function renderCategories(){
 
 function renderAudio(){
 
-  const a =
-    settings.audio;
+  const a=settings.audio;
 
-  $("audioEnabled").checked =
-    !!a.enabled;
+  document.getElementById(
+    "audioEnabled"
+  ).checked=!!a.enabled;
 
-  $("audioText").value =
-    a.text || "";
+  document.getElementById(
+    "audioText"
+  ).value=a.text||"";
 
-  $("audioUrl").value =
-    a.audioUrl || "";
+  const box=
+    document.getElementById(
+      "audioButtons"
+    );
 
-  $("audioFileId").value =
-    a.audioFileId || "";
+  box.innerHTML="";
 
-  $("audioB1Text").value =
-    a.buttons?.[0]?.text || "";
+  (a.buttons||[]).forEach(
+    (b,i)=>{
 
-  $("audioB1Url").value =
-    a.buttons?.[0]?.url || "";
+      const div=
+        document.createElement(
+          "div"
+        );
 
-  $("audioB2Text").value =
-    a.buttons?.[1]?.text || "";
+      div.className="slot";
 
-  $("audioB2Url").value =
-    a.buttons?.[1]?.url || "";
+      div.innerHTML=`
 
+        <div class="slotTitle">
+          Audio Button ${i+1}
+        </div>
+
+        <div class="switch">
+          <span>ON / OFF</span>
+          <input
+            type="checkbox"
+            data-audio-enabled="${i}"
+            ${b.enabled?"checked":""}>
+        </div>
+
+        <label>Text</label>
+
+        <input
+          data-audio-text="${i}"
+          value="${esc(b.text||"")}">
+
+        <label>URL</label>
+
+        <input
+          data-audio-url="${i}"
+          value="${esc(b.url||"")}">
+
+      `;
+
+      box.appendChild(div);
+    }
+  );
 }
 
 
 /* =========================================================
-   COLLECT FORM
+   COLLECT SETTINGS
 ========================================================= */
 
-function collect(){
+function collectSettings(){
 
-  const w =
-    settings.welcome;
+  settings.welcome.enabled=
+    document.getElementById(
+      "welcomeEnabled"
+    ).checked;
 
-  w.enabled =
-    $("welcomeEnabled").checked;
+  settings.welcome.profilePhoto=
+    document.getElementById(
+      "profilePhoto"
+    ).checked;
 
-  w.profilePhoto =
-    $("profilePhoto").checked;
+  settings.welcome.text=
+    document.getElementById(
+      "welcomeText"
+    ).value;
 
-  w.text =
-    $("welcomeText").value;
+  settings.welcome.textSize=
+    document.getElementById(
+      "welcomeTextSize"
+    ).value;
 
-  w.textSize =
-    $("welcomeTextSize").value;
-
-  w.imageUrl =
-    $("welcomeImageUrl").value;
+  settings.welcome.mediaType=
+    document.getElementById(
+      "welcomeMediaType"
+    ).value;
 
 
   /* MAIN */
 
-  settings.welcome.buttons.forEach(
+  settings.mainButtons.forEach(
     (b,i)=>{
 
-      const enabled =
+      b.enabled=
         document.querySelector(
           `[data-main-enabled="${i}"]`
-        );
+        ).checked;
 
-      const text =
+      b.text=
         document.querySelector(
           `[data-main-text="${i}"]`
-        );
+        ).value;
 
-      const url =
+      b.action=
+        document.querySelector(
+          `[data-main-action="${i}"]`
+        ).value;
+
+      b.category=
+        document.querySelector(
+          `[data-main-category="${i}"]`
+        ).value;
+
+      b.url=
         document.querySelector(
           `[data-main-url="${i}"]`
-        );
-
-      if(enabled)
-        b.enabled =
-          enabled.checked;
-
-      if(text)
-        b.text =
-          text.value;
-
-      if(url)
-        b.url =
-          url.value;
-
+        ).value;
     }
   );
 
@@ -1515,78 +1503,55 @@ function collect(){
   settings.aiHack.forEach(
     (item,i)=>{
 
-      const enabled =
+      item.enabled=
         document.querySelector(
           `[data-ai-enabled="${i}"]`
-        );
+        ).checked;
 
-      const text =
-        document.querySelector(
-          `[data-ai-text="${i}"]`
-        );
-
-      const type =
+      item.mediaType=
         document.querySelector(
           `[data-ai-type="${i}"]`
-        );
+        ).value;
 
-      const file =
+      item.text=
         document.querySelector(
-          `[data-ai-file="${i}"]`
-        );
+          `[data-ai-text="${i}"]`
+        ).value;
 
-      const b1t =
-        document.querySelector(
-          `[data-ai-b1-text="${i}"]`
-        );
-
-      const b1u =
-        document.querySelector(
-          `[data-ai-b1-url="${i}"]`
-        );
-
-      const b2t =
-        document.querySelector(
-          `[data-ai-b2-text="${i}"]`
-        );
-
-      const b2u =
-        document.querySelector(
-          `[data-ai-b2-url="${i}"]`
-        );
-
-      if(enabled)
-        item.enabled =
-          enabled.checked;
-
-      if(text)
-        item.text =
-          text.value;
-
-      if(type)
-        item.mediaType =
-          type.value;
-
-      if(file)
-        item.fileId =
-          file.value;
-
-      item.buttons = [
-
+      item.buttons=[
         {
-          enabled:true,
-          text:b1t?.value || "",
-          url:b1u?.value || ""
+          enabled:
+            document.querySelector(
+              `[data-ai-b1-enabled="${i}"]`
+            ).checked,
+
+          text:
+            document.querySelector(
+              `[data-ai-b1-text="${i}"]`
+            ).value,
+
+          url:
+            document.querySelector(
+              `[data-ai-b1-url="${i}"]`
+            ).value
         },
-
         {
-          enabled:true,
-          text:b2t?.value || "",
-          url:b2u?.value || ""
+          enabled:
+            document.querySelector(
+              `[data-ai-b2-enabled="${i}"]`
+            ).checked,
+
+          text:
+            document.querySelector(
+              `[data-ai-b2-text="${i}"]`
+            ).value,
+
+          url:
+            document.querySelector(
+              `[data-ai-b2-url="${i}"]`
+            ).value
         }
-
       ];
-
     }
   );
 
@@ -1597,93 +1562,107 @@ function collect(){
     settings.categories
   ).forEach(key=>{
 
-    const c =
+    const c=
       settings.categories[key];
 
-    const enabled =
+    c.enabled=
       document.querySelector(
         `[data-cat-enabled="${key}"]`
-      );
+      ).checked;
 
-    const title =
+    c.title=
       document.querySelector(
         `[data-cat-title="${key}"]`
-      );
+      ).value;
 
-    const message =
-      document.querySelector(
-        `[data-cat-message="${key}"]`
-      );
-
-    const type =
+    c.mediaType=
       document.querySelector(
         `[data-cat-type="${key}"]`
-      );
+      ).value;
 
-    const file =
+    c.text=
       document.querySelector(
-        `[data-cat-file="${key}"]`
-      );
+        `[data-cat-text="${key}"]`
+      ).value;
 
-    if(enabled)
-      c.enabled =
-        enabled.checked;
+    c.buttons=[
+      {
+        enabled:
+          document.querySelector(
+            `[data-cat-b1-enabled="${key}"]`
+          ).checked,
 
-    if(title)
-      c.text =
-        title.value;
+        text:
+          document.querySelector(
+            `[data-cat-b1-text="${key}"]`
+          ).value,
 
-    if(message)
-      c.message =
-        message.value;
+        url:
+          document.querySelector(
+            `[data-cat-b1-url="${key}"]`
+          ).value
+      },
+      {
+        enabled:
+          document.querySelector(
+            `[data-cat-b2-enabled="${key}"]`
+          ).checked,
 
-    if(type)
-      c.mediaType =
-        type.value;
+        text:
+          document.querySelector(
+            `[data-cat-b2-text="${key}"]`
+          ).value,
 
-    if(file)
-      c.fileId =
-        file.value;
-
+        url:
+          document.querySelector(
+            `[data-cat-b2-url="${key}"]`
+          ).value
+      }
+    ];
   });
 
 
   /* AUDIO */
 
-  settings.audio.enabled =
-    $("audioEnabled").checked;
+  settings.audio.enabled=
+    document.getElementById(
+      "audioEnabled"
+    ).checked;
 
-  settings.audio.text =
-    $("audioText").value;
+  settings.audio.text=
+    document.getElementById(
+      "audioText"
+    ).value;
 
-  settings.audio.audioUrl =
-    $("audioUrl").value;
+  settings.audio.buttons.forEach(
+    (b,i)=>{
 
-  settings.audio.audioFileId =
-    $("audioFileId").value;
+      b.enabled=
+        document.querySelector(
+          `[data-audio-enabled="${i}"]`
+        ).checked;
 
-  settings.audio.buttons = [
+      b.text=
+        document.querySelector(
+          `[data-audio-text="${i}"]`
+        ).value;
 
-    {
-      enabled:true,
-      text:$("audioB1Text").value,
-      url:$("audioB1Url").value
-    },
-
-    {
-      enabled:true,
-      text:$("audioB2Text").value,
-      url:$("audioB2Url").value
+      b.url=
+        document.querySelector(
+          `[data-audio-url="${i}"]`
+        ).value;
     }
+  );
 
-  ];
 
-
-  settings.autoDelete =
+  settings.autoDelete=
     Number(
-      $("autoDelete").value
+      document.getElementById(
+        "autoDelete"
+      ).value
     );
 
+  return settings;
 }
 
 
@@ -1691,100 +1670,351 @@ function collect(){
    SAVE
 ========================================================= */
 
-async function saveAll(){
+function saveSettings(){
 
-  collect();
+  collectSettings();
 
-  try{
+  fetch("/api/settings",{
+    method:"POST",
+    headers:authHeaders(),
+    body:JSON.stringify(
+      settings
+    )
+  })
+  .then(async r=>{
 
-    const response =
-      await fetch("/api/settings",{
+    const data=
+      await r.json();
 
-        method:"POST",
-
-        headers:{
-          "Content-Type":"application/json",
-          "x-admin-password":
-            PASSWORD
-        },
-
-        body:JSON.stringify({
-          settings
-        })
-
-      });
-
-    const data =
-      await response.json();
-
-    if(!data.ok){
-
-      toast(
+    if(!r.ok){
+      throw new Error(
         data.error ||
         "Save failed"
       );
-
-      return;
-
     }
 
-    updatePreview();
+    settings=data.settings;
 
-    toast("✅ All System Saved");
+    alert(
+      "✅ Settings saved successfully."
+    );
 
-  }catch(error){
-
-    toast(error.message);
-
-  }
-
+    renderAll();
+  })
+  .catch(err=>{
+    alert(err.message);
+  });
 }
 
 
 /* =========================================================
-   RESET
+   ADMIN CONNECTION
 ========================================================= */
 
-async function resetSystem(){
+function generateCode(){
 
-  if(!confirm(
-    "Are you sure you want to reset everything?"
-  )){
-    return;
+  fetch(
+    "/api/admin/connect-code",
+    {
+      method:"POST",
+      headers:authHeaders()
+    }
+  )
+  .then(async r=>{
+
+    const data=
+      await r.json();
+
+    if(!r.ok){
+      throw new Error(
+        data.error
+      );
+    }
+
+    document
+      .getElementById(
+        "connectResult"
+      )
+      .classList.remove(
+        "hidden"
+      );
+
+    document
+      .getElementById(
+        "connectCode"
+      )
+      .textContent=
+        "/admin " +
+        data.code;
+  })
+  .catch(err=>{
+    alert(err.message);
+  });
+}
+
+
+function checkConnection(){
+
+  fetch(
+    "/api/admin/status",
+    {
+      headers:authHeaders()
+    }
+  )
+  .then(r=>r.json())
+  .then(data=>{
+
+    const el=
+      document.getElementById(
+        "connectionStatus"
+      );
+
+    if(data.connected){
+
+      el.textContent=
+        "🟢 Telegram Admin Connected";
+
+      el.className=
+        "status success";
+
+    }else{
+
+      el.textContent=
+        "🔴 Telegram Admin Not Connected";
+
+      el.className=
+        "status";
+    }
+  });
+}
+
+
+/* =========================================================
+   MEDIA UPLOAD
+========================================================= */
+
+async function uploadFile(
+  file,
+  type
+){
+
+  if(!file){
+    throw new Error(
+      "Select a file first."
+    );
   }
 
-  const response =
-    await fetch("/api/reset",{
+  const form=
+    new FormData();
 
-      method:"POST",
+  form.append(
+    "file",
+    file
+  );
 
-      headers:{
-        "x-admin-password":
-          PASSWORD
+  form.append(
+    "type",
+    type
+  );
+
+  const response=
+    await fetch(
+      "/api/upload",
+      {
+        method:"POST",
+        headers:{
+          "x-admin-password":
+            password
+        },
+        body:form
       }
+    );
 
-    });
-
-  const data =
+  const data=
     await response.json();
 
-  if(data.ok){
-
-    toast(
-      "System reset successfully"
-    );
-
-    await loadSettings();
-
-  }else{
-
-    toast(
+  if(!response.ok){
+    throw new Error(
       data.error ||
-      "Reset failed"
+      "Upload failed"
     );
-
   }
 
+  return data.fileId;
+}
+
+
+async function uploadWelcomeMedia(){
+
+  try{
+
+    const file=
+      document.getElementById(
+        "welcomeMediaFile"
+      ).files[0];
+
+    const type=
+      document.getElementById(
+        "welcomeMediaType"
+      ).value;
+
+    if(type==="none"){
+      alert(
+        "Select media type first."
+      );
+      return;
+    }
+
+    const fileId=
+      await uploadFile(
+        file,
+        type
+      );
+
+    settings.welcome.mediaFileId=
+      fileId;
+
+    document.getElementById(
+      "welcomeMediaStatus"
+    ).textContent=
+      "✅ Uploaded successfully.";
+
+  }catch(err){
+
+    alert(err.message);
+  }
+}
+
+
+async function uploadAISlot(i){
+
+  try{
+
+    const file=
+      document.getElementById(
+        "aiFile"+i
+      ).files[0];
+
+    const type=
+      document.querySelector(
+        `[data-ai-type="${i}"]`
+      ).value;
+
+    const fileId=
+      await uploadFile(
+        file,
+        type
+      );
+
+    settings.aiHack[i]
+      .mediaFileId=
+        fileId;
+
+    document.getElementById(
+      "aiStatus"+i
+    ).textContent=
+      "✅ Uploaded.";
+
+  }catch(err){
+
+    alert(err.message);
+  }
+}
+
+
+async function uploadCategory(key){
+
+  try{
+
+    const file=
+      document.getElementById(
+        "catFile_"+key
+      ).files[0];
+
+    const type=
+      document.querySelector(
+        `[data-cat-type="${key}"]`
+      ).value;
+
+    const fileId=
+      await uploadFile(
+        file,
+        type
+      );
+
+    settings.categories[key]
+      .mediaFileId=
+        fileId;
+
+    document.getElementById(
+      "catStatus_"+key
+    ).textContent=
+      "✅ Uploaded.";
+
+  }catch(err){
+
+    alert(err.message);
+  }
+}
+
+
+async function uploadAudioImage(){
+
+  try{
+
+    const file=
+      document.getElementById(
+        "audioImageFile"
+      ).files[0];
+
+    const fileId=
+      await uploadFile(
+        file,
+        "photo"
+      );
+
+    settings.audio.imageFileId=
+      fileId;
+
+    document.getElementById(
+      "audioImageStatus"
+    ).textContent=
+      "✅ Uploaded.";
+
+  }catch(err){
+
+    alert(err.message);
+  }
+}
+
+
+async function uploadAudio(){
+
+  try{
+
+    const file=
+      document.getElementById(
+        "audioFile"
+      ).files[0];
+
+    const fileId=
+      await uploadFile(
+        file,
+        "audio"
+      );
+
+    settings.audio.audioFileId=
+      fileId;
+
+    document.getElementById(
+      "audioStatus"
+    ).textContent=
+      "✅ Uploaded.";
+
+  }catch(err){
+
+    alert(err.message);
+  }
 }
 
 
@@ -1796,38 +2026,94 @@ function updatePreview(){
 
   if(!settings) return;
 
-  $("previewText").textContent =
+  collectSettings();
+
+  const text=
     settings.welcome.text ||
-    "Welcome message";
+    "Welcome!";
 
-  const box =
-    $("previewButtons");
+  const name=
+    "👋 Hello User";
 
-  box.innerHTML = "";
+  document.getElementById(
+    "previewText"
+  ).innerHTML=
+    `<strong>${esc(name)}</strong><br><br>
+     ${esc(text).replace(/\n/g,"<br>")}`;
 
-  const buttons =
-    settings.welcome.buttons || [];
+  const box=
+    document.getElementById(
+      "previewButtons"
+    );
 
-  buttons.forEach(b=>{
+  box.innerHTML="";
 
-    if(!b.enabled) return;
+  settings.mainButtons
+    .forEach(b=>{
 
-    const a =
-      document.createElement("a");
+      if(!b.enabled) return;
 
-    a.className =
-      "preview-btn";
+      const button=
+        document.createElement(
+          "button"
+        );
 
-    a.textContent =
-      b.text || "Button";
+      button.className=
+        "previewButton";
 
-    a.href =
-      b.url || "#";
+      button.textContent=
+        b.text;
 
-    box.appendChild(a);
+      box.appendChild(button);
+    });
+}
 
+
+/* =========================================================
+   RESET
+========================================================= */
+
+function resetSystem(){
+
+  if(
+    !confirm(
+      "Are you sure you want to reset the entire system?"
+    )
+  ){
+    return;
+  }
+
+  fetch(
+    "/api/reset",
+    {
+      method:"POST",
+      headers:authHeaders()
+    }
+  )
+  .then(async r=>{
+
+    const data=
+      await r.json();
+
+    if(!r.ok){
+      throw new Error(
+        data.error ||
+        "Reset failed"
+      );
+    }
+
+    settings=
+      data.settings;
+
+    renderAll();
+
+    alert(
+      "✅ System reset completed."
+    );
+  })
+  .catch(err=>{
+    alert(err.message);
   });
-
 }
 
 
@@ -1835,42 +2121,71 @@ function updatePreview(){
    ESCAPE
 ========================================================= */
 
-function escapeHtml(value){
+function esc(value){
 
-  return String(value || "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-
-}
-
-
-/* =========================================================
-   LIVE PREVIEW
-========================================================= */
-
-$("welcomeText")
-  .addEventListener(
-    "input",
-    ()=>{
-      if(settings){
-        settings.welcome.text =
-          $("welcomeText").value;
-
-        updatePreview();
-      }
-    }
+  return String(
+    value ?? ""
+  )
+  .replace(
+    /&/g,
+    "&amp;"
+  )
+  .replace(
+    /</g,
+    "&lt;"
+  )
+  .replace(
+    />/g,
+    "&gt;"
+  )
+  .replace(
+    /"/g,
+    "&quot;"
+  )
+  .replace(
+    /'/g,
+    "&#039;"
   );
+}
 
 
 /* =========================================================
    START
 ========================================================= */
 
-autoLogin();
+window.addEventListener(
+  "DOMContentLoaded",
+  ()=>{
+    const saved=
+      sessionStorage.getItem(
+        "adminPassword"
+      );
 
+    if(saved){
+
+      password=saved;
+
+      document
+        .getElementById(
+          "loginPage"
+        )
+        .classList.add(
+          "hidden"
+        );
+
+      document
+        .getElementById(
+          "adminPage"
+        )
+        .classList.remove(
+          "hidden"
+        );
+
+      loadSettings();
+      checkConnection();
+    }
+  }
+);
 </script>
 
 </body>
