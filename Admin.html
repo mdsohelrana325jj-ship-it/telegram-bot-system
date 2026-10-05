@@ -1414,7 +1414,15 @@ async function loadSettings(){
     );
   }
 
-  settings = data.settings;
+  settings = data.settings || {};
+  
+  // Safe defaults if welcome or mainButtons are missing
+  if (!settings.welcome) {
+    settings.welcome = {};
+  }
+  if (!settings.mainButtons) {
+    settings.mainButtons = [];
+  }
 }
 
 /* =====================================================
@@ -1451,6 +1459,9 @@ function goMain(){
 
 function openWelcomePage(){
 
+  if (!settings) {
+    settings = { welcome: {}, mainButtons: [] };
+  }
   renderWelcome();
 
   showOnly("welcomePage");
@@ -1458,6 +1469,9 @@ function openWelcomePage(){
 
 function openMainButtonsPage(){
 
+  if (!settings) {
+    settings = { welcome: {}, mainButtons: [] };
+  }
   renderMainButtons();
 
   showOnly("mainButtonsPage");
@@ -1465,6 +1479,9 @@ function openMainButtonsPage(){
 
 function openAudioPage(){
 
+  if (!settings) {
+    settings = { welcome: {}, mainButtons: [] };
+  }
   renderAudio();
 
   showOnly("audioPage");
@@ -1472,6 +1489,9 @@ function openAudioPage(){
 
 function openSystemSettingsPage(){
 
+  if (!settings) {
+    settings = { welcome: {}, mainButtons: [] };
+  }
   renderSystemSettings();
 
   showOnly("systemSettingsPage");
@@ -1479,6 +1499,9 @@ function openSystemSettingsPage(){
 
 function openAllViewPage(){
 
+  if (!settings) {
+    settings = { welcome: {}, mainButtons: [] };
+  }
   renderAllView();
 
   showOnly("allViewPage");
@@ -1491,7 +1514,7 @@ function openAllViewPage(){
 function renderWelcome(){
 
   const w =
-    settings.welcome;
+    settings.welcome || {};
 
   $("profilePhoto").checked =
     !!w.profilePhoto;
@@ -1512,6 +1535,10 @@ function renderWelcome(){
 }
 
 async function saveWelcome(){
+
+  if (!settings.welcome) {
+    settings.welcome = {};
+  }
 
   settings.welcome.profilePhoto =
     $("profilePhoto").checked;
@@ -1555,6 +1582,38 @@ async function saveWelcome(){
   toast("Welcome Settings Saved");
 }
 
+function renderWelcomeView(){
+
+  const w = settings.welcome || {};
+  const view = $("welcomeView");
+  if (!view) return;
+
+  let html = `
+    <div class="preview-title">
+      👁️ SYSTEM VIEW
+    </div>
+  `;
+
+  if (w.mediaId || w.mediaUrl){
+    html += mediaPreview(
+      w.mediaType || "none",
+      w.mediaSource || "upload",
+      w.mediaId,
+      w.mediaUrl
+    );
+  }
+
+  if (w.text){
+    html += `
+      <div class="preview-text">
+        ${escapeHtml(w.text)}
+      </div>
+    `;
+  }
+
+  view.innerHTML = html;
+}
+
 /* =====================================================
    MAIN BUTTON LIST
 ===================================================== */
@@ -1566,7 +1625,7 @@ function renderMainButtons(){
 
   box.innerHTML = "";
 
-  settings.mainButtons.forEach(button => {
+  (settings.mainButtons || []).forEach(button => {
 
     const el =
       document.createElement("button");
@@ -1600,7 +1659,7 @@ function openMainEditor(id){
   currentButtonId = id;
 
   const button =
-    settings.mainButtons.find(
+    (settings.mainButtons || []).find(
       b => b.id === id
     );
 
@@ -1962,6 +2021,10 @@ function addSlot(){
 
   if (!button) return;
 
+  if (!button.slots) {
+    button.slots = [];
+  }
+
   if (button.slots.length >= 20){
 
     toast("Maximum 20 slots");
@@ -2038,6 +2101,7 @@ function updateSlotsFromDOM(){
       slot.text =
         el.querySelector(".slot-text").value;
 
+      if (!slot.button1) slot.button1 = {};
       slot.button1.enabled =
         el.querySelector(".b1-enabled").checked;
 
@@ -2050,6 +2114,7 @@ function updateSlotsFromDOM(){
       slot.button1.color =
         el.querySelector(".b1-color").value;
 
+      if (!slot.button2) slot.button2 = {};
       slot.button2.enabled =
         el.querySelector(".b2-enabled").checked;
 
@@ -2171,6 +2236,8 @@ async function saveMainButton(){
 ===================================================== */
 
 function getCurrentButton(){
+
+  if (!settings || !settings.mainButtons) return null;
 
   return settings.mainButtons.find(
     b => b.id === currentButtonId
@@ -2298,7 +2365,7 @@ async function saveSettings(){
   }
 
   settings =
-    response.settings;
+    response.settings || settings;
 
   return true;
 }
@@ -2316,6 +2383,8 @@ function renderMainSystemView(){
 
   const view =
     $("mainSystemView");
+
+  if (!view) return;
 
   let html = `
     <div class="preview-title">
@@ -2545,7 +2614,7 @@ function mediaPreview(
 function renderAudio(){
 
   const a =
-    settings.audio;
+    settings.audio || {};
 
   $("audioEnabled").checked =
     !!a.enabled;
@@ -2579,6 +2648,9 @@ function renderAudio(){
 
 async function saveAudio(){
 
+  if (!settings.audio) {
+    settings.audio = { button1: {}, button2: {} };
+  }
   const a =
     settings.audio;
 
@@ -2597,6 +2669,7 @@ async function saveAudio(){
   a.mediaSource =
     "upload";
 
+  if (!a.button1) a.button1 = {};
   a.button1.enabled =
     $("audioB1Enabled").checked;
 
@@ -2606,6 +2679,7 @@ async function saveAudio(){
   a.button1.url =
     $("audioB1Url").value.trim();
 
+  if (!a.button2) a.button2 = {};
   a.button2.enabled =
     $("audioB2Enabled").checked;
 
@@ -2648,9 +2722,12 @@ async function saveAudio(){
 function renderAudioView(){
 
   const a =
-    settings.audio;
+    settings.audio || {};
 
-  $("audioView").innerHTML = `
+  const view = $("audioView");
+  if (!view) return;
+
+  view.innerHTML = `
 
     <div class="preview-title">
       👁️ SYSTEM VIEW
@@ -2660,7 +2737,7 @@ function renderAudioView(){
       a.mediaId || a.mediaUrl
       ? mediaPreview(
           "audio",
-          a.mediaSource,
+          a.mediaSource || "upload",
           a.mediaId,
           a.mediaUrl
         )
@@ -2726,12 +2803,13 @@ function renderSystemSettings(){
 
   $("autoDelete").value =
     String(
-      settings.autoDelete || 0
+      settings?.autoDelete || 0
     );
 }
 
 async function saveSystemSettings(){
 
+  if (!settings) settings = {};
   settings.autoDelete =
     Number(
       $("autoDelete").value
@@ -2757,7 +2835,7 @@ function renderAllView(){
   `;
 
   const w =
-    settings.welcome;
+    settings?.welcome || {};
 
   if (
     w.mediaId ||
@@ -2765,8 +2843,8 @@ function renderAllView(){
   ){
 
     html += mediaPreview(
-      w.mediaType,
-      w.mediaSource,
+      w.mediaType || "none",
+      w.mediaSource || "upload",
       w.mediaId,
       w.mediaUrl
     );
@@ -2779,7 +2857,7 @@ function renderAllView(){
     </div>
   `;
 
-  settings.mainButtons.forEach(
+  (settings?.mainButtons || []).forEach(
     button => {
 
       html += `
@@ -2799,8 +2877,8 @@ function renderAllView(){
             button.headerMediaId ||
             button.headerMediaUrl
             ? mediaPreview(
-                button.headerMediaType,
-                button.headerMediaSource,
+                button.headerMediaType || "none",
+                button.headerMediaSource || "upload",
                 button.headerMediaId,
                 button.headerMediaUrl
               )
@@ -2835,8 +2913,10 @@ function renderAllView(){
     }
   );
 
-  $("allView").innerHTML =
-    html;
+  const allViewEl = $("allView");
+  if (allViewEl) {
+    allViewEl.innerHTML = html;
+  }
 }
 
 /* =====================================================
@@ -2871,7 +2951,7 @@ async function resetAll(){
   }
 
   settings =
-    result.settings;
+    result.settings || {};
 
   toast("All systems reset");
 
@@ -2912,21 +2992,18 @@ function toggleLanguage(){
     currentLanguage
   );
 
-  $("languageBtn").innerText =
-    currentLanguage === "bn"
-      ? "🇧🇩"
-      : "🇺🇸";
-
-  /*
-    Admin content entered by the user
-    is never translated.
-    This switch is for future/static UI labels.
-  */
+  const langBtn = $("languageBtn");
+  if (langBtn) {
+    langBtn.innerText =
+      currentLanguage === "bn"
+        ? "🇧🇩"
+        : "🇺🇸";
+  }
 
   toast(
     currentLanguage === "bn"
-      ? "বাংলা মোড"
-      : "English Mode"
+      ? "বাংলা মোড সক্রিয় করা হয়েছে"
+      : "English Mode Activated"
   );
 }
 
@@ -2996,10 +3073,13 @@ function escapeAttr(value){
     document.body.classList.add("dark");
   }
 
-  $("languageBtn").innerText =
-    currentLanguage === "bn"
-      ? "🇧🇩"
-      : "🇺🇸";
+  const langBtn = $("languageBtn");
+  if (langBtn){
+    langBtn.innerText =
+      currentLanguage === "bn"
+        ? "🇧🇩"
+        : "🇺🇸";
+  }
 
 })();
 
