@@ -51,30 +51,12 @@ const pool = new Pool({
 const MAX_UPLOAD_SIZE = 50 * 1024 * 1024;
 
 const MAIN_BUTTONS = [
-  {
-    id: "ai",
-    text: "🤖 AI HACK All Link Check ✅"
-  },
-  {
-    id: "vip",
-    text: "🔥 VIP GROUP All Link Check"
-  },
-  {
-    id: "support",
-    text: "💬 SUPPORT All Link Check"
-  },
-  {
-    id: "official",
-    text: "📢 OFFICIAL CHANNEL All Link Check"
-  },
-  {
-    id: "bonus",
-    text: "🎁 BONUS All Link Check"
-  },
-  {
-    id: "admin",
-    text: "👨‍💻 ADMIN All Link Check"
-  }
+  { id: "ai", text: "🤖 AI HACK All Link Check" },
+  { id: "vip", text: "🔥 VIP GROUP All Link Check" },
+  { id: "support", text: "💬 SUPPORT All Link Check" },
+  { id: "official", text: "📢 OFFICIAL CHANNEL All Link Check🥰" },
+  { id: "bonus", text: "🎁 BONUS All Link Check" },
+  { id: "admin", text: "👨‍💻 ADMIN All Link Check" }
 ];
 
 /* =========================================================
@@ -87,21 +69,6 @@ function clone(obj) {
 
 function cleanText(value) {
   return String(value ?? "").trim();
-}
-
-function validUrl(value) {
-  const url = cleanText(value);
-  if (!url) return false;
-  try {
-    const parsed = new URL(url);
-    return (
-      parsed.protocol === "http:" ||
-      parsed.protocol === "https:" ||
-      parsed.protocol === "tg:"
-    );
-  } catch {
-    return false;
-  }
 }
 
 function normalizeHex(value) {
@@ -119,7 +86,6 @@ function normalizeHex(value) {
 function slotDefault() {
   return {
     enabled: true,
-    mediaEnabled: false,
     mediaType: "none",
     mediaSource: "upload",
     mediaId: null,
@@ -130,16 +96,14 @@ function slotDefault() {
       text: "OPEN LINK",
       url: "",
       colorEnabled: true,
-      color: "#6d5dfc",
-      style: "primary"
+      color: "#6d5dfc"
     },
     button2: {
       enabled: false,
       text: "SUPPORT",
       url: "",
       colorEnabled: true,
-      color: "#6d5dfc",
-      style: "success"
+      color: "#6d5dfc"
     }
   };
 }
@@ -156,18 +120,19 @@ function mainDefault(id, text) {
     buttonColorEnabled: true,
     buttonColor: "#6d5dfc",
     buttonStyle: "primary",
-
     buttonVisualEnabled: false,
-    buttonVisualType: "none",
-    buttonVisualSource: "upload",
-    buttonVisualId: null,
-    buttonVisualUrl: "",
+    buttonVisualMediaType: "none",
+    buttonVisualMediaSource: "upload",
+    buttonVisualMediaId: null,
+    buttonVisualMediaUrl: "",
     buttonVisualText: "",
-
-    // Background Image & Color On/Off toggles for admin panel
-    buttonBackgroundImageEnabled: true,
-    buttonColorToggle: true,
-
+    buttonImageEnabled: false,
+    buttonImageUrl: "",
+    headerMediaType: "none",
+    headerMediaSource: "upload",
+    headerMediaId: null,
+    headerMediaUrl: "",
+    headerText: "",
     slots: []
   };
 }
@@ -186,7 +151,7 @@ function welcomeDefault() {
     mediaId: null,
     mediaUrl: "",
     text: "👋 Welcome to our Telegram Bot!",
-    layout: "profile_welcome_buttons" // or "buttons_profile_welcome"
+    layout: "profile_welcome_buttons"
   };
 }
 
@@ -197,10 +162,9 @@ function welcomeDefault() {
 function audioDefault() {
   return {
     enabled: false,
-    mediaEnabled: true,
     text: "",
     mediaType: "audio",
-    mediaSource: "upload",
+    mediaSource: "url",
     mediaId: null,
     mediaUrl: "",
     button1: {
@@ -208,16 +172,14 @@ function audioDefault() {
       text: "OPEN LINK",
       url: "",
       colorEnabled: true,
-      color: "#6d5dfc",
-      style: "primary"
+      color: "#6d5dfc"
     },
     button2: {
       enabled: false,
       text: "SUPPORT",
       url: "",
       colorEnabled: true,
-      color: "#6d5dfc",
-      style: "success"
+      color: "#6d5dfc"
     }
   };
 }
@@ -263,9 +225,8 @@ function normalizeSlot(slot) {
   return mergeObject(base, slot || {});
 }
 
-function normalizeMainButton(button, index) {
-  const fallback = MAIN_BUTTONS[index] || MAIN_BUTTONS[0];
-  const base = mainDefault(button?.id || fallback.id, button?.text || fallback.text);
+function normalizeMainButton(button, fallbackItem) {
+  const base = mainDefault(button?.id || fallbackItem.id, button?.text || fallbackItem.text);
   const result = mergeObject(base, button || {});
   result.slots = Array.isArray(result.slots) ? result.slots.map(normalizeSlot) : [];
   return result;
@@ -278,15 +239,13 @@ function normalizeSettings(data) {
   }
   const result = mergeObject(defaults, data);
   result.welcome = mergeObject(welcomeDefault(), data.welcome || {});
-  if (Array.isArray(data.mainButtons)) {
-    result.mainButtons = data.mainButtons.map(normalizeMainButton);
-  }
-  for (const item of MAIN_BUTTONS) {
-    const exists = result.mainButtons.some(button => button.id === item.id);
-    if (!exists) {
-      result.mainButtons.push(mainDefault(item.id, item.text));
-    }
-  }
+  
+  const rawMain = Array.isArray(data.mainButtons) ? data.mainButtons : [];
+  result.mainButtons = MAIN_BUTTONS.map((item, index) => {
+    const found = rawMain.find(x => x && x.id === item.id) || rawMain[index] || item;
+    return normalizeMainButton(found, item);
+  });
+
   result.audio = mergeObject(audioDefault(), data.audio || {});
   return result;
 }
@@ -323,11 +282,6 @@ async function dbInit() {
       message_id BIGINT NOT NULL,
       created_at TIMESTAMPTZ DEFAULT NOW()
     )
-  `);
-
-  await pool.query(`
-    CREATE INDEX IF NOT EXISTS idx_bot_chat_messages_chat
-    ON bot_chat_messages(chat_id)
   `);
 
   const result = await pool.query(`SELECT id FROM bot_settings WHERE id = 1`);
@@ -473,10 +427,10 @@ async function clearBotMessages(chatId) {
 }
 
 function telegramButtonStyle(button) {
-  if (!button || button.colorEnabled === false || button.buttonColorToggle === false) {
+  if (!button || button.colorEnabled === false) {
     return undefined;
   }
-  const hex = normalizeHex(button.buttonColor || button.color);
+  const hex = normalizeHex(button.color);
   if (hex) {
     const r = parseInt(hex.substring(0, 2), 16);
     const g = parseInt(hex.substring(2, 4), 16);
@@ -687,23 +641,21 @@ async function getWelcomeText(chatId, settings) {
 }
 
 function hasWelcomeMedia(welcome) {
-  if (!welcome || welcome.mediaEnabled === false) return false;
+  if (!welcome || !welcome.mediaEnabled) return false;
   if (!welcome.mediaType || welcome.mediaType === "none") return false;
   return !!(welcome.mediaId || welcome.mediaUrl);
 }
 
 function getMainButtonVisual(button) {
-  if (!button || button.buttonVisualEnabled === false || button.buttonBackgroundImageEnabled === false) {
-    return null;
-  }
-  if (button.buttonVisualType && button.buttonVisualType !== "none" && (button.buttonVisualId || button.buttonVisualUrl)) {
-    return {
-      type: button.buttonVisualType,
-      source: button.buttonVisualSource || "upload",
-      id: button.buttonVisualId || null,
-      url: button.buttonVisualUrl || "",
-      text: button.buttonVisualText || ""
-    };
+  if (!button || !button.buttonVisualEnabled) return null;
+  const type = button.buttonVisualMediaType || "none";
+  const source = button.buttonVisualMediaSource || "upload";
+  const id = button.buttonVisualMediaId || null;
+  const url = button.buttonVisualMediaUrl || button.buttonImageUrl || "";
+  const text = button.buttonVisualText || "";
+
+  if (type !== "none" || text) {
+    return { type, source, id, url, text };
   }
   return null;
 }
@@ -712,7 +664,10 @@ async function sendMainButtonVisual(chatId, button, settings) {
   const visual = getMainButtonVisual(button);
   if (!visual) return null;
   if (visual.type === "none") {
-    return sendText(chatId, visual.text, undefined, settings);
+    if (visual.text) {
+      return sendText(chatId, visual.text, undefined, settings);
+    }
+    return null;
   }
   return sendConfiguredMedia(chatId, visual.type, visual.source, visual.id, visual.url, visual.text, undefined, settings);
 }
@@ -750,16 +705,12 @@ async function showMainPage(chatId) {
   const layout = settings.welcome?.layout || "profile_welcome_buttons";
 
   if (layout === "buttons_profile_welcome") {
-    // 1. Buttons first
     await sendSixMainButtons(chatId, settings);
-    // 2. Profile Photo
     await sendProfilePhoto(chatId, settings);
-    // 3. Welcome Media + Text
     await sendWelcomeContent(chatId, settings, false);
     return;
   }
 
-  // Default: Profile Photo -> Welcome Media + Text -> 6 Buttons
   await sendProfilePhoto(chatId, settings);
   await sendWelcomeContent(chatId, settings, false);
   await sendSixMainButtons(chatId, settings);
@@ -777,20 +728,42 @@ async function showMainButton(chatId, buttonId) {
 
   const visual = getMainButtonVisual(button);
   if (visual) {
-    if (visual.type === "none") {
+    if (visual.type === "none" && visual.text) {
       await sendText(chatId, visual.text, undefined, settings);
-    } else {
+    } else if (visual.type !== "none") {
       await sendConfiguredMedia(chatId, visual.type, visual.source, visual.id, visual.url, visual.text, undefined, settings);
     }
   }
 
+  if (button.headerMediaType && button.headerMediaType !== "none" && (button.headerMediaId || button.headerMediaUrl)) {
+    await sendConfiguredMedia(chatId, button.headerMediaType, button.headerMediaSource, button.headerMediaId, button.headerMediaUrl, button.headerText, undefined, settings);
+  } else if (button.headerText) {
+    await sendText(chatId, button.headerText, undefined, settings);
+  }
+
   for (const slot of button.slots || []) {
     if (!slot || !slot.enabled) continue;
-    if (slot.mediaEnabled === false) {
-      await sendText(chatId, slot.text || "", null, settings);
-      continue;
+    
+    let slotMarkup = undefined;
+    const b1 = slot.button1?.enabled ? { text: slot.button1.text, url: slot.button1.url } : null;
+    const b2 = slot.button2?.enabled ? { text: slot.button2.text, url: slot.button2.url } : null;
+    
+    const inlineRows = [];
+    if (b1) {
+      inlineRows.push([{ text: b1.text, url: b1.url || undefined, callback_data: b1.url ? undefined : `slot:btn1` }]);
     }
-    await sendConfiguredMedia(chatId, slot.mediaType, slot.mediaSource, slot.mediaId, slot.mediaUrl, slot.text, null, settings);
+    if (b2) {
+      inlineRows.push([{ text: b2.text, url: b2.url || undefined, callback_data: b2.url ? undefined : `slot:btn2` }]);
+    }
+    if (inlineRows.length > 0) {
+      slotMarkup = { inline_keyboard: inlineRows };
+    }
+
+    if (slot.mediaType === "none") {
+      await sendText(slotIdForChat => slotIdForChat, slot.text || "", slotMarkup, settings);
+    } else {
+      await sendConfiguredMedia(chatId, slot.mediaType, slot.mediaSource, slot.mediaId, slot.mediaUrl, slot.text, slotMarkup, settings);
+    }
   }
 
   await sendText(chatId, "⬅️ BACK", backKeyboard(), settings);
@@ -865,6 +838,16 @@ app.get("/api/settings", checkAdmin, async (req, res) => {
 app.post("/api/settings", checkAdmin, async (req, res) => {
   try {
     const settings = await saveSettings(req.body);
+    res.json({ ok: true, settings });
+  } catch (error) {
+    res.status(500).json({ ok: false, error: error.message });
+  }
+});
+
+app.post("/api/reset", checkAdmin, async (req, res) => {
+  try {
+    const defaults = defaultSettings();
+    const settings = await saveSettings(defaults);
     res.json({ ok: true, settings });
   } catch (error) {
     res.status(500).json({ ok: false, error: error.message });
