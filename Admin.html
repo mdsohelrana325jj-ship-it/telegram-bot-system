@@ -3,264 +3,321 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport"
-      content="width=device-width,initial-scale=1.0">
+content="width=device-width,initial-scale=1,maximum-scale=1">
 
-<title>Telegram Bot Admin</title>
+<title>Telegram Admin Panel</title>
 
 <style>
 *{
-  box-sizing:border-box;
+ box-sizing:border-box;
 }
 
 body{
-  margin:0;
-  background:#f3f4f8;
-  font-family:Arial,Helvetica,sans-serif;
-  color:#171923;
+ margin:0;
+ background:#f4f5f8;
+ color:#171923;
+ font-family:Arial,sans-serif;
+ transition:.25s;
 }
 
-button,
-input,
-select,
-textarea{
-  font:inherit;
+body.dark{
+ background:#101114;
+ color:#f5f5f5;
 }
 
 .app{
-  width:100%;
-  max-width:520px;
-  margin:auto;
-  padding:16px;
+ width:100%;
+ max-width:540px;
+ margin:auto;
+ padding:14px;
 }
 
 .card{
-  background:#fff;
-  border-radius:18px;
-  padding:18px;
-  margin-bottom:14px;
-  box-shadow:0 8px 25px rgba(0,0,0,.07);
+ background:#fff;
+ border-radius:18px;
+ padding:16px;
+ margin-bottom:12px;
+ box-shadow:0 7px 24px rgba(0,0,0,.07);
+}
+
+.dark .card{
+ background:#1b1d22;
 }
 
 h1{
-  font-size:22px;
-  margin:0 0 5px;
+ font-size:21px;
+ margin:0;
 }
 
 h2{
-  font-size:18px;
-  margin:0 0 14px;
+ font-size:18px;
+ margin:0 0 14px;
 }
 
 h3{
-  font-size:15px;
-  margin:0 0 10px;
+ font-size:15px;
+ margin:0 0 10px;
 }
 
-label{
-  display:block;
-  font-size:13px;
-  font-weight:bold;
-  margin:12px 0 6px;
+.small{
+ font-size:12px;
+ color:#777;
+}
+
+.dark .small{
+ color:#aaa;
 }
 
 input,
 select,
 textarea{
-  width:100%;
-  border:1px solid #dddfe7;
-  border-radius:11px;
-  padding:11px;
-  outline:none;
-  background:#fafbfc;
+ width:100%;
+ padding:11px;
+ border:1px solid #ddd;
+ border-radius:10px;
+ background:#fafafa;
+ color:#111;
+ margin-bottom:8px;
+}
+
+.dark input,
+.dark select,
+.dark textarea{
+ background:#25272d;
+ color:#fff;
+ border-color:#444;
 }
 
 textarea{
-  min-height:90px;
-  resize:vertical;
+ min-height:85px;
+ resize:vertical;
 }
 
-input:focus,
-select:focus,
-textarea:focus{
-  border-color:#6c45ff;
-  background:#fff;
+label{
+ display:block;
+ font-weight:bold;
+ font-size:13px;
+ margin:9px 0 5px;
+}
+
+button{
+ font-family:inherit;
 }
 
 .btn{
-  border:0;
-  border-radius:11px;
-  padding:11px 15px;
-  cursor:pointer;
-  font-weight:bold;
-  margin-top:10px;
+ width:100%;
+ padding:11px;
+ border:0;
+ border-radius:10px;
+ margin-top:7px;
+ cursor:pointer;
+ font-weight:bold;
 }
 
 .primary{
-  background:#6842ee;
-  color:#fff;
+ background:#6842ee;
+ color:white;
 }
 
 .secondary{
-  background:#eef0f5;
-  color:#222;
+ background:#eceef3;
+ color:#222;
+}
+
+.dark .secondary{
+ background:#303239;
+ color:#fff;
 }
 
 .danger{
-  background:#ffe9e7;
-  color:#c52b21;
-}
-
-.success{
-  background:#e6f7ef;
-  color:#087f5b;
+ background:#ffe8e6;
+ color:#c62b21;
 }
 
 .row{
-  display:flex;
-  gap:8px;
+ display:flex;
+ gap:8px;
 }
 
 .row>*{
-  flex:1;
+ flex:1;
 }
 
-.switch{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:10px 0;
+.top{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ margin-bottom:12px;
 }
 
-.switch input{
-  width:auto;
-  transform:scale(1.3);
+.topActions{
+ display:flex;
+ gap:6px;
 }
 
-.hidden{
-  display:none!important;
+.iconBtn{
+ width:40px;
+ height:40px;
+ border:0;
+ border-radius:12px;
+ background:#fff;
+ cursor:pointer;
+ font-size:18px;
 }
 
-.small{
-  font-size:12px;
-  color:#74798a;
-}
-
-.status{
-  padding:10px;
-  border-radius:10px;
-  background:#f1f2f6;
-  font-size:13px;
-  margin-top:10px;
+.dark .iconBtn{
+ background:#25272d;
+ color:#fff;
 }
 
 .login{
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
+ min-height:100vh;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ padding:18px;
 }
 
 .loginBox{
-  width:100%;
-  max-width:400px;
+ width:100%;
+ max-width:400px;
 }
 
-.header{
-  text-align:center;
-  margin-bottom:18px;
+.hidden{
+ display:none!important;
 }
 
-.sectionBtn{
-  width:100%;
-  text-align:left;
-  background:#fff;
-  border:1px solid #e2e3e9;
-  border-radius:13px;
-  padding:14px;
-  margin-bottom:8px;
-  cursor:pointer;
-  font-weight:bold;
+.menuBtn{
+ width:100%;
+ border:1px solid #e1e2e8;
+ background:#fff;
+ color:#171923;
+ border-radius:13px;
+ padding:14px;
+ text-align:left;
+ margin-bottom:8px;
+ cursor:pointer;
+ font-weight:bold;
 }
 
-.sectionBtn.active{
-  background:#eeeaff;
-  border-color:#7552ee;
+.dark .menuBtn{
+ background:#1b1d22;
+ color:#fff;
+ border-color:#34363d;
 }
 
-.settings{
-  margin-top:10px;
+.backBtn{
+ margin-bottom:10px;
 }
 
 .slot{
-  border:1px solid #e3e4e9;
-  border-radius:14px;
-  padding:14px;
-  margin-top:12px;
-  background:#fafbfc;
+ border:1px solid #e0e2e8;
+ border-radius:14px;
+ padding:13px;
+ margin-top:11px;
+ background:#fafbfc;
+}
+
+.dark .slot{
+ background:#22242a;
+ border-color:#383a42;
 }
 
 .slotTitle{
-  font-weight:bold;
-  margin-bottom:10px;
+ font-weight:bold;
+ margin-bottom:8px;
 }
 
-hr{
-  border:0;
-  border-top:1px solid #eee;
-  margin:18px 0;
+.switch{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ padding:7px 0;
+}
+
+.switch input{
+ width:auto;
+ margin:0;
+ transform:scale(1.2);
 }
 
 .preview{
-  background:#eef0f5;
-  border-radius:16px;
-  padding:15px;
+ background:#e9ebf0;
+ padding:14px;
+ border-radius:16px;
 }
 
-.previewMessage{
-  background:#fff;
-  border-radius:13px;
-  padding:14px;
+.dark .preview{
+ background:#0d0e10;
+}
+
+.previewPhone{
+ background:#fff;
+ border-radius:15px;
+ overflow:hidden;
+}
+
+.dark .previewPhone{
+ background:#191a1e;
+}
+
+.previewMedia{
+ width:100%;
+ aspect-ratio:2/1;
+ object-fit:cover;
+ background:#d8d9df;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+}
+
+.previewText{
+ padding:12px;
+ white-space:pre-wrap;
 }
 
 .previewButton{
-  display:block;
-  width:100%;
-  margin-top:7px;
-  border:0;
-  background:#6b45ee;
-  color:#fff;
-  border-radius:9px;
-  padding:9px;
+ margin:6px 10px;
+ border-radius:10px;
+ padding:11px;
+ text-align:center;
+ color:#fff;
+ font-weight:bold;
 }
 
-.topbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:15px;
+.code{
+ background:#eee9ff;
+ border-radius:10px;
+ padding:12px;
+ text-align:center;
+ font-size:18px;
+ font-weight:bold;
+ margin-top:8px;
+}
+
+.status{
+ padding:9px;
+ background:#f0f1f4;
+ border-radius:9px;
+ font-size:12px;
+ margin-top:7px;
+}
+
+.dark .status{
+ background:#282a30;
 }
 
 .fileBox{
-  border:1px dashed #bbbfc9;
-  border-radius:11px;
-  padding:12px;
-  background:#fafafa;
+ border:1px dashed #bbb;
+ padding:10px;
+ border-radius:10px;
+ margin-top:7px;
 }
 
-.fileBox button{
-  width:100%;
-}
-
-.codeBox{
-  font-size:20px;
-  letter-spacing:3px;
-  text-align:center;
-  padding:13px;
-  background:#f0edff;
-  border-radius:11px;
-  margin-top:10px;
-  font-weight:bold;
+hr{
+ border:0;
+ border-top:1px solid #e5e5e5;
+ margin:16px 0;
 }
 </style>
 </head>
@@ -269,653 +326,625 @@ hr{
 
 <!-- LOGIN -->
 
-<div id="loginPage" class="login">
-  <div class="loginBox">
+<div id="login" class="login">
 
-    <div class="card">
+ <div class="loginBox card">
 
-      <div class="header">
-        <h1>🤖 Telegram Bot</h1>
-        <div class="small">
-          Admin Panel Login
-        </div>
-      </div>
+  <h1>🤖 Telegram Bot</h1>
 
-      <label>Admin Password</label>
-
-      <input
-        id="loginPassword"
-        type="password"
-        placeholder="Enter password">
-
-      <button
-        class="btn primary"
-        onclick="login()">
-        LOGIN
-      </button>
-
-      <div id="loginStatus"
-           class="status hidden"></div>
-
-    </div>
-
+  <div class="small">
+   Admin Panel
   </div>
+
+  <label>Admin Password</label>
+
+  <input
+   id="password"
+   type="password"
+   placeholder="Enter password">
+
+  <button
+   class="btn primary"
+   onclick="login()">
+   LOGIN
+  </button>
+
+  <div
+   id="loginError"
+   class="status hidden">
+  </div>
+
+ </div>
+
 </div>
 
 
 <!-- ADMIN -->
 
-<div id="adminPage"
-     class="app hidden">
+<div
+ id="admin"
+ class="app hidden">
 
-  <div class="topbar">
+ <div class="top">
 
-    <div>
-      <h1>Admin Panel</h1>
-      <div class="small">
-        Telegram Bot Control System
-      </div>
-    </div>
+  <div>
+   <h1>Admin Panel</h1>
+   <div
+    id="langTitle"
+    class="small">
+    Telegram Bot Control
+   </div>
+  </div>
 
-    <button
-      class="btn danger"
-      onclick="logout()">
-      Logout
-    </button>
+  <div class="topActions">
+
+   <button
+    class="iconBtn"
+    onclick="toggleDark()">
+    🌞
+   </button>
+
+   <button
+    class="iconBtn"
+    onclick="toggleLang()">
+    🇧🇩
+   </button>
 
   </div>
 
+ </div>
 
-  <!-- CONNECTION -->
+
+ <!-- MAIN ADMIN PAGE -->
+
+ <div id="homePage">
 
   <div class="card">
 
-    <h2>🔗 Telegram Admin Connection</h2>
+   <h2>👋 Welcome Settings</h2>
 
-    <div id="connectionStatus"
-         class="status">
-      Checking...
-    </div>
-
-    <button
-      class="btn primary"
-      onclick="generateCode()">
-      CONNECT TELEGRAM
-    </button>
-
-    <div id="connectResult"
-         class="hidden">
-
-      <div class="small"
-           style="margin-top:10px">
-        Open your bot and send this command:
-      </div>
-
-      <div id="connectCode"
-           class="codeBox"></div>
-
-    </div>
+   <button
+    class="menuBtn"
+    onclick="openPage('welcome')">
+    👋 Welcome Settings
+   </button>
 
   </div>
 
-
-  <!-- MENU -->
 
   <div class="card">
 
-    <button class="sectionBtn"
-            onclick="openSection('welcome',this)">
-      👋 Welcome Settings
-    </button>
+   <h2>🏠 Main Buttons</h2>
 
-    <button class="sectionBtn"
-            onclick="openSection('main',this)">
-      🏠 Main Buttons
-    </button>
-
-    <button class="sectionBtn"
-            onclick="openSection('ai',this)">
-      🤖 AI HACK
-    </button>
-
-    <button class="sectionBtn"
-            onclick="openSection('categories',this)">
-      📂 Categories
-    </button>
-
-    <button class="sectionBtn"
-            onclick="openSection('audio',this)">
-      🎧 Audio
-    </button>
-
-    <button class="sectionBtn"
-            onclick="openSection('system',this)">
-      ⚙️ System
-    </button>
-
-    <button class="sectionBtn"
-            onclick="openSection('preview',this)">
-      👁️ All System View
-    </button>
+   <div
+    id="mainMenuButtons">
+   </div>
 
   </div>
 
 
-  <!-- WELCOME -->
+  <div class="card">
 
-  <div id="welcomeSection"
-       class="card settings hidden">
+   <button
+    class="menuBtn"
+    onclick="openPage('audio')">
+    🎧 Audio System
+   </button>
 
-    <h2>👋 Welcome Settings</h2>
+   <button
+    class="menuBtn"
+    onclick="openPage('system')">
+    ⚙️ System Settings
+   </button>
 
-    <div class="switch">
-      <span>Welcome ON/OFF</span>
-      <input
-        id="welcomeEnabled"
-        type="checkbox">
-    </div>
+   <button
+    class="menuBtn"
+    onclick="openPage('allPreview')">
+    👁️ ALL SYSTEM VIEW
+   </button>
 
-    <div class="switch">
-      <span>Profile Photo ON/OFF</span>
-      <input
-        id="profilePhoto"
-        type="checkbox">
-    </div>
+   <button
+    class="btn danger"
+    onclick="resetSystem()">
+    ALL WELCOME SYSTEM RESET
+   </button>
 
-    <label>Welcome Text</label>
+  </div>
 
-    <textarea
-      id="welcomeText"></textarea>
+ </div>
 
-    <label>Welcome Text Size</label>
 
-    <select id="welcomeTextSize">
-      <option value="small">Small</option>
-      <option value="medium">Medium</option>
-      <option value="large">Large</option>
-    </select>
+ <!-- WELCOME PAGE -->
 
-    <label>Welcome Media Type</label>
+ <div
+  id="welcomePage"
+  class="hidden">
 
-    <select id="welcomeMediaType">
-      <option value="none">None</option>
-      <option value="photo">Image</option>
-      <option value="video">Video</option>
-      <option value="audio">Audio</option>
-    </select>
+  <button
+   class="btn secondary backBtn"
+   onclick="home()">
+   ← BACK
+  </button>
 
-    <div class="fileBox">
+  <div class="card">
 
-      <label>Upload Welcome Media</label>
+   <h2>👋 Welcome Settings</h2>
 
-      <input
-        id="welcomeMediaFile"
-        type="file">
+   <div class="switch">
+    <span>Welcome ON/OFF</span>
+    <input
+     id="welcomeEnabled"
+     type="checkbox">
+   </div>
 
-      <button
-        class="btn secondary"
-        onclick="uploadWelcomeMedia()">
-        UPLOAD MEDIA
-      </button>
+   <div class="switch">
+    <span>Profile Photo</span>
+    <input
+     id="profilePhoto"
+     type="checkbox">
+   </div>
 
-      <div
-        id="welcomeMediaStatus"
-        class="small">
-      </div>
+   <label>Welcome Text</label>
 
-    </div>
+   <textarea
+    id="welcomeText"></textarea>
 
-    <button
-      class="btn primary"
-      onclick="saveSettings()">
-      SAVE WELCOME
-    </button>
+   <label>Text Size</label>
+
+   <select id="welcomeSize">
+    <option value="small">Small</option>
+    <option value="medium">Medium</option>
+    <option value="large">Large</option>
+   </select>
+
+   <label>Media Type</label>
+
+   <select
+    id="welcomeType"
+    onchange="mediaMode('welcome')">
+    <option value="none">None</option>
+    <option value="photo">Image</option>
+    <option value="video">Video</option>
+    <option value="audio">Audio</option>
+   </select>
+
+   <div
+    id="welcomeMediaBox"
+    class="fileBox">
+   </div>
+
+   <label>Button Background Color</label>
+
+   <input
+    id="welcomeBg"
+    type="color">
+
+   <label>Button Text Color</label>
+
+   <input
+    id="welcomeColor"
+    type="color">
+
+   <button
+    class="btn primary"
+    onclick="save()">
+    SAVE WELCOME
+   </button>
+
+   <button
+    class="btn secondary"
+    onclick="openPage('allPreview')">
+    👁️ SYSTEM VIEW
+   </button>
+
+  </div>
+
+ </div>
+
+
+ <!-- SECTION PAGE -->
+
+ <div
+  id="sectionPage"
+  class="hidden">
+
+  <button
+   class="btn secondary backBtn"
+   onclick="home()">
+   ← BACK
+  </button>
+
+  <div class="card">
+
+   <h2 id="sectionTitle">
+   </h2>
+
+   <div class="switch">
+    <span>ON / OFF</span>
+    <input
+     id="sectionEnabled"
+     type="checkbox">
+   </div>
+
+   <label>Button Name</label>
+
+   <input
+    id="sectionButtonName">
+
+   <label>Top Text Message</label>
+
+   <textarea
+    id="sectionText"></textarea>
+
+   <label>Top Media Type</label>
+
+   <select
+    id="sectionType"
+    onchange="mediaMode('section')">
+    <option value="none">None</option>
+    <option value="photo">Image</option>
+    <option value="video">Video</option>
+    <option value="audio">Audio</option>
+   </select>
+
+   <div
+    id="sectionMediaBox"
+    class="fileBox">
+   </div>
+
+   <label>Button Background Color</label>
+
+   <input
+    id="sectionBg"
+    type="color">
+
+   <label>Button Text Color</label>
+
+   <input
+    id="sectionColor"
+    type="color">
 
   </div>
 
 
-  <!-- MAIN -->
+  <div class="card">
 
-  <div id="mainSection"
-       class="card settings hidden">
+   <h2>📦 Content Slots</h2>
 
-    <h2>🏠 Main Buttons</h2>
+   <div
+    id="slots">
+   </div>
 
-    <div id="mainButtons"></div>
+   <button
+    class="btn secondary"
+    onclick="addSlot()">
+    + ADD SLOT
+   </button>
 
-    <button
-      class="btn primary"
-      onclick="saveSettings()">
-      SAVE MAIN BUTTONS
-    </button>
-
-  </div>
-
-
-  <!-- AI -->
-
-  <div id="aiSection"
-       class="card settings hidden">
-
-    <h2>🤖 AI HACK</h2>
-
-    <div class="small">
-      Maximum 10 content slots.
-    </div>
-
-    <div id="aiSlots"></div>
-
-    <button
-      class="btn secondary"
-      onclick="addAISlot()">
-      + ADD AI HACK SLOT
-    </button>
-
-    <button
-      class="btn primary"
-      onclick="saveSettings()">
-      SAVE AI HACK
-    </button>
+   <button
+    class="btn primary"
+    onclick="save()">
+    SAVE
+   </button>
 
   </div>
 
 
-  <!-- CATEGORIES -->
+  <div class="card">
 
-  <div id="categoriesSection"
-       class="card settings hidden">
+   <h2>👁️ System View</h2>
 
-    <h2>📂 Categories</h2>
-
-    <div id="categoryContainer"></div>
-
-    <button
-      class="btn primary"
-      onclick="saveSettings()">
-      SAVE CATEGORIES
-    </button>
+   <div
+    id="sectionPreview">
+   </div>
 
   </div>
 
+ </div>
 
-  <!-- AUDIO -->
 
-  <div id="audioSection"
-       class="card settings hidden">
+ <!-- AUDIO PAGE -->
 
-    <h2>🎧 Audio Section</h2>
+ <div
+  id="audioPage"
+  class="hidden">
 
-    <div class="switch">
-      <span>Audio ON/OFF</span>
-      <input
-        id="audioEnabled"
-        type="checkbox">
-    </div>
+  <button
+   class="btn secondary backBtn"
+   onclick="home()">
+   ← BACK
+  </button>
 
-    <label>Audio Text</label>
+  <div class="card">
 
-    <textarea id="audioText"></textarea>
+   <h2>🎧 Audio System</h2>
 
-    <div class="fileBox">
+   <div class="switch">
+    <span>ON / OFF</span>
+    <input
+     id="audioEnabled"
+     type="checkbox">
+   </div>
 
-      <label>Audio Image</label>
+   <label>Audio Text</label>
 
-      <input
-        id="audioImageFile"
-        type="file">
+   <textarea
+    id="audioText"></textarea>
 
-      <button
-        class="btn secondary"
-        onclick="uploadAudioImage()">
-        UPLOAD IMAGE
-      </button>
+   <label>Audio URL</label>
 
-      <div
-        id="audioImageStatus"
-        class="small">
-      </div>
+   <input
+    id="audioUrl"
+    placeholder="https://example.com/audio.mp3">
 
-    </div>
+   <div class="fileBox">
 
-    <div class="fileBox">
+    <label>Audio Upload</label>
 
-      <label>Audio File</label>
-
-      <input
-        id="audioFile"
-        type="file">
-
-      <button
-        class="btn secondary"
-        onclick="uploadAudio()">
-        UPLOAD AUDIO
-      </button>
-
-      <div
-        id="audioStatus"
-        class="small">
-      </div>
-
-    </div>
-
-    <div id="audioButtons"></div>
+    <input
+     id="audioFile"
+     type="file"
+     accept="audio/*">
 
     <button
-      class="btn primary"
-      onclick="saveSettings()">
-      SAVE AUDIO
+     class="btn secondary"
+     onclick="uploadAudio()">
+     UPLOAD AUDIO
     </button>
+
+    <div
+     id="audioUploadStatus"
+     class="small">
+    </div>
+
+   </div>
+
+   <hr>
+
+   <h3>Audio Buttons</h3>
+
+   <div id="audioButtons"></div>
+
+   <button
+    class="btn primary"
+    onclick="save()">
+    SAVE AUDIO
+   </button>
 
   </div>
 
+ </div>
 
-  <!-- SYSTEM -->
 
-  <div id="systemSection"
-       class="card settings hidden">
+ <!-- SYSTEM -->
 
-    <h2>⚙️ System</h2>
+ <div
+  id="systemPage"
+  class="hidden">
 
-    <label>Auto Delete</label>
+  <button
+   class="btn secondary backBtn"
+   onclick="home()">
+   ← BACK
+  </button>
 
-    <select id="autoDelete">
-      <option value="0">OFF</option>
-      <option value="30">30 Seconds</option>
-      <option value="60">1 Minute</option>
-      <option value="120">2 Minutes</option>
-      <option value="300">5 Minutes</option>
-      <option value="600">10 Minutes</option>
-      <option value="900">15 Minutes</option>
-    </select>
+  <div class="card">
 
-    <hr>
+   <h2>⚙️ System Settings</h2>
 
-    <h3>Admin Password</h3>
+   <label>Auto Delete</label>
 
-    <div class="small">
-      Password is controlled by Render Environment Variables.
-    </div>
+   <select id="autoDelete">
+    <option value="0">OFF</option>
+    <option value="30">30 Seconds</option>
+    <option value="60">1 Minute</option>
+    <option value="120">2 Minutes</option>
+    <option value="300">5 Minutes</option>
+    <option value="600">10 Minutes</option>
+    <option value="900">15 Minutes</option>
+   </select>
 
-    <button
-      class="btn secondary"
-      onclick="alert('Change ADMIN_PASSWORD from Render Environment Variables.')">
-      PASSWORD SETTINGS
-    </button>
+   <button
+    class="btn primary"
+    onclick="save()">
+    SAVE SYSTEM
+   </button>
 
-    <hr>
+   <hr>
 
-    <button
-      class="btn primary"
-      onclick="saveSettings()">
-      SAVE SYSTEM
-    </button>
-
-    <button
-      class="btn danger"
-      onclick="resetSystem()">
-      ALL WELCOME SYSTEM RESET
-    </button>
+   <button
+    class="btn danger"
+    onclick="resetSystem()">
+    RESET EVERYTHING
+   </button>
 
   </div>
 
+ </div>
 
-  <!-- PREVIEW -->
 
-  <div id="previewSection"
-       class="card settings hidden">
+ <!-- ALL PREVIEW -->
 
-    <h2>👁️ All System View</h2>
+ <div
+  id="allPreviewPage"
+  class="hidden">
 
-    <div class="preview">
+  <button
+   class="btn secondary backBtn"
+   onclick="home()">
+   ← BACK
+  </button>
 
-      <div class="previewMessage">
+  <div class="card">
 
-        <div
-          id="previewProfile"
-          style="
-          width:45px;
-          height:45px;
-          border-radius:50%;
-          background:#ddd;
-          display:flex;
-          align-items:center;
-          justify-content:center;
-          margin-bottom:10px;">
-          👤
-        </div>
+   <h2>👁️ ALL SYSTEM VIEW</h2>
 
-        <div
-          id="previewText">
-        </div>
+   <div
+    id="allPreview">
+   </div>
 
-        <div
-          id="previewButtons">
-        </div>
-
-      </div>
-
-    </div>
-
-    <button
-      class="btn primary"
-      onclick="saveSettings()">
-      ALL WELCOME SYSTEM SAVE
-    </button>
+   <button
+    class="btn primary"
+    onclick="save()">
+    ALL WELCOME SYSTEM SAVE
+   </button>
 
   </div>
+
+ </div>
 
 </div>
 
 
 <script>
-let password = "";
-let settings = null;
+
+let pass="";
+let data=null;
+let currentSection="";
 
 
 /* =========================================================
-   AUTH
+   LOGIN
 ========================================================= */
 
 function login(){
 
-  const value =
-    document.getElementById(
-      "loginPassword"
-    ).value.trim();
+ const p=
+  document.getElementById(
+   "password"
+  ).value.trim();
 
-  if(!value){
-    showLoginStatus(
-      "Enter password."
-    );
-    return;
+ fetch(
+  "/api/login",
+  {
+   method:"POST",
+   headers:{
+    "Content-Type":
+     "application/json"
+   },
+   body:JSON.stringify({
+    password:p
+   })
   }
+ )
+ .then(async r=>{
+  const x=await r.json();
 
-  fetch("/api/login",{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json"
-    },
-    body:JSON.stringify({
-      password:value
-    })
-  })
-  .then(async r=>{
-    const data=await r.json();
+  if(!r.ok)
+   throw new Error(
+    x.error
+   );
 
-    if(!r.ok){
-      throw new Error(
-        data.error || "Login failed"
-      );
-    }
+  pass=p;
 
-    password=value;
-
-    sessionStorage.setItem(
-      "adminPassword",
-      password
-    );
-
-    document.getElementById(
-      "loginPage"
-    ).classList.add("hidden");
-
-    document.getElementById(
-      "adminPage"
-    ).classList.remove("hidden");
-
-    loadSettings();
-    checkConnection();
-  })
-  .catch(err=>{
-    showLoginStatus(
-      err.message
-    );
-  });
-}
-
-
-function showLoginStatus(text){
-
-  const el=
-    document.getElementById(
-      "loginStatus"
-    );
-
-  el.textContent=text;
-  el.classList.remove("hidden");
-}
-
-
-function logout(){
-
-  sessionStorage.removeItem(
-    "adminPassword"
+  sessionStorage.setItem(
+   "botAdminPassword",
+   pass
   );
 
-  location.reload();
-}
+  document
+   .getElementById("login")
+   .classList.add("hidden");
 
+  document
+   .getElementById("admin")
+   .classList.remove("hidden");
 
-function authHeaders(){
+  load();
+ })
+ .catch(e=>{
+  const x=
+   document.getElementById(
+    "loginError"
+   );
 
-  return {
-    "Content-Type":"application/json",
-    "x-admin-password":password
-  };
+  x.textContent=e.message;
+  x.classList.remove(
+   "hidden"
+  );
+ });
 }
 
 
 /* =========================================================
-   LOAD SETTINGS
+   API
 ========================================================= */
 
-function loadSettings(){
+function headers(){
+ return {
+  "Content-Type":
+   "application/json",
+  "x-admin-password":pass
+ };
+}
 
-  fetch("/api/settings",{
-    headers:authHeaders()
-  })
-  .then(async r=>{
+function load(){
 
-    const data=
-      await r.json();
+ fetch(
+  "/api/settings",
+  {
+   headers:headers()
+  }
+ )
+ .then(r=>r.json())
+ .then(x=>{
+  data=x.settings;
+  render();
+ });
+}
 
-    if(!r.ok){
-      throw new Error(
-        data.error ||
-        "Cannot load settings"
-      );
-    }
 
-    settings=data.settings;
+/* =========================================================
+   HOME
+========================================================= */
 
-    renderAll();
-  })
-  .catch(err=>{
-    alert(err.message);
+function home(){
+
+ document
+  .querySelectorAll(
+   "#admin>div:not(.top)"
+  )
+  .forEach(x=>{
+   x.classList.add(
+    "hidden"
+   );
   });
+
+ document
+  .getElementById(
+   "homePage"
+  )
+  .classList.remove(
+   "hidden"
+  );
+
+ renderMainButtons();
 }
 
 
-/* =========================================================
-   OPEN SECTION
-========================================================= */
+function openPage(name){
 
-function openSection(name,button){
+ home();
 
-  document
-    .querySelectorAll(".settings")
-    .forEach(x=>{
-      x.classList.add("hidden");
-    });
+ document
+  .getElementById(
+   name+"Page"
+  )
+  .classList.remove(
+   "hidden"
+  );
 
-  document
-    .querySelectorAll(".sectionBtn")
-    .forEach(x=>{
-      x.classList.remove("active");
-    });
+ if(name==="welcome")
+  renderWelcome();
 
-  document
-    .getElementById(
-      name+"Section"
-    )
-    .classList.remove("hidden");
-
-  if(button){
-    button.classList.add("active");
-  }
-
-  if(name==="preview"){
-    updatePreview();
-  }
-}
-
-
-/* =========================================================
-   RENDER ALL
-========================================================= */
-
-function renderAll(){
-
-  if(!settings) return;
-
-  document.getElementById(
-    "welcomeEnabled"
-  ).checked =
-    !!settings.welcome.enabled;
-
-  document.getElementById(
-    "profilePhoto"
-  ).checked =
-    !!settings.welcome.profilePhoto;
-
-  document.getElementById(
-    "welcomeText"
-  ).value =
-    settings.welcome.text || "";
-
-  document.getElementById(
-    "welcomeTextSize"
-  ).value =
-    settings.welcome.textSize ||
-    "medium";
-
-  document.getElementById(
-    "welcomeMediaType"
-  ).value =
-    settings.welcome.mediaType ||
-    "none";
-
-  document.getElementById(
-    "autoDelete"
-  ).value =
-    String(settings.autoDelete || 0);
-
-  renderMainButtons();
-  renderAISlots();
-  renderCategories();
+ if(name==="audio")
   renderAudio();
 
-  updatePreview();
+ if(name==="system")
+  renderSystem();
+
+ if(name==="allPreview")
+  renderAllPreview();
 }
 
 
@@ -925,444 +954,538 @@ function renderAll(){
 
 function renderMainButtons(){
 
-  const box=
-    document.getElementById(
-      "mainButtons"
+ const box=
+  document.getElementById(
+   "mainMenuButtons"
+  );
+
+ box.innerHTML="";
+
+ data.mainButtons
+  .forEach((b,i)=>{
+
+   const x=
+    document.createElement(
+     "button"
     );
 
-  box.innerHTML="";
+   x.className=
+    "menuBtn";
 
-  (settings.mainButtons || [])
-    .forEach((b,i)=>{
+   x.innerHTML=
+    `${b.enabled?"🟢":"🔴"}
+     ${escapeHtml(b.text)}`;
 
-      const div=
-        document.createElement(
-          "div"
-        );
-
-      div.className="slot";
-
-      div.innerHTML=`
-
-        <div class="slotTitle">
-          Main Button ${i+1}
-        </div>
-
-        <div class="switch">
-          <span>ON / OFF</span>
-          <input
-            type="checkbox"
-            data-main-enabled="${i}"
-            ${b.enabled?"checked":""}>
-        </div>
-
-        <label>Button Text</label>
-
-        <input
-          data-main-text="${i}"
-          value="${esc(b.text)}">
-
-        <label>Action</label>
-
-        <select
-          data-main-action="${i}">
-
-          <option
-            value="category"
-            ${b.action==="category"?"selected":""}>
-            Open Bot Category
-          </option>
-
-          <option
-            value="url"
-            ${b.action==="url"?"selected":""}>
-            Open URL
-          </option>
-
-        </select>
-
-        <label>Category</label>
-
-        <select
-          data-main-category="${i}">
-
-          <option value="aiHack">
-            AI HACK
-          </option>
-
-          <option value="vip">
-            VIP GROUP
-          </option>
-
-          <option value="support">
-            SUPPORT
-          </option>
-
-          <option value="official">
-            OFFICIAL CHANNEL
-          </option>
-
-          <option value="bonus">
-            BONUS
-          </option>
-
-          <option value="admin">
-            ADMIN
-          </option>
-
-        </select>
-
-        <label>URL</label>
-
-        <input
-          data-main-url="${i}"
-          value="${esc(b.url)}"
-          placeholder="https://example.com">
-      `;
-
-      box.appendChild(div);
-
-      const cat=
-        div.querySelector(
-          `[data-main-category="${i}"]`
-        );
-
-      cat.value =
-        b.category ||
-        "aiHack";
-    });
-}
-
-
-/* =========================================================
-   AI
-========================================================= */
-
-function renderAISlots(){
-
-  const box=
-    document.getElementById(
-      "aiSlots"
+   x.onclick=()=>{
+    openSection(
+     b.section
     );
+   };
 
-  box.innerHTML="";
-
-  (settings.aiHack || [])
-    .forEach((item,i)=>{
-
-      const div=
-        document.createElement(
-          "div"
-        );
-
-      div.className="slot";
-
-      div.innerHTML=`
-
-        <div class="slotTitle">
-          🤖 AI HACK Slot ${i+1}
-        </div>
-
-        <div class="switch">
-          <span>ON / OFF</span>
-          <input
-            type="checkbox"
-            data-ai-enabled="${i}"
-            ${item.enabled!==false?"checked":""}>
-        </div>
-
-        <label>Media Type</label>
-
-        <select
-          data-ai-type="${i}">
-
-          <option value="none">None</option>
-          <option value="photo">Image</option>
-          <option value="video">Video</option>
-          <option value="audio">Audio</option>
-
-        </select>
-
-        <label>Text</label>
-
-        <textarea
-          data-ai-text="${i}">${esc(item.text||"")}</textarea>
-
-        <div class="fileBox">
-
-          <input
-            type="file"
-            id="aiFile${i}">
-
-          <button
-            class="btn secondary"
-            onclick="uploadAISlot(${i})">
-            UPLOAD MEDIA
-          </button>
-
-          <div
-            id="aiStatus${i}"
-            class="small">
-          </div>
-
-        </div>
-
-        <label>Button 1 Text</label>
-
-        <input
-          data-ai-b1-text="${i}"
-          value="${esc(
-            item.buttons?.[0]?.text || ""
-          )}">
-
-        <label>Button 1 URL</label>
-
-        <input
-          data-ai-b1-url="${i}"
-          value="${esc(
-            item.buttons?.[0]?.url || ""
-          )}">
-
-        <div class="switch">
-          <span>Button 1 ON / OFF</span>
-          <input
-            type="checkbox"
-            data-ai-b1-enabled="${i}"
-            ${item.buttons?.[0]?.enabled!==false?"checked":""}>
-        </div>
-
-        <label>Button 2 Text</label>
-
-        <input
-          data-ai-b2-text="${i}"
-          value="${esc(
-            item.buttons?.[1]?.text || ""
-          )}">
-
-        <label>Button 2 URL</label>
-
-        <input
-          data-ai-b2-url="${i}"
-          value="${esc(
-            item.buttons?.[1]?.url || ""
-          )}">
-
-        <div class="switch">
-          <span>Button 2 ON / OFF</span>
-          <input
-            type="checkbox"
-            data-ai-b2-enabled="${i}"
-            ${item.buttons?.[1]?.enabled?"checked":""}>
-        </div>
-
-        <button
-          class="btn danger"
-          onclick="removeAISlot(${i})">
-          REMOVE SLOT
-        </button>
-      `;
-
-      box.appendChild(div);
-
-      div.querySelector(
-        `[data-ai-type="${i}"]`
-      ).value =
-        item.mediaType ||
-        "none";
-    });
-}
-
-
-function addAISlot(){
-
-  if(
-    settings.aiHack.length>=10
-  ){
-    alert(
-      "Maximum 10 AI HACK slots."
-    );
-    return;
-  }
-
-  settings.aiHack.push({
-    enabled:true,
-    mediaType:"none",
-    mediaFileId:"",
-    text:"",
-    buttons:[
-      {
-        enabled:true,
-        text:"🤖 AI HACK Open Click",
-        url:""
-      },
-      {
-        enabled:true,
-        text:"💬 Support Admin",
-        url:""
-      }
-    ]
+   box.appendChild(x);
   });
-
-  renderAISlots();
-}
-
-
-function removeAISlot(i){
-
-  settings.aiHack.splice(i,1);
-
-  renderAISlots();
 }
 
 
 /* =========================================================
-   CATEGORIES
+   SECTION
 ========================================================= */
 
-function renderCategories(){
+function openSection(name){
 
-  const box=
-    document.getElementById(
-      "categoryContainer"
-    );
+ currentSection=name;
 
-  box.innerHTML="";
+ home();
 
-  const names=[
-    ["vip","🔥 VIP GROUP"],
-    ["support","💬 SUPPORT"],
-    ["official","📢 OFFICIAL CHANNEL"],
-    ["bonus","🎁 BONUS"],
-    ["admin","👨‍💻 ADMIN"]
+ document
+  .getElementById(
+   "sectionPage"
+  )
+  .classList.remove(
+   "hidden"
+  );
+
+ renderSection();
+}
+
+
+function renderSection(){
+
+ const s=
+  data.sections[
+   currentSection
   ];
 
-  names.forEach(pair=>{
+ const mainIndex=
+  data.mainButtons.findIndex(
+   x=>
+    x.section===
+    currentSection
+  );
 
-    const key=pair[0];
+ document.getElementById(
+  "sectionTitle"
+ ).textContent=
+  data.mainButtons[
+   mainIndex
+  ]?.text ||
+  s.title;
 
-    const c=
-      settings.categories[key];
+ document.getElementById(
+  "sectionEnabled"
+ ).checked=
+  s.enabled;
 
-    const div=
-      document.createElement(
-        "div"
-      );
+ document.getElementById(
+  "sectionButtonName"
+ ).value=
+  s.title || "";
 
-    div.className="slot";
+ document.getElementById(
+  "sectionText"
+ ).value=
+  s.text || "";
 
-    div.innerHTML=`
+ document.getElementById(
+  "sectionType"
+ ).value=
+  s.mediaType || "none";
 
-      <div class="slotTitle">
-        ${pair[1]}
-      </div>
+ document.getElementById(
+  "sectionBg"
+ ).value=
+  s.buttonBg ||
+  "#6842ee";
 
-      <div class="switch">
-        <span>ON / OFF</span>
-        <input
-          type="checkbox"
-          data-cat-enabled="${key}"
-          ${c.enabled?"checked":""}>
-      </div>
+ document.getElementById(
+  "sectionColor"
+ ).value=
+  s.buttonTextColor ||
+  "#ffffff";
 
-      <label>Title</label>
+ renderMediaBox(
+  "section",
+  s
+ );
 
-      <input
-        data-cat-title="${key}"
-        value="${esc(c.title||"")}">
+ renderSlots();
 
-      <label>Media Type</label>
+ renderSectionPreview();
+}
 
-      <select
-        data-cat-type="${key}">
 
-        <option value="none">None</option>
-        <option value="photo">Image</option>
-        <option value="video">Video</option>
-        <option value="audio">Audio</option>
+/* =========================================================
+   SLOT
+========================================================= */
 
-      </select>
+function renderSlots(){
 
-      <label>Text</label>
+ const box=
+  document.getElementById(
+   "slots"
+  );
 
-      <textarea
-        data-cat-text="${key}">${esc(c.text||"")}</textarea>
+ box.innerHTML="";
 
-      <div class="fileBox">
+ const list=
+  data.sections[
+   currentSection
+  ].slots || [];
 
-        <input
-          type="file"
-          id="catFile_${key}">
+ list.forEach(
+  (s,i)=>{
 
-        <button
-          class="btn secondary"
-          onclick="uploadCategory('${key}')">
-          UPLOAD MEDIA
-        </button>
+   const d=
+    document.createElement(
+     "div"
+    );
 
-        <div
-          id="catStatus_${key}"
-          class="small">
-        </div>
+   d.className="slot";
 
-      </div>
+   d.innerHTML=`
 
-      <label>Button 1 Text</label>
+    <div class="slotTitle">
+     Slot ${i+1}
+    </div>
 
-      <input
-        data-cat-b1-text="${key}"
-        value="${esc(
-          c.buttons?.[0]?.text||""
-        )}">
+    <div class="switch">
+     <span>ON / OFF</span>
+     <input
+      type="checkbox"
+      data-slot-enabled="${i}"
+      ${s.enabled!==false?"checked":""}>
+    </div>
 
-      <label>Button 1 URL</label>
+    <label>Media Type</label>
 
-      <input
-        data-cat-b1-url="${key}"
-        value="${esc(
-          c.buttons?.[0]?.url||""
-        )}">
+    <select
+     data-slot-type="${i}"
+     onchange="renderSlotMedia(${i})">
 
-      <div class="switch">
-        <span>Button 1 ON / OFF</span>
-        <input
-          type="checkbox"
-          data-cat-b1-enabled="${key}"
-          ${c.buttons?.[0]?.enabled!==false?"checked":""}>
-      </div>
+     <option value="none">
+      None
+     </option>
 
-      <label>Button 2 Text</label>
+     <option value="photo">
+      Image
+     </option>
 
-      <input
-        data-cat-b2-text="${key}"
-        value="${esc(
-          c.buttons?.[1]?.text||""
-        )}">
+     <option value="video">
+      Video
+     </option>
 
-      <label>Button 2 URL</label>
+     <option value="audio">
+      Audio
+     </option>
 
-      <input
-        data-cat-b2-url="${key}"
-        value="${esc(
-          c.buttons?.[1]?.url||""
-        )}">
+    </select>
 
-      <div class="switch">
-        <span>Button 2 ON / OFF</span>
-        <input
-          type="checkbox"
-          data-cat-b2-enabled="${key}"
-          ${c.buttons?.[1]?.enabled?"checked":""}>
-      </div>
-    `;
+    <div
+     id="slotMedia${i}">
+    </div>
 
-    box.appendChild(div);
+    <label>Text Message</label>
 
-    div.querySelector(
-      `[data-cat-type="${key}"]`
-    ).value =
-      c.mediaType ||
-      "none";
+    <textarea
+     data-slot-text="${i}">
+${escapeHtml(s.text||"")}</textarea>
+
+    <hr>
+
+    <b>Button 1</b>
+
+    <div class="switch">
+     <span>ON / OFF</span>
+     <input
+      type="checkbox"
+      data-slot-b1-enabled="${i}"
+      ${s.buttons?.[0]?.enabled?"checked":""}>
+    </div>
+
+    <input
+     data-slot-b1-text="${i}"
+     placeholder="Button Text"
+     value="${escapeAttr(
+      s.buttons?.[0]?.text||""
+     )}">
+
+    <input
+     data-slot-b1-url="${i}"
+     placeholder="Button URL"
+     value="${escapeAttr(
+      s.buttons?.[0]?.url||""
+     )}">
+
+    <b>Button 2</b>
+
+    <div class="switch">
+     <span>ON / OFF</span>
+     <input
+      type="checkbox"
+      data-slot-b2-enabled="${i}"
+      ${s.buttons?.[1]?.enabled?"checked":""}>
+    </div>
+
+    <input
+     data-slot-b2-text="${i}"
+     placeholder="Button Text"
+     value="${escapeAttr(
+      s.buttons?.[1]?.text||""
+     )}">
+
+    <input
+     data-slot-b2-url="${i}"
+     placeholder="Button URL"
+     value="${escapeAttr(
+      s.buttons?.[1]?.url||""
+     )}">
+
+    <button
+     class="btn danger"
+     onclick="removeSlot(${i})">
+     REMOVE SLOT
+    </button>
+   `;
+
+   box.appendChild(d);
+
+   d.querySelector(
+    `[data-slot-type="${i}"]`
+   ).value=
+    s.mediaType||"none";
+
+   renderSlotMedia(i);
   });
+}
+
+
+function renderSlotMedia(i){
+
+ const s=
+  data.sections[
+   currentSection
+  ].slots[i];
+
+ const box=
+  document.getElementById(
+   "slotMedia"+i
+  );
+
+ if(!box)return;
+
+ box.innerHTML="";
+
+ if(
+  !s ||
+  s.mediaType==="none"
+ ){
+  return;
+ }
+
+ box.innerHTML=`
+
+  <label>Media Source</label>
+
+  <select
+   data-slot-source="${i}"
+   onchange="renderSlotMedia(${i})">
+
+   <option
+    value="upload"
+    ${s.mediaSource==="upload"?"selected":""}>
+    Upload
+   </option>
+
+   <option
+    value="url"
+    ${s.mediaSource==="url"?"selected":""}>
+    URL Link
+   </option>
+
+  </select>
+ `;
+
+ const source=
+  box.querySelector(
+   `[data-slot-source="${i}"]`
+  ).value;
+
+ if(source==="url"){
+
+  box.innerHTML+=`
+
+   <input
+    data-slot-url="${i}"
+    placeholder="Direct media URL"
+    value="${escapeAttr(
+     s.mediaUrl||""
+    )}">
+
+  `;
+
+ }else{
+
+  box.innerHTML+=`
+
+   <input
+    type="file"
+    id="slotFile${i}">
+
+   <button
+    class="btn secondary"
+    onclick="uploadSlot(${i})">
+    UPLOAD
+   </button>
+
+   <div
+    id="slotStatus${i}"
+    class="small">
+   </div>
+
+  `;
+ }
+}
+
+
+function addSlot(){
+
+ const s=
+  data.sections[
+   currentSection
+  ];
+
+ s.slots.push({
+  enabled:true,
+  mediaType:"none",
+  mediaSource:"upload",
+  mediaId:null,
+  mediaUrl:"",
+  text:"",
+  buttons:[
+   {
+    enabled:true,
+    text:"OPEN",
+    url:""
+   },
+   {
+    enabled:true,
+    text:"💬 SUPPORT",
+    url:""
+   }
+  ]
+ });
+
+ renderSlots();
+}
+
+
+function removeSlot(i){
+
+ data.sections[
+  currentSection
+ ].slots.splice(i,1);
+
+ renderSlots();
+}
+
+
+/* =========================================================
+   WELCOME
+========================================================= */
+
+function renderWelcome(){
+
+ const w=data.welcome;
+
+ document.getElementById(
+  "welcomeEnabled"
+ ).checked=w.enabled;
+
+ document.getElementById(
+  "profilePhoto"
+ ).checked=w.profilePhoto;
+
+ document.getElementById(
+  "welcomeText"
+ ).value=w.text||"";
+
+ document.getElementById(
+  "welcomeSize"
+ ).value=
+  w.textSize||"medium";
+
+ document.getElementById(
+  "welcomeType"
+ ).value=
+  w.mediaType||"none";
+
+ document.getElementById(
+  "welcomeBg"
+ ).value=
+  w.buttonBg||"#6842ee";
+
+ document.getElementById(
+  "welcomeColor"
+ ).value=
+  w.buttonTextColor||"#ffffff";
+
+ renderMediaBox(
+  "welcome",
+  w
+ );
+}
+
+
+/* =========================================================
+   MEDIA BOX
+========================================================= */
+
+function renderMediaBox(
+ type,
+ obj
+){
+
+ const box=
+  document.getElementById(
+   type==="welcome"
+    ? "welcomeMediaBox"
+    : "sectionMediaBox"
+  );
+
+ const select=
+  document.getElementById(
+   type==="welcome"
+    ? "welcomeType"
+    : "sectionType"
+  );
+
+ box.innerHTML="";
+
+ if(
+  select.value==="none"
+ ){
+  return;
+ }
+
+ box.innerHTML=`
+
+  <label>Media Source</label>
+
+  <select
+   id="${type}Source"
+   onchange="renderMediaBox('${type}',data.${type==='welcome'?'welcome':'sections[currentSection]'})">
+
+   <option
+    value="upload"
+    ${obj.mediaSource==="upload"?"selected":""}>
+    Upload
+   </option>
+
+   <option
+    value="url"
+    ${obj.mediaSource==="url"?"selected":""}>
+    URL Link
+   </option>
+
+  </select>
+ `;
+
+ if(
+  obj.mediaSource==="url"
+ ){
+
+  box.innerHTML+=`
+
+   <input
+    id="${type}Url"
+    placeholder="Direct media URL"
+    value="${escapeAttr(
+     obj.mediaUrl||""
+    )}">
+
+  `;
+
+ }else{
+
+  box.innerHTML+=`
+
+   <input
+    id="${type}File"
+    type="file">
+
+   <button
+    class="btn secondary"
+    onclick="uploadGeneral('${type}')">
+    UPLOAD MEDIA
+   </button>
+
+   <div
+    id="${type}Status"
+    class="small">
+   </div>
+
+  `;
+ }
 }
 
 
@@ -1372,297 +1495,390 @@ function renderCategories(){
 
 function renderAudio(){
 
-  const a=settings.audio;
+ const a=data.audio;
+
+ document.getElementById(
+  "audioEnabled"
+ ).checked=a.enabled;
+
+ document.getElementById(
+  "audioText"
+ ).value=a.text||"";
+
+ document.getElementById(
+  "audioUrl"
+ ).value=a.mediaUrl||"";
+
+ const box=
+  document.getElementById(
+   "audioButtons"
+  );
+
+ box.innerHTML="";
+
+ a.buttons.forEach(
+  (b,i)=>{
+
+   box.innerHTML+=`
+
+    <div class="slot">
+
+     <b>Button ${i+1}</b>
+
+     <div class="switch">
+      <span>ON / OFF</span>
+      <input
+       type="checkbox"
+       data-audio-enabled="${i}"
+       ${b.enabled?"checked":""}>
+     </div>
+
+     <input
+      data-audio-text="${i}"
+      placeholder="Text"
+      value="${escapeAttr(b.text)}">
+
+     <input
+      data-audio-url="${i}"
+      placeholder="URL"
+      value="${escapeAttr(b.url)}">
+
+    </div>
+   `;
+  }
+ );
+}
+
+
+function uploadAudio(){
+
+ const file=
+  document.getElementById(
+   "audioFile"
+  ).files[0];
+
+ if(!file){
+  alert(
+   "Select audio first."
+  );
+  return;
+ }
+
+ uploadFile(
+  file,
+  "audio"
+ )
+ .then(id=>{
+  data.audio.mediaId=id;
+  data.audio.mediaSource=
+   "upload";
 
   document.getElementById(
-    "audioEnabled"
-  ).checked=!!a.enabled;
+   "audioUploadStatus"
+  ).textContent=
+   "✅ Audio uploaded.";
+ })
+ .catch(e=>
+  alert(e.message)
+ );
+}
 
-  document.getElementById(
-    "audioText"
-  ).value=a.text||"";
 
-  const box=
-    document.getElementById(
-      "audioButtons"
-    );
+/* =========================================================
+   SYSTEM
+========================================================= */
 
-  box.innerHTML="";
+function renderSystem(){
 
-  (a.buttons||[]).forEach(
-    (b,i)=>{
-
-      const div=
-        document.createElement(
-          "div"
-        );
-
-      div.className="slot";
-
-      div.innerHTML=`
-
-        <div class="slotTitle">
-          Audio Button ${i+1}
-        </div>
-
-        <div class="switch">
-          <span>ON / OFF</span>
-          <input
-            type="checkbox"
-            data-audio-enabled="${i}"
-            ${b.enabled?"checked":""}>
-        </div>
-
-        <label>Text</label>
-
-        <input
-          data-audio-text="${i}"
-          value="${esc(b.text||"")}">
-
-        <label>URL</label>
-
-        <input
-          data-audio-url="${i}"
-          value="${esc(b.url||"")}">
-
-      `;
-
-      box.appendChild(div);
-    }
+ document.getElementById(
+  "autoDelete"
+ ).value=
+  String(
+   data.autoDelete||0
   );
 }
 
 
 /* =========================================================
-   COLLECT SETTINGS
+   COLLECT
 ========================================================= */
 
-function collectSettings(){
+function collect(){
 
-  settings.welcome.enabled=
+ const w=data.welcome;
+
+ w.enabled=
+  document.getElementById(
+   "welcomeEnabled"
+  ).checked;
+
+ w.profilePhoto=
+  document.getElementById(
+   "profilePhoto"
+  ).checked;
+
+ w.text=
+  document.getElementById(
+   "welcomeText"
+  ).value;
+
+ w.textSize=
+  document.getElementById(
+   "welcomeSize"
+  ).value;
+
+ w.mediaType=
+  document.getElementById(
+   "welcomeType"
+  ).value;
+
+ w.buttonBg=
+  document.getElementById(
+   "welcomeBg"
+  ).value;
+
+ w.buttonTextColor=
+  document.getElementById(
+   "welcomeColor"
+  ).value;
+
+
+ if(
+  w.mediaType!=="none"
+ ){
+  const src=
+   document.getElementById(
+    "welcomeSource"
+   );
+
+  if(src){
+   w.mediaSource=
+    src.value;
+  }
+
+  if(
+   w.mediaSource==="url"
+  ){
+   const url=
     document.getElementById(
-      "welcomeEnabled"
-    ).checked;
-
-  settings.welcome.profilePhoto=
-    document.getElementById(
-      "profilePhoto"
-    ).checked;
-
-  settings.welcome.text=
-    document.getElementById(
-      "welcomeText"
-    ).value;
-
-  settings.welcome.textSize=
-    document.getElementById(
-      "welcomeTextSize"
-    ).value;
-
-  settings.welcome.mediaType=
-    document.getElementById(
-      "welcomeMediaType"
-    ).value;
-
-
-  /* MAIN */
-
-  settings.mainButtons.forEach(
-    (b,i)=>{
-
-      b.enabled=
-        document.querySelector(
-          `[data-main-enabled="${i}"]`
-        ).checked;
-
-      b.text=
-        document.querySelector(
-          `[data-main-text="${i}"]`
-        ).value;
-
-      b.action=
-        document.querySelector(
-          `[data-main-action="${i}"]`
-        ).value;
-
-      b.category=
-        document.querySelector(
-          `[data-main-category="${i}"]`
-        ).value;
-
-      b.url=
-        document.querySelector(
-          `[data-main-url="${i}"]`
-        ).value;
-    }
-  );
-
-
-  /* AI */
-
-  settings.aiHack.forEach(
-    (item,i)=>{
-
-      item.enabled=
-        document.querySelector(
-          `[data-ai-enabled="${i}"]`
-        ).checked;
-
-      item.mediaType=
-        document.querySelector(
-          `[data-ai-type="${i}"]`
-        ).value;
-
-      item.text=
-        document.querySelector(
-          `[data-ai-text="${i}"]`
-        ).value;
-
-      item.buttons=[
-        {
-          enabled:
-            document.querySelector(
-              `[data-ai-b1-enabled="${i}"]`
-            ).checked,
-
-          text:
-            document.querySelector(
-              `[data-ai-b1-text="${i}"]`
-            ).value,
-
-          url:
-            document.querySelector(
-              `[data-ai-b1-url="${i}"]`
-            ).value
-        },
-        {
-          enabled:
-            document.querySelector(
-              `[data-ai-b2-enabled="${i}"]`
-            ).checked,
-
-          text:
-            document.querySelector(
-              `[data-ai-b2-text="${i}"]`
-            ).value,
-
-          url:
-            document.querySelector(
-              `[data-ai-b2-url="${i}"]`
-            ).value
-        }
-      ];
-    }
-  );
-
-
-  /* CATEGORIES */
-
-  Object.keys(
-    settings.categories
-  ).forEach(key=>{
-
-    const c=
-      settings.categories[key];
-
-    c.enabled=
-      document.querySelector(
-        `[data-cat-enabled="${key}"]`
-      ).checked;
-
-    c.title=
-      document.querySelector(
-        `[data-cat-title="${key}"]`
-      ).value;
-
-    c.mediaType=
-      document.querySelector(
-        `[data-cat-type="${key}"]`
-      ).value;
-
-    c.text=
-      document.querySelector(
-        `[data-cat-text="${key}"]`
-      ).value;
-
-    c.buttons=[
-      {
-        enabled:
-          document.querySelector(
-            `[data-cat-b1-enabled="${key}"]`
-          ).checked,
-
-        text:
-          document.querySelector(
-            `[data-cat-b1-text="${key}"]`
-          ).value,
-
-        url:
-          document.querySelector(
-            `[data-cat-b1-url="${key}"]`
-          ).value
-      },
-      {
-        enabled:
-          document.querySelector(
-            `[data-cat-b2-enabled="${key}"]`
-          ).checked,
-
-        text:
-          document.querySelector(
-            `[data-cat-b2-text="${key}"]`
-          ).value,
-
-        url:
-          document.querySelector(
-            `[data-cat-b2-url="${key}"]`
-          ).value
-      }
-    ];
-  });
-
-
-  /* AUDIO */
-
-  settings.audio.enabled=
-    document.getElementById(
-      "audioEnabled"
-    ).checked;
-
-  settings.audio.text=
-    document.getElementById(
-      "audioText"
-    ).value;
-
-  settings.audio.buttons.forEach(
-    (b,i)=>{
-
-      b.enabled=
-        document.querySelector(
-          `[data-audio-enabled="${i}"]`
-        ).checked;
-
-      b.text=
-        document.querySelector(
-          `[data-audio-text="${i}"]`
-        ).value;
-
-      b.url=
-        document.querySelector(
-          `[data-audio-url="${i}"]`
-        ).value;
-    }
-  );
-
-
-  settings.autoDelete=
-    Number(
-      document.getElementById(
-        "autoDelete"
-      ).value
+     "welcomeUrl"
     );
 
-  return settings;
+   if(url)
+    w.mediaUrl=
+     url.value;
+  }
+ }
+
+
+ /* SECTION */
+
+ if(
+  document.getElementById(
+   "sectionEnabled"
+  )
+ ){
+
+  const s=
+   data.sections[
+    currentSection
+   ];
+
+  s.enabled=
+   document.getElementById(
+    "sectionEnabled"
+   ).checked;
+
+  s.title=
+   document.getElementById(
+    "sectionButtonName"
+   ).value;
+
+  s.text=
+   document.getElementById(
+    "sectionText"
+   ).value;
+
+  s.mediaType=
+   document.getElementById(
+    "sectionType"
+   ).value;
+
+  s.buttonBg=
+   document.getElementById(
+    "sectionBg"
+   ).value;
+
+  s.buttonTextColor=
+   document.getElementById(
+    "sectionColor"
+   ).value;
+
+  const source=
+   document.getElementById(
+    "sectionSource"
+   );
+
+  if(source)
+   s.mediaSource=
+    source.value;
+
+  if(
+   s.mediaSource==="url"
+  ){
+   const url=
+    document.getElementById(
+     "sectionUrl"
+    );
+
+   if(url)
+    s.mediaUrl=
+     url.value;
+  }
+
+
+  s.slots.forEach(
+   (x,i)=>{
+
+    x.enabled=
+     document.querySelector(
+      `[data-slot-enabled="${i}"]`
+     ).checked;
+
+    x.mediaType=
+     document.querySelector(
+      `[data-slot-type="${i}"]`
+     ).value;
+
+    x.text=
+     document.querySelector(
+      `[data-slot-text="${i}"]`
+     ).value;
+
+    x.buttons=[
+     {
+      enabled:
+       document.querySelector(
+        `[data-slot-b1-enabled="${i}"]`
+       ).checked,
+
+      text:
+       document.querySelector(
+        `[data-slot-b1-text="${i}"]`
+       ).value,
+
+      url:
+       document.querySelector(
+        `[data-slot-b1-url="${i}"]`
+       ).value
+     },
+     {
+      enabled:
+       document.querySelector(
+        `[data-slot-b2-enabled="${i}"]`
+       ).checked,
+
+      text:
+       document.querySelector(
+        `[data-slot-b2-text="${i}"]`
+       ).value,
+
+      url:
+       document.querySelector(
+        `[data-slot-b2-url="${i}"]`
+       ).value
+     }
+    ];
+
+    const src=
+     document.querySelector(
+      `[data-slot-source="${i}"]`
+     );
+
+    if(src)
+     x.mediaSource=
+      src.value;
+
+    if(
+     x.mediaSource==="url"
+    ){
+
+     const url=
+      document.querySelector(
+       `[data-slot-url="${i}"]`
+      );
+
+     if(url)
+      x.mediaUrl=
+       url.value;
+    }
+   }
+  );
+ }
+
+
+ /* AUDIO */
+
+ if(
+  document.getElementById(
+   "audioEnabled"
+  )
+ ){
+
+  data.audio.enabled=
+   document.getElementById(
+    "audioEnabled"
+   ).checked;
+
+  data.audio.text=
+   document.getElementById(
+    "audioText"
+   ).value;
+
+  data.audio.mediaUrl=
+   document.getElementById(
+    "audioUrl"
+   ).value;
+
+  data.audio.mediaSource=
+   data.audio.mediaUrl
+    ? "url"
+    : "upload";
+
+  data.audio.buttons.forEach(
+   (b,i)=>{
+
+    b.enabled=
+     document.querySelector(
+      `[data-audio-enabled="${i}"]`
+     ).checked;
+
+    b.text=
+     document.querySelector(
+      `[data-audio-text="${i}"]`
+     ).value;
+
+    b.url=
+     document.querySelector(
+      `[data-audio-url="${i}"]`
+     ).value;
+   }
+  );
+ }
+
+
+ if(
+  document.getElementById(
+   "autoDelete"
+  )
+ ){
+  data.autoDelete=
+   Number(
+    document.getElementById(
+     "autoDelete"
+    ).value
+   );
+ }
 }
 
 
@@ -1670,351 +1886,194 @@ function collectSettings(){
    SAVE
 ========================================================= */
 
-function saveSettings(){
+function save(){
 
-  collectSettings();
+ collect();
 
-  fetch("/api/settings",{
-    method:"POST",
-    headers:authHeaders(),
-    body:JSON.stringify(
-      settings
-    )
-  })
-  .then(async r=>{
+ fetch(
+  "/api/settings",
+  {
+   method:"POST",
+   headers:headers(),
+   body:JSON.stringify(data)
+  }
+ )
+ .then(r=>r.json())
+ .then(x=>{
 
-    const data=
-      await r.json();
+  if(!x.ok)
+   throw new Error(
+    x.error
+   );
 
-    if(!r.ok){
-      throw new Error(
-        data.error ||
-        "Save failed"
-      );
-    }
+  data=x.settings;
 
-    settings=data.settings;
+  render();
 
-    alert(
-      "✅ Settings saved successfully."
-    );
+  if(
+   currentSection
+  ){
+   renderSectionPreview();
+  }
 
-    renderAll();
-  })
-  .catch(err=>{
-    alert(err.message);
-  });
+  alert(
+   "✅ Saved successfully."
+  );
+ })
+ .catch(e=>
+  alert(e.message)
+ );
 }
 
 
 /* =========================================================
-   ADMIN CONNECTION
-========================================================= */
-
-function generateCode(){
-
-  fetch(
-    "/api/admin/connect-code",
-    {
-      method:"POST",
-      headers:authHeaders()
-    }
-  )
-  .then(async r=>{
-
-    const data=
-      await r.json();
-
-    if(!r.ok){
-      throw new Error(
-        data.error
-      );
-    }
-
-    document
-      .getElementById(
-        "connectResult"
-      )
-      .classList.remove(
-        "hidden"
-      );
-
-    document
-      .getElementById(
-        "connectCode"
-      )
-      .textContent=
-        "/admin " +
-        data.code;
-  })
-  .catch(err=>{
-    alert(err.message);
-  });
-}
-
-
-function checkConnection(){
-
-  fetch(
-    "/api/admin/status",
-    {
-      headers:authHeaders()
-    }
-  )
-  .then(r=>r.json())
-  .then(data=>{
-
-    const el=
-      document.getElementById(
-        "connectionStatus"
-      );
-
-    if(data.connected){
-
-      el.textContent=
-        "🟢 Telegram Admin Connected";
-
-      el.className=
-        "status success";
-
-    }else{
-
-      el.textContent=
-        "🔴 Telegram Admin Not Connected";
-
-      el.className=
-        "status";
-    }
-  });
-}
-
-
-/* =========================================================
-   MEDIA UPLOAD
+   UPLOAD
 ========================================================= */
 
 async function uploadFile(
-  file,
-  type
+ file,
+ kind
 ){
 
-  if(!file){
-    throw new Error(
-      "Select a file first."
-    );
-  }
+ const fd=
+  new FormData();
 
-  const form=
-    new FormData();
+ fd.append(
+  "file",
+  file
+ );
 
-  form.append(
-    "file",
-    file
+ fd.append(
+  "kind",
+  kind
+ );
+
+ const r=
+  await fetch(
+   "/api/upload",
+   {
+    method:"POST",
+    headers:{
+     "x-admin-password":
+      pass
+    },
+    body:fd
+   }
   );
 
-  form.append(
-    "type",
+ const x=
+  await r.json();
+
+ if(!r.ok)
+  throw new Error(
+   x.error
+  );
+
+ return x.id;
+}
+
+
+async function uploadGeneral(
+ type
+){
+
+ const file=
+  document.getElementById(
+   type+"File"
+  ).files[0];
+
+ if(!file){
+  alert(
+   "Select media first."
+  );
+  return;
+ }
+
+ const mediaType=
+  type==="welcome"
+   ? document.getElementById(
+      "welcomeType"
+     ).value
+   : document.getElementById(
+      "sectionType"
+     ).value;
+
+ try{
+
+  const id=
+   await uploadFile(
+    file,
+    mediaType
+   );
+
+  const obj=
+   type==="welcome"
+    ? data.welcome
+    : data.sections[
+       currentSection
+      ];
+
+  obj.mediaId=id;
+  obj.mediaSource=
+   "upload";
+
+  document.getElementById(
+   type+"Status"
+  ).textContent=
+   "✅ Uploaded successfully.";
+
+ }catch(e){
+
+  alert(e.message);
+ }
+}
+
+
+async function uploadSlot(i){
+
+ const file=
+  document.getElementById(
+   "slotFile"+i
+  ).files[0];
+
+ const type=
+  document.querySelector(
+   `[data-slot-type="${i}"]`
+  ).value;
+
+ if(!file){
+  alert(
+   "Select media first."
+  );
+  return;
+ }
+
+ try{
+
+  const id=
+   await uploadFile(
+    file,
     type
-  );
+   );
 
-  const response=
-    await fetch(
-      "/api/upload",
-      {
-        method:"POST",
-        headers:{
-          "x-admin-password":
-            password
-        },
-        body:form
-      }
-    );
+  data.sections[
+   currentSection
+  ].slots[i].mediaId=id;
 
-  const data=
-    await response.json();
+  data.sections[
+   currentSection
+  ].slots[i].mediaSource=
+   "upload";
 
-  if(!response.ok){
-    throw new Error(
-      data.error ||
-      "Upload failed"
-    );
-  }
+  document.getElementById(
+   "slotStatus"+i
+  ).textContent=
+   "✅ Uploaded.";
 
-  return data.fileId;
-}
+ }catch(e){
 
-
-async function uploadWelcomeMedia(){
-
-  try{
-
-    const file=
-      document.getElementById(
-        "welcomeMediaFile"
-      ).files[0];
-
-    const type=
-      document.getElementById(
-        "welcomeMediaType"
-      ).value;
-
-    if(type==="none"){
-      alert(
-        "Select media type first."
-      );
-      return;
-    }
-
-    const fileId=
-      await uploadFile(
-        file,
-        type
-      );
-
-    settings.welcome.mediaFileId=
-      fileId;
-
-    document.getElementById(
-      "welcomeMediaStatus"
-    ).textContent=
-      "✅ Uploaded successfully.";
-
-  }catch(err){
-
-    alert(err.message);
-  }
-}
-
-
-async function uploadAISlot(i){
-
-  try{
-
-    const file=
-      document.getElementById(
-        "aiFile"+i
-      ).files[0];
-
-    const type=
-      document.querySelector(
-        `[data-ai-type="${i}"]`
-      ).value;
-
-    const fileId=
-      await uploadFile(
-        file,
-        type
-      );
-
-    settings.aiHack[i]
-      .mediaFileId=
-        fileId;
-
-    document.getElementById(
-      "aiStatus"+i
-    ).textContent=
-      "✅ Uploaded.";
-
-  }catch(err){
-
-    alert(err.message);
-  }
-}
-
-
-async function uploadCategory(key){
-
-  try{
-
-    const file=
-      document.getElementById(
-        "catFile_"+key
-      ).files[0];
-
-    const type=
-      document.querySelector(
-        `[data-cat-type="${key}"]`
-      ).value;
-
-    const fileId=
-      await uploadFile(
-        file,
-        type
-      );
-
-    settings.categories[key]
-      .mediaFileId=
-        fileId;
-
-    document.getElementById(
-      "catStatus_"+key
-    ).textContent=
-      "✅ Uploaded.";
-
-  }catch(err){
-
-    alert(err.message);
-  }
-}
-
-
-async function uploadAudioImage(){
-
-  try{
-
-    const file=
-      document.getElementById(
-        "audioImageFile"
-      ).files[0];
-
-    const fileId=
-      await uploadFile(
-        file,
-        "photo"
-      );
-
-    settings.audio.imageFileId=
-      fileId;
-
-    document.getElementById(
-      "audioImageStatus"
-    ).textContent=
-      "✅ Uploaded.";
-
-  }catch(err){
-
-    alert(err.message);
-  }
-}
-
-
-async function uploadAudio(){
-
-  try{
-
-    const file=
-      document.getElementById(
-        "audioFile"
-      ).files[0];
-
-    const fileId=
-      await uploadFile(
-        file,
-        "audio"
-      );
-
-    settings.audio.audioFileId=
-      fileId;
-
-    document.getElementById(
-      "audioStatus"
-    ).textContent=
-      "✅ Uploaded.";
-
-  }catch(err){
-
-    alert(err.message);
-  }
+  alert(e.message);
+ }
 }
 
 
@@ -2022,50 +2081,254 @@ async function uploadAudio(){
    PREVIEW
 ========================================================= */
 
-function updatePreview(){
+function mediaPreview(
+ obj
+){
 
-  if(!settings) return;
+ if(
+  !obj ||
+  obj.mediaType==="none"
+ ){
+  return "";
+ }
 
-  collectSettings();
+ if(
+  obj.mediaSource==="url" &&
+  obj.mediaUrl
+ ){
 
-  const text=
-    settings.welcome.text ||
-    "Welcome!";
+  if(
+   obj.mediaType==="photo"
+  ){
+   return `
+    <img
+     class="previewMedia"
+     src="${escapeAttr(
+      obj.mediaUrl
+     )}">
+   `;
+  }
 
-  const name=
-    "👋 Hello User";
+  if(
+   obj.mediaType==="video"
+  ){
+   return `
+    <video
+     class="previewMedia"
+     controls
+     src="${escapeAttr(
+      obj.mediaUrl
+     )}">
+    </video>
+   `;
+  }
 
-  document.getElementById(
-    "previewText"
-  ).innerHTML=
-    `<strong>${esc(name)}</strong><br><br>
-     ${esc(text).replace(/\n/g,"<br>")}`;
+  return `
+   <div class="previewMedia">
+    🎧 AUDIO
+   </div>
+  `;
+ }
 
-  const box=
-    document.getElementById(
-      "previewButtons"
-    );
+ return `
+  <div class="previewMedia">
+   ${obj.mediaType==="video"
+    ?"🎬 VIDEO"
+    :obj.mediaType==="audio"
+    ?"🎧 AUDIO"
+    :"🖼️ IMAGE"}
+  </div>
+ `;
+}
 
-  box.innerHTML="";
 
-  settings.mainButtons
+function renderSectionPreview(){
+
+ const s=
+  data.sections[
+   currentSection
+  ];
+
+ let html="";
+
+ html+=mediaPreview(s);
+
+ if(s.text){
+  html+=`
+   <div class="previewText">
+    ${escapeHtml(
+     s.text
+    )}
+   </div>
+  `;
+ }
+
+ (s.slots||[]).forEach(
+  x=>{
+
+   if(x.enabled===false)
+    return;
+
+   html+=`
+    <div class="slot">
+     ${mediaPreview(x)}
+     <div class="previewText">
+      ${escapeHtml(
+       x.text||""
+      )}
+     </div>
+    `;
+
+   (x.buttons||[])
     .forEach(b=>{
 
-      if(!b.enabled) return;
+     if(
+      !b.enabled ||
+      !b.text
+     )return;
 
-      const button=
-        document.createElement(
-          "button"
-        );
-
-      button.className=
-        "previewButton";
-
-      button.textContent=
-        b.text;
-
-      box.appendChild(button);
+     html+=`
+      <div
+       class="previewButton"
+       style="
+       background:${s.buttonBg};
+       color:${s.buttonTextColor}">
+       ${escapeHtml(
+        b.text
+       )}
+      </div>
+     `;
     });
+
+   html+=`
+    </div>
+   `;
+  }
+ );
+
+ document.getElementById(
+  "sectionPreview"
+ ).innerHTML=
+  `<div class="preview">
+   <div class="previewPhone">
+    ${html}
+   </div>
+  </div>`;
+}
+
+
+function renderAllPreview(){
+
+ collect();
+
+ let html="";
+
+ html+=`
+  <div class="preview">
+   <div class="previewPhone">
+    ${mediaPreview(
+     data.welcome
+    )}
+
+    <div class="previewText">
+     ${escapeHtml(
+      data.welcome.text
+     )}
+    </div>
+ `;
+
+ data.mainButtons
+  .forEach(
+   (b,i)=>{
+
+    if(!b.enabled)
+     return;
+
+    const s=
+     data.sections[
+      b.section
+     ];
+
+    html+=`
+     <div
+      class="previewButton"
+      style="
+      background:${
+       s.buttonBg
+      };
+      color:${
+       s.buttonTextColor
+      }">
+      ${escapeHtml(
+       b.text
+      )}
+     </div>
+    `;
+   }
+  );
+
+ html+=`
+   </div>
+  </div>
+ </div>
+ `;
+
+ document.getElementById(
+  "allPreview"
+ ).innerHTML=
+  html;
+}
+
+
+/* =========================================================
+   MEDIA MODE
+========================================================= */
+
+function mediaMode(type){
+
+ if(
+  type==="welcome"
+  ||
+  type==="section"
+ ){
+  const obj=
+   type==="welcome"
+    ? data.welcome
+    : data.sections[
+       currentSection
+      ];
+
+  obj.mediaType=
+   document.getElementById(
+    type==="welcome"
+     ?"welcomeType"
+     :"sectionType"
+   ).value;
+
+  renderMediaBox(
+   type,
+   obj
+  );
+ }
+}
+
+
+/* =========================================================
+   RENDER
+========================================================= */
+
+function render(){
+
+ renderMainButtons();
+ renderWelcome();
+ renderSystem();
+ renderAudio();
+
+ if(
+  currentSection
+ ){
+  renderSection();
+ }
 }
 
 
@@ -2075,45 +2338,82 @@ function updatePreview(){
 
 function resetSystem(){
 
-  if(
-    !confirm(
-      "Are you sure you want to reset the entire system?"
-    )
-  ){
-    return;
-  }
-
-  fetch(
-    "/api/reset",
-    {
-      method:"POST",
-      headers:authHeaders()
-    }
+ if(
+  !confirm(
+   "Reset all settings?"
   )
-  .then(async r=>{
+ )return;
 
-    const data=
-      await r.json();
+ fetch(
+  "/api/reset",
+  {
+   method:"POST",
+   headers:headers()
+  }
+ )
+ .then(r=>r.json())
+ .then(x=>{
 
-    if(!r.ok){
-      throw new Error(
-        data.error ||
-        "Reset failed"
-      );
-    }
+  if(!x.ok)
+   throw new Error(
+    x.error
+   );
 
-    settings=
-      data.settings;
+  data=x.settings;
 
-    renderAll();
+  currentSection="";
 
-    alert(
-      "✅ System reset completed."
-    );
-  })
-  .catch(err=>{
-    alert(err.message);
-  });
+  home();
+
+  render();
+
+  alert(
+   "✅ System reset."
+  );
+ })
+ .catch(e=>
+  alert(e.message)
+ );
+}
+
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+function toggleDark(){
+
+ document.body.classList.toggle(
+  "dark"
+ );
+
+ localStorage.setItem(
+  "botDark",
+  document.body.classList.contains(
+   "dark"
+  )
+  ? "1"
+  : "0"
+ );
+}
+
+
+/* =========================================================
+   LANGUAGE
+========================================================= */
+
+let bangla=false;
+
+function toggleLang(){
+
+ bangla=!bangla;
+
+ document.getElementById(
+  "langTitle"
+ ).textContent=
+  bangla
+   ?"টেলিগ্রাম বট কন্ট্রোল"
+   :"Telegram Bot Control";
 }
 
 
@@ -2121,30 +2421,31 @@ function resetSystem(){
    ESCAPE
 ========================================================= */
 
-function esc(value){
+function escapeHtml(x){
 
-  return String(
-    value ?? ""
-  )
+ return String(
+  x||""
+ )
+ .replace(
+  /&/g,
+  "&amp;"
+ )
+ .replace(
+  /</g,
+  "&lt;"
+ )
+ .replace(
+  />/g,
+  "&gt;"
+ );
+}
+
+function escapeAttr(x){
+
+ return escapeHtml(x)
   .replace(
-    /&/g,
-    "&amp;"
-  )
-  .replace(
-    /</g,
-    "&lt;"
-  )
-  .replace(
-    />/g,
-    "&gt;"
-  )
-  .replace(
-    /"/g,
-    "&quot;"
-  )
-  .replace(
-    /'/g,
-    "&#039;"
+   /"/g,
+   "&quot;"
   );
 }
 
@@ -2154,38 +2455,47 @@ function esc(value){
 ========================================================= */
 
 window.addEventListener(
-  "DOMContentLoaded",
-  ()=>{
-    const saved=
-      sessionStorage.getItem(
-        "adminPassword"
-      );
+ "DOMContentLoaded",
+ ()=>{
 
-    if(saved){
-
-      password=saved;
-
-      document
-        .getElementById(
-          "loginPage"
-        )
-        .classList.add(
-          "hidden"
-        );
-
-      document
-        .getElementById(
-          "adminPage"
-        )
-        .classList.remove(
-          "hidden"
-        );
-
-      loadSettings();
-      checkConnection();
-    }
+  if(
+   localStorage.getItem(
+    "botDark"
+   )==="1"
+  ){
+   document.body.classList.add(
+    "dark"
+   );
   }
-);
+
+  const saved=
+   sessionStorage.getItem(
+    "botAdminPassword"
+   );
+
+  if(saved){
+
+   pass=saved;
+
+   document
+    .getElementById(
+     "login"
+    )
+    .classList.add(
+     "hidden"
+    );
+
+   document
+    .getElementById(
+     "admin"
+    )
+    .classList.remove(
+     "hidden"
+    );
+
+   load();
+  }
+ });
 </script>
 
 </body>
