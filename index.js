@@ -1,5 +1,3 @@
-'use strict';
-
 const express = require('express');
 const multer = require('multer');
 const { Pool } = require('pg');
@@ -8,1429 +6,559 @@ const path = require('path');
 
 const app = express();
 
-const PORT = Number(process.env.PORT || 10000);
+const PORT = Number(process.env.PORT || 3000);
+const BOT_TOKEN = process.env.BOT_TOKEN;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+const DATABASE_URL = process.env.DATABASE_URL;
 
-const BOT_TOKEN =
-  process.env.BOT_TOKEN || '';
-
-const ADMIN_PASSWORD =
-  process.env.ADMIN_PASSWORD || '';
-
-const DATABASE_URL =
-  process.env.DATABASE_URL || '';
-
-const PUBLIC_URL = (
-  process.env.RENDER_EXTERNAL_URL ||
-  (
-    process.env.RENDER_EXTERNAL_HOSTNAME
-      ? `https://${process.env.RENDER_EXTERNAL_HOSTNAME}`
-      : 'https://telegram-bot-system-kgdq.onrender.com'
-  )
-).replace(/\/$/, '');
-
-
-if (!BOT_TOKEN) {
-  console.warn('BOT_TOKEN is missing.');
+if (!BOT_TOKEN || !ADMIN_PASSWORD || !DATABASE_URL) {
+  console.error('BOT_TOKEN, ADMIN_PASSWORD and DATABASE_URL are required.');
+  process.exit(1);
 }
 
-if (!ADMIN_PASSWORD) {
-  console.warn('ADMIN_PASSWORD is missing.');
-}
-
-if (!DATABASE_URL) {
-  console.warn('DATABASE_URL is missing.');
-}
-
-
-/* =========================================================
-   DATABASE
-========================================================= */
-
-const pool = DATABASE_URL
-  ? new Pool({
-      connectionString: DATABASE_URL,
-
-      ssl: DATABASE_URL.includes('localhost')
-        ? false
-        : {
-            rejectUnauthorized: false
-          }
-    })
-  : null;
-
-
-/* =========================================================
-   EXPRESS
-========================================================= */
-
-app.use(
-  express.json({
-    limit: '2mb'
-  })
-);
-
-app.use(
-  express.urlencoded({
-    extended: true
-  })
-);
-
-
-/* =========================================================
-   MULTER
-========================================================= */
+app.use(express.json({ limit: '2mb' }));
+app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 
 const upload = multer({
-
-  storage:
-    multer.memoryStorage(),
-
+  storage: multer.memoryStorage(),
   limits: {
-    fileSize:
-      50 * 1024 * 1024
+    fileSize: 50 * 1024 * 1024
   }
-
 });
 
+const pool = new Pool({
+  connectionString: DATABASE_URL,
+  ssl: /localhost|127\.0\.0\.1/.test(DATABASE_URL)
+    ? false
+    : { rejectUnauthorized: false }
+});
 
-/* =========================================================
-   DEFAULT MAIN BUTTON
-========================================================= */
+const sessions = new Map();
+const messageCache = new Map();
+const mediaLocks = new Map();
 
-function buttonDefault(
-  id,
-  text,
-  color,
-  style
-) {
+const IDS = [
+  'ai',
+  'vip',
+  'support',
+  'official',
+  'bonus',
+  'admin'
+];
 
-  return {
+const LABELS = {
+  ai: '🤖 AI HACK All Link Check',
+  vip: '🔥 VIP GROUP All Link Check',
+  support: '💬 SUPPORT All Link Check',
+  official: '📢 OFFICIAL CHANNEL All Link Check',
+  bonus: '🎁 BONUS All Link Check',
+  admin: '👨‍💻 ADMIN All Link Check'
+};
 
+const DEFAULT_SETTINGS = {
+  autoDelete: 0,
+
+  welcome: {
+    profilePhotoEnabled: true,
+    profilePhoto: true,
+
+    mediaEnabled: false,
+    mediaType: 'none',
+    mediaSource: 'upload',
+    mediaId: null,
+    mediaUrl: '',
+
+    text: '👋 Welcome to our Telegram Bot!',
+
+    layout: 'profile_welcome_buttons'
+  },
+
+  mainButtons: IDS.map(id => ({
     id,
-
     enabled: true,
-
-    text,
-
-
-    /* =========================
-       COLOR SYSTEM
-    ========================= */
+    text: LABELS[id],
 
     buttonColorEnabled: true,
-
-    buttonColor:
-      color,
-
-    buttonStyle:
-      style || '',
-
-
-    /* =========================
-       VISUAL SYSTEM
-       Image / Video / Audio / Text
-    ========================= */
+    buttonColor: '#6d5dfc',
+    buttonStyle: '',
 
     buttonVisualEnabled: false,
+    buttonVisualMediaType: 'none',
+    buttonVisualMediaSource: 'upload',
+    buttonVisualMediaId: null,
+    buttonVisualMediaUrl: '',
+    buttonVisualText: '',
 
-    buttonVisualMediaType:
-      'none',
+    // পুরোনো Admin panel-এর compatibility
+    buttonImageEnabled: false,
+    buttonImageUrl: '',
 
-    buttonVisualMediaSource:
-      'upload',
-
-    buttonVisualMediaId:
-      null,
-
-    buttonVisualMediaUrl:
-      '',
-
-    buttonVisualText:
-      '',
-
-
-    /* =========================
-       OLD SYSTEM COMPATIBILITY
-    ========================= */
-
-    buttonImageEnabled:
-      false,
-
-    buttonImageUrl:
-      '',
-
-
-    /* =========================
-       CLICKED BUTTON HEADER
-    ========================= */
-
-    headerMediaType:
-      'none',
-
-    headerMediaSource:
-      'upload',
-
-    headerMediaId:
-      null,
-
-    headerMediaUrl:
-      '',
-
-    headerText:
-      '',
-
-
-    /* =========================
-       SLOTS
-    ========================= */
+    headerMediaType: 'none',
+    headerMediaSource: 'upload',
+    headerMediaId: null,
+    headerMediaUrl: '',
+    headerText: '',
 
     slots: []
-
-  };
-
-}
-
-
-/* =========================================================
-   DEFAULT SETTINGS
-========================================================= */
-
-function defaultSettings() {
-
-  return {
-
-    autoDelete:
-      0,
-
-
-    /* =========================
-       WELCOME
-    ========================= */
-
-    welcome: {
-
-      profilePhotoEnabled:
-        true,
-
-      profilePhoto:
-        true,
-
-
-      /*
-        IMPORTANT
-
-        Welcome media-এর
-        ON / OFF system
-      */
-
-      mediaEnabled:
-        false,
-
-
-      mediaType:
-        'none',
-
-      mediaSource:
-        'upload',
-
-      mediaId:
-        null,
-
-      mediaUrl:
-        '',
-
-
-      text:
-        '👋 Welcome to our Telegram Bot!',
-
-
-      /*
-        profile_welcome_buttons
-        অথবা
-        buttons_profile_welcome
-      */
-
-      layout:
-        'profile_welcome_buttons'
-
-    },
-
-
-    /* =========================
-       SIX MAIN BUTTONS
-    ========================= */
-
-    mainButtons: [
-
-      buttonDefault(
-        'ai',
-        '🤖 AI HACK All Link Check',
-        '#67a74a',
-        'success'
-      ),
-
-      buttonDefault(
-        'vip',
-        '🔥 VIP GROUP All Link Check',
-        '#6d5dfc',
-        'primary'
-      ),
-
-      buttonDefault(
-        'support',
-        '💬 SUPPORT All Link Check',
-        '#e89b24',
-        'primary'
-      ),
-
-      buttonDefault(
-        'official',
-        '📢 OFFICIAL CHANNEL All Link Check🥰',
-        '#ff3b30',
-        'danger'
-      ),
-
-      buttonDefault(
-        'bonus',
-        '🎁 BONUS All Link Check',
-        '#16a085',
-        'success'
-      ),
-
-      buttonDefault(
-        'admin',
-        '👨‍💻 ADMIN All Link Check',
-        '#8e44ad',
-        'primary'
-      )
-
-    ],
-
-
-    /* =========================
-       AUDIO SYSTEM
-    ========================= */
-
-    audio: {
-
-      enabled:
-        false,
-
-      text:
-        '',
-
-      mediaType:
-        'audio',
-
-      mediaSource:
-        'url',
-
-      mediaId:
-        null,
-
-      mediaUrl:
-        '',
-
-
-      button1: {
-
-        enabled:
-          false,
-
-        text:
-          '',
-
-        url:
-          '',
-
-        color:
-          '#6d5dfc',
-
-        colorEnabled:
-          true
-
-      },
-
-
-      button2: {
-
-        enabled:
-          false,
-
-        text:
-          '',
-
-        url:
-          '',
-
-        color:
-          '#6d5dfc',
-
-        colorEnabled:
-          true
-
-      }
-
-    }
-
-  };
-
-}
-
-
-/* =========================================================
-   CLONE
-========================================================= */
-
-function clone(value) {
-
-  return JSON.parse(
-    JSON.stringify(value)
-  );
-
-}
-
-
-/* =========================================================
-   VALUE CHECK
-========================================================= */
-
-function hasValue(value) {
-
-  return (
-    value !== undefined &&
-    value !== null &&
-    String(value).trim() !== ''
-  );
-
-}
-
-
-/* =========================================================
-   SLOT NORMALIZE
-========================================================= */
-
-function normalizeSlot(raw) {
-
-  const s =
-    raw || {};
-
-  const b1 =
-    s.button1 || {};
-
-  const b2 =
-    s.button2 || {};
-
-
-  return {
-
-    enabled:
-      s.enabled !== false,
-
-
-    mediaType:
-      s.mediaType || 'none',
-
-
-    mediaSource:
-      s.mediaSource || 'upload',
-
-
-    mediaId:
-      s.mediaId ?? null,
-
-
-    mediaUrl:
-      s.mediaUrl || '',
-
-
-    text:
-      s.text || '',
-
-
-    button1: {
-
-      enabled:
-        b1.enabled !== false,
-
-      text:
-        b1.text ||
-        'OPEN LINK',
-
-      url:
-        b1.url ||
-        '',
-
-      color:
-        b1.color ||
-        '#6d5dfc',
-
-      colorEnabled:
-        b1.colorEnabled !== undefined
-          ? !!b1.colorEnabled
-          : true,
-
-      buttonStyle:
-        b1.buttonStyle ||
-        ''
-
-    },
-
-
-    button2: {
-
-      enabled:
-        !!b2.enabled,
-
-      text:
-        b2.text ||
-        'SUPPORT',
-
-      url:
-        b2.url ||
-        '',
-
-      color:
-        b2.color ||
-        '#6d5dfc',
-
-      colorEnabled:
-        b2.colorEnabled !== undefined
-          ? !!b2.colorEnabled
-          : true,
-
-      buttonStyle:
-        b2.buttonStyle ||
-        ''
-
-    }
-
-  };
-
-}
-
-
-/* =========================================================
-   NORMALIZE MAIN BUTTON
-========================================================= */
-
-function normalizeButton(
-  raw,
-  def
-) {
-
-  const b = {
-
-    ...clone(def),
-
-    ...(raw || {})
-
-  };
-
-
-  b.id =
-    raw?.id ||
-    def.id;
-
-
-  b.enabled =
-    raw?.enabled !== false;
-
-
-  b.text =
-    hasValue(raw?.text)
-      ? String(raw.text)
-      : def.text;
-
-
-  /* =========================
-     COLOR
-  ========================= */
-
-  b.buttonColorEnabled =
-    raw?.buttonColorEnabled !== undefined
-      ? !!raw.buttonColorEnabled
-      : true;
-
-
-  b.buttonColor =
-    hasValue(
-      raw?.buttonColor
-    )
-      ? String(
-          raw.buttonColor
-        )
-      : def.buttonColor;
-
-
-  b.buttonStyle =
-    raw?.buttonStyle ||
-    def.buttonStyle ||
-    '';
-
-
-  /* =========================
-     OLD IMAGE
-  ========================= */
-
-  const legacyImage =
-    hasValue(
-      raw?.buttonImageUrl
-    );
-
-
-  const legacyImageEnabled =
-    raw?.buttonImageEnabled !== undefined
-      ? !!raw.buttonImageEnabled
-      : legacyImage;
-
-
-  /* =========================
-     NEW VISUAL
-  ========================= */
-
-  const hasNewVisualFields =
-
-    raw?.buttonVisualEnabled !==
-      undefined ||
-
-    raw?.buttonVisualMediaType !==
-      undefined ||
-
-    raw?.buttonVisualMediaId !==
-      undefined ||
-
-    raw?.buttonVisualMediaUrl !==
-      undefined ||
-
-    raw?.buttonVisualText !==
-      undefined;
-
-
-  b.buttonVisualEnabled =
-    raw?.buttonVisualEnabled !==
-      undefined
-
-      ? !!raw.buttonVisualEnabled
-
-      : legacyImageEnabled;
-
-
-  b.buttonVisualMediaType =
-    raw?.buttonVisualMediaType ||
-
-    (
-      legacyImage
-        ? 'photo'
-        : 'none'
-    );
-
-
-  b.buttonVisualMediaSource =
-    raw?.buttonVisualMediaSource ||
-
-    (
-      legacyImage
-        ? 'url'
-        : 'upload'
-    );
-
-
-  b.buttonVisualMediaId =
-    raw?.buttonVisualMediaId ??
-    null;
-
-
-  b.buttonVisualMediaUrl =
-    hasValue(
-      raw?.buttonVisualMediaUrl
-    )
-
-      ? String(
-          raw.buttonVisualMediaUrl
-        )
-
-      : (
-          legacyImage
-            ? String(
-                raw.buttonImageUrl
-              )
-            : ''
-        );
-
-
-  b.buttonVisualText =
-    raw?.buttonVisualText ||
-    '';
-
-
-  /* =========================
-     LEGACY MIRROR
-  ========================= */
-
-  b.buttonImageEnabled =
-    b.buttonVisualEnabled;
-
-
-  b.buttonImageUrl =
-
-    b.buttonVisualMediaType ===
-      'photo' &&
-
-    b.buttonVisualMediaSource ===
-      'url'
-
-      ? b.buttonVisualMediaUrl
-
-      : (
-          raw?.buttonImageUrl ||
-          ''
-        );
-
-
-  /* =========================
-     HEADER
-  ========================= */
-
-  b.headerMediaType =
-    raw?.headerMediaType ||
-    'none';
-
-
-  b.headerMediaSource =
-    raw?.headerMediaSource ||
-    'upload';
-
-
-  b.headerMediaId =
-    raw?.headerMediaId ??
-    null;
-
-
-  b.headerMediaUrl =
-    raw?.headerMediaUrl ||
-    '';
-
-
-  b.headerText =
-    raw?.headerText ||
-    '';
-
-
-  /*
-    পুরোনো system থেকে migration
-
-    যদি নতুন Visual system না থাকে,
-    তাহলে পুরোনো Header media-কে
-    button visual হিসেবে ব্যবহার করবে।
-  */
-
-  if (
-    !hasNewVisualFields &&
-    !legacyImage &&
-    !b.buttonVisualEnabled
-  ) {
-
-    if (
-      b.headerMediaType !==
-        'none' &&
-
-      (
-        b.headerMediaId ||
-        b.headerMediaUrl
-      )
-    ) {
-
-      b.buttonVisualEnabled =
-        true;
-
-      b.buttonVisualMediaType =
-        b.headerMediaType;
-
-      b.buttonVisualMediaSource =
-        b.headerMediaSource;
-
-      b.buttonVisualMediaId =
-        b.headerMediaId;
-
-      b.buttonVisualMediaUrl =
-        b.headerMediaUrl;
-
-      b.buttonVisualText =
-        b.headerText ||
-        '';
-
-    }
-
-    else if (
-      b.headerText
-    ) {
-
-      b.buttonVisualEnabled =
-        true;
-
-      b.buttonVisualMediaType =
-        'none';
-
-      b.buttonVisualMediaSource =
-        'upload';
-
-      b.buttonVisualText =
-        b.headerText;
-
-    }
-
+  })),
+
+  audio: {
+    enabled: false,
+    text: '',
+    source: 'upload',
+    mediaId: null,
+    mediaUrl: ''
+  }
+};
+
+const clone = x => JSON.parse(JSON.stringify(x));
+
+const str = (v, d = '') =>
+  v == null ? d : String(v);
+
+function bool(v, d = false) {
+  if (v == null) return d;
+
+  if (typeof v === 'boolean') {
+    return v;
   }
 
+  const s = String(v).toLowerCase().trim();
 
-  /* =========================
-     SLOTS
-  ========================= */
+  if (['true', '1', 'yes', 'on'].includes(s)) {
+    return true;
+  }
 
-  const rawSlots =
-    Array.isArray(
-      raw?.slots
-    )
-      ? raw.slots
-      : [];
+  if (['false', '0', 'no', 'off'].includes(s)) {
+    return false;
+  }
 
-
-  b.slots =
-    rawSlots
-      .slice(0,20)
-      .map(
-        normalizeSlot
-      );
-
-
-  return b;
-
+  return !!v;
 }
 
+function mediaType(v) {
+  v = str(v, 'none').toLowerCase();
 
-/* =========================================================
-   NORMALIZE SETTINGS
-========================================================= */
+  return ['none', 'photo', 'video', 'audio'].includes(v)
+    ? v
+    : 'none';
+}
 
-function normalizeSettings(raw) {
+function mediaSource(v) {
+  return str(v, 'upload').toLowerCase() === 'url'
+    ? 'url'
+    : 'upload';
+}
 
-  const defaults =
-    defaultSettings();
+function color(v, d = '#6d5dfc') {
+  v = str(v, d).trim();
 
-  const src =
-    raw &&
-    typeof raw === 'object'
+  return /^#[0-9a-f]{6}$/i.test(v)
+    ? v
+    : d;
+}
+
+function buttonStyle(v) {
+  v = str(v, '').toLowerCase();
+
+  return ['', 'primary', 'success', 'danger'].includes(v)
+    ? v
+    : '';
+}
+
+function cleanUrl(v) {
+  return str(v, '').trim();
+}
+
+function normalizeSlot(x = {}) {
+  const a = x.button1 || {};
+  const b = x.button2 || {};
+
+  return {
+    enabled: bool(x.enabled, true),
+
+    mediaType: mediaType(x.mediaType),
+    mediaSource: mediaSource(x.mediaSource),
+
+    mediaId: x.mediaId
+      ? Number(x.mediaId)
+      : null,
+
+    mediaUrl: cleanUrl(x.mediaUrl),
+
+    text: str(x.text, ''),
+
+    button1: {
+      enabled: bool(a.enabled, true),
+      text: str(a.text, 'OPEN LINK'),
+      url: cleanUrl(a.url),
+      color: color(a.color),
+      colorEnabled: bool(a.colorEnabled, true)
+    },
+
+    button2: {
+      enabled: bool(b.enabled, false),
+      text: str(b.text, 'SUPPORT'),
+      url: cleanUrl(b.url),
+      color: color(b.color),
+      colorEnabled: bool(b.colorEnabled, true)
+    }
+  };
+}
+
+function normalizeButton(raw = {}, def = {}) {
+  const oldImageUrl = cleanUrl(raw.buttonImageUrl);
+
+  const oldImageEnabled = bool(
+    raw.buttonImageEnabled,
+    !!oldImageUrl
+  );
+
+  const hasNewVisual =
+    raw.buttonVisualEnabled !== undefined ||
+    raw.buttonVisualMediaType !== undefined ||
+    raw.buttonVisualMediaId !== undefined ||
+    raw.buttonVisualMediaUrl !== undefined ||
+    raw.buttonVisualText !== undefined;
+
+  let visualEnabled = bool(
+    raw.buttonVisualEnabled,
+    oldImageEnabled ||
+    !!raw.buttonVisualMediaId ||
+    !!raw.buttonVisualMediaUrl ||
+    !!raw.buttonVisualText
+  );
+
+  let visualType = mediaType(raw.buttonVisualMediaType);
+  let visualSource = mediaSource(raw.buttonVisualMediaSource);
+
+  let visualId = raw.buttonVisualMediaId
+    ? Number(raw.buttonVisualMediaId)
+    : null;
+
+  let visualUrl = cleanUrl(raw.buttonVisualMediaUrl);
+
+  let visualText = str(
+    raw.buttonVisualText,
+    ''
+  );
+
+  // পুরোনো buttonImageUrl → নতুন Visual System
+  if (!hasNewVisual && oldImageUrl) {
+    visualEnabled = true;
+    visualType = 'photo';
+    visualSource = 'url';
+    visualId = null;
+    visualUrl = oldImageUrl;
+  }
+
+  return {
+    id: str(raw.id, def.id),
+
+    enabled: bool(
+      raw.enabled,
+      def.enabled !== undefined
+        ? def.enabled
+        : true
+    ),
+
+    text: str(
+      raw.text,
+      def.text || ''
+    ),
+
+    buttonColorEnabled: bool(
+      raw.buttonColorEnabled,
+      true
+    ),
+
+    buttonColor: color(
+      raw.buttonColor
+    ),
+
+    buttonStyle: buttonStyle(
+      raw.buttonStyle
+    ),
+
+    buttonVisualEnabled: visualEnabled,
+
+    buttonVisualMediaType: visualType,
+
+    buttonVisualMediaSource: visualSource,
+
+    buttonVisualMediaId: visualId,
+
+    buttonVisualMediaUrl: visualUrl,
+
+    buttonVisualText: visualText,
+
+    // Legacy fields
+    buttonImageEnabled: visualEnabled,
+
+    buttonImageUrl:
+      visualType === 'photo' &&
+      visualSource === 'url'
+        ? visualUrl
+        : oldImageUrl,
+
+    headerMediaType:
+      mediaType(raw.headerMediaType),
+
+    headerMediaSource:
+      mediaSource(raw.headerMediaSource),
+
+    headerMediaId:
+      raw.headerMediaId
+        ? Number(raw.headerMediaId)
+        : null,
+
+    headerMediaUrl:
+      cleanUrl(raw.headerMediaUrl),
+
+    headerText:
+      str(raw.headerText, ''),
+
+    slots:
+      Array.isArray(raw.slots)
+        ? raw.slots.map(normalizeSlot)
+        : []
+  };
+}
+
+function normalizeSettings(raw = {}) {
+  const out = clone(DEFAULT_SETTINGS);
+
+  const r =
+    raw && typeof raw === 'object'
       ? raw
       : {};
 
-
-  const out =
-    clone(
-      defaults
-    );
-
-
-  /* =========================
-     AUTO DELETE
-  ========================= */
+  const n = Number(r.autoDelete);
 
   out.autoDelete =
-    Math.max(
-      0,
-      Math.min(
-        86400,
-        Number(
-          src.autoDelete ||
-          0
+    Number.isFinite(n)
+      ? Math.max(
+          0,
+          Math.min(
+            86400,
+            Math.floor(n)
+          )
         )
-      )
-    );
+      : 0;
 
+  const w =
+    r.welcome &&
+    typeof r.welcome === 'object'
+      ? r.welcome
+      : {};
 
-  /* =========================
-     WELCOME
-  ========================= */
-
-  const rw =
-    src.welcome ||
-    {};
-
-
-  out.welcome.profilePhotoEnabled =
-
-    rw.profilePhotoEnabled !==
-      undefined
-
-      ? !!rw.profilePhotoEnabled
-
-      : (
-          rw.profilePhoto !==
-            undefined
-
-            ? !!rw.profilePhoto
-
-            : true
-        );
-
-
-  out.welcome.profilePhoto =
-    out.welcome.profilePhotoEnabled;
-
-
-  const oldWelcomeMediaConfigured =
-
-    (
-      rw.mediaType &&
-      rw.mediaType !== 'none'
-    ) ||
-
-    hasValue(
-      rw.mediaId
-    ) ||
-
-    hasValue(
-      rw.mediaUrl
-    );
-
-
-  out.welcome.mediaEnabled =
-
-    rw.mediaEnabled !==
-      undefined
-
-      ? !!rw.mediaEnabled
-
-      : !!oldWelcomeMediaConfigured;
-
-
-  out.welcome.mediaType =
-    rw.mediaType ||
-    'none';
-
-
-  out.welcome.mediaSource =
-    rw.mediaSource ||
-    'upload';
-
-
-  out.welcome.mediaId =
-    rw.mediaId ??
-    null;
-
-
-  out.welcome.mediaUrl =
-    rw.mediaUrl ||
-    '';
-
-
-  out.welcome.text =
-    rw.text !== undefined
-      ? String(rw.text)
-      : defaults.welcome.text;
-
-
-  out.welcome.layout =
-
-    rw.layout ===
-      'buttons_profile_welcome'
-
-      ? 'buttons_profile_welcome'
-
-      : 'profile_welcome_buttons';
-
-
-  /* =========================
-     MAIN BUTTONS
-  ========================= */
-
-  const rawById =
-    new Map(
-
-      (
-        Array.isArray(
-          src.mainButtons
-        )
-          ? src.mainButtons
-          : []
-      )
-
-      .filter(
-        x =>
-          x &&
-          x.id
-      )
-
-      .map(
-        x => [
-          String(x.id),
-          x
-        ]
-      )
-
-    );
-
-
-  out.mainButtons =
-    defaults.mainButtons.map(
-      def =>
-        normalizeButton(
-          rawById.get(
-            def.id
-          ),
-          def
-        )
-    );
-
-
-  /* =========================
-     AUDIO
-  ========================= */
-
-  out.audio = {
-
-    ...clone(
-      defaults.audio
+  out.welcome = {
+    profilePhotoEnabled: bool(
+      w.profilePhotoEnabled,
+      w.profilePhoto === undefined
+        ? true
+        : bool(w.profilePhoto, true)
     ),
 
-    ...(src.audio || {})
-
-  };
-
-
-  out.audio.enabled =
-    !!out.audio.enabled;
-
-
-  out.audio.mediaType =
-    'audio';
-
-
-  out.audio.mediaSource =
-    out.audio.mediaSource ||
-    'url';
-
-
-  out.audio.mediaId =
-    out.audio.mediaId ??
-    null;
-
-
-  out.audio.mediaUrl =
-    out.audio.mediaUrl ||
-    '';
-
-
-  out.audio.text =
-    out.audio.text ||
-    '';
-
-
-  out.audio.button1 = {
-
-    ...clone(
-      defaults.audio.button1
+    profilePhoto: bool(
+      w.profilePhoto,
+      bool(w.profilePhotoEnabled, true)
     ),
 
-    ...(out.audio.button1 || {})
-
-  };
-
-
-  out.audio.button2 = {
-
-    ...clone(
-      defaults.audio.button2
+    mediaEnabled: bool(
+      w.mediaEnabled,
+      !!w.mediaId ||
+      !!cleanUrl(w.mediaUrl) ||
+      mediaType(w.mediaType) !== 'none'
     ),
 
-    ...(out.audio.button2 || {})
+    mediaType:
+      mediaType(w.mediaType),
 
+    mediaSource:
+      mediaSource(w.mediaSource),
+
+    mediaId:
+      w.mediaId
+        ? Number(w.mediaId)
+        : null,
+
+    mediaUrl:
+      cleanUrl(w.mediaUrl),
+
+    text:
+      str(
+        w.text,
+        out.welcome.text
+      ),
+
+    layout:
+      str(
+        w.layout,
+        'profile_welcome_buttons'
+      ) === 'buttons_profile_welcome'
+        ? 'buttons_profile_welcome'
+        : 'profile_welcome_buttons'
   };
 
+  const rawButtons =
+    Array.isArray(r.mainButtons)
+      ? r.mainButtons
+      : [];
 
-  return out;
-
-}
-
-
-/* =========================================================
-   DATABASE QUERY
-========================================================= */
-
-async function dbQuery(
-  text,
-  params = []
-) {
-
-  if (!pool) {
-
-    throw new Error(
-      'DATABASE_URL is not configured.'
-    );
-
-  }
-
-  return pool.query(
-    text,
-    params
+  const byId = new Map(
+    rawButtons.map(
+      x => [
+        str(x && x.id),
+        x
+      ]
+    )
   );
 
-}
-
-
-/* =========================================================
-   DATABASE INIT
-========================================================= */
-
-async function initDb() {
-
-  if (!pool)
-    return;
-
-
-  await dbQuery(`
-
-    CREATE TABLE IF NOT EXISTS bot_settings (
-
-      id INTEGER PRIMARY KEY,
-
-      data JSONB NOT NULL,
-
-      updated_at
-        TIMESTAMPTZ
-        NOT NULL
-        DEFAULT NOW()
-
-    )
-
-  `);
-
-
-  await dbQuery(`
-
-    CREATE TABLE IF NOT EXISTS bot_media (
-
-      id BIGSERIAL PRIMARY KEY,
-
-      kind TEXT NOT NULL,
-
-      filename TEXT NOT NULL,
-
-      mimetype TEXT NOT NULL,
-
-      data BYTEA NOT NULL,
-
-      telegram_file_id TEXT,
-
-      created_at
-        TIMESTAMPTZ
-        NOT NULL
-        DEFAULT NOW()
-
-    )
-
-  `);
-
-
-  await dbQuery(`
-
-    CREATE TABLE IF NOT EXISTS bot_chat_messages (
-
-      chat_id BIGINT NOT NULL,
-
-      message_id BIGINT NOT NULL,
-
-      created_at
-        TIMESTAMPTZ
-        NOT NULL
-        DEFAULT NOW(),
-
-      PRIMARY KEY (
-        chat_id,
-        message_id
-      )
-
-    )
-
-  `);
-
-
-  const result =
-    await dbQuery(
-      `
-      SELECT data
-      FROM bot_settings
-      WHERE id=1
-      LIMIT 1
-      `
-    );
-
-
-  if (
-    !result.rows.length
-  ) {
-
-    await dbQuery(
-
-      `
-      INSERT INTO
-        bot_settings(
-          id,
-          data
-        )
-
-      VALUES(
-        1,
-        $1::jsonb
-      )
-      `,
-
-      [
-        JSON.stringify(
-          defaultSettings()
-        )
-      ]
-
-    );
-
-  }
-
-  else {
-
-    const normalized =
-      normalizeSettings(
-        result.rows[0].data
+  out.mainButtons = IDS.map(id => {
+    const defaultButton =
+      out.mainButtons.find(
+        x => x.id === id
       );
 
-
-    await dbQuery(
-
-      `
-      UPDATE bot_settings
-
-      SET
-        data=$1::jsonb,
-        updated_at=NOW()
-
-      WHERE id=1
-      `,
-
-      [
-        JSON.stringify(
-          normalized
-        )
-      ]
-
+    return normalizeButton(
+      byId.get(id) || {},
+      defaultButton
     );
+  });
 
-  }
+  const a =
+    r.audio &&
+    typeof r.audio === 'object'
+      ? r.audio
+      : {};
 
+  out.audio = {
+    enabled:
+      bool(a.enabled, false),
+
+    text:
+      str(a.text, ''),
+
+    source:
+      mediaSource(a.source),
+
+    mediaId:
+      a.mediaId
+        ? Number(a.mediaId)
+        : null,
+
+    mediaUrl:
+      cleanUrl(a.mediaUrl)
+  };
+
+  return out;
 }
 
+let settings =
+  clone(DEFAULT_SETTINGS);
 
-/* =========================================================
-   GET SETTINGS
-========================================================= */
+async function initDB() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS bot_settings (
+      id INTEGER PRIMARY KEY,
+      data JSONB NOT NULL,
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+  `);
 
-async function getSettings() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS bot_media (
+      id BIGSERIAL PRIMARY KEY,
+      kind TEXT NOT NULL,
+      filename TEXT NOT NULL,
+      mimetype TEXT NOT NULL,
+      data BYTEA NOT NULL,
+      telegram_file_id TEXT,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+  `);
 
-  const result =
-    await dbQuery(
-      `
-      SELECT data
-      FROM bot_settings
-      WHERE id=1
-      LIMIT 1
-      `
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS bot_chat_messages (
+      chat_id BIGINT NOT NULL,
+      message_id BIGINT NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      PRIMARY KEY(chat_id, message_id)
+    )
+  `);
+
+  const q =
+    await pool.query(
+      'SELECT data FROM bot_settings WHERE id=1'
     );
 
+  settings =
+    q.rows.length
+      ? normalizeSettings(q.rows[0].data)
+      : clone(DEFAULT_SETTINGS);
 
-  if (
-    !result.rows.length
-  ) {
+  await pool.query(
+    `
+      INSERT INTO bot_settings(id,data)
+      VALUES(1,$1::jsonb)
 
-    return normalizeSettings(
-      defaultSettings()
-    );
+      ON CONFLICT(id)
 
-  }
-
-
-  return normalizeSettings(
-    result.rows[0].data
+      DO UPDATE SET
+        data=EXCLUDED.data,
+        updated_at=NOW()
+    `,
+    [
+      JSON.stringify(settings)
+    ]
   );
 
+  console.log(
+    'Database initialized.'
+  );
 }
 
+async function saveSettings(x) {
+  settings =
+    normalizeSettings(x);
 
-/* =========================================================
-   SAVE SETTINGS
-========================================================= */
-
-async function saveSettings(
-  data
-) {
-
-  const normalized =
-    normalizeSettings(
-      data
-    );
-
-
-  await dbQuery(
-
+  await pool.query(
     `
-    INSERT INTO
-      bot_settings(
+      INSERT INTO bot_settings(
         id,
         data,
         updated_at
       )
-
-    VALUES(
-      1,
-      $1::jsonb,
-      NOW()
-    )
-
-    ON CONFLICT(id)
-
-    DO UPDATE SET
-
-      data =
-        EXCLUDED.data,
-
-      updated_at =
+      VALUES(
+        1,
+        $1::jsonb,
         NOW()
-    `,
-
-    [
-      JSON.stringify(
-        normalized
       )
-    ]
 
+      ON CONFLICT(id)
+
+      DO UPDATE SET
+        data=EXCLUDED.data,
+        updated_at=NOW()
+    `,
+    [
+      JSON.stringify(settings)
+    ]
   );
 
-
-  return normalized;
-
+  return settings;
 }
-
-
-/* =========================================================
-   ADMIN AUTH
-========================================================= */
-
-const adminSessions =
-  new Map();
-
-const SESSION_MS =
-  7 *
-  24 *
-  60 *
-  60 *
-  1000;
-
-
-function makeToken() {
-
-  return crypto
-    .randomBytes(32)
-    .toString('hex');
-
-}
-
-
-function requireAdmin(
-  req,
-  res,
-  next
-) {
-
-  const header =
-    req.headers.authorization ||
-    '';
-
-
-  const token =
-    header.startsWith(
-      'Bearer '
-    )
-
-      ? header
-          .slice(7)
-          .trim()
-
-      : '';
-
-
-  const created =
-    adminSessions.get(
-      token
-    );
-
-
-  if (
-    !token ||
-    !created ||
-    Date.now() -
-      created >
-      SESSION_MS
-  ) {
-
-    adminSessions.delete(
-      token
-    );
-
-
-    return res
-      .status(401)
-      .json({
-
-        ok:false,
-
-        error:
-          'Unauthorized'
-
-      });
-
-  }
-
-
-  next();
-
-}
-
-
-/* =========================================================
-   TELEGRAM
-========================================================= */
-
-const TG =
-  `https://api.telegram.org/bot${BOT_TOKEN}`;
-
 
 async function telegram(
   method,
   payload = {}
 ) {
-
-  if (!BOT_TOKEN) {
-
-    throw new Error(
-      'BOT_TOKEN is not configured.'
-    );
-
-  }
-
-
   const response =
     await fetch(
-      `${TG}/${method}`,
+      `https://api.telegram.org/bot${BOT_TOKEN}/${method}`,
       {
-
-        method:
-          'POST',
+        method: 'POST',
 
         headers: {
           'Content-Type':
@@ -1438,3441 +566,1765 @@ async function telegram(
         },
 
         body:
-          JSON.stringify(
-            payload
-          )
-
+          JSON.stringify(payload)
       }
     );
 
+  const data =
+    await response.json()
+      .catch(() => ({
+        ok: false,
+        description:
+          `HTTP ${response.status}`
+      }));
 
-  let data;
-
-
-  try {
-
-    data =
-      await response.json();
-
-  }
-
-  catch (_) {
-
-    throw new Error(
-      `Telegram returned HTTP ${response.status}`
-    );
-
-  }
-
-
-  if (!data.ok) {
-
+  if (
+    !response.ok ||
+    !data.ok
+  ) {
     throw new Error(
       data.description ||
-      `Telegram API error in ${method}`
+      `Telegram HTTP ${response.status}`
     );
-
   }
 
-
   return data.result;
-
 }
 
-
-/* =========================================================
-   TELEGRAM MULTIPART
-========================================================= */
-
-async function telegramMultipart(
+async function telegramForm(
   method,
   form
 ) {
-
   const response =
     await fetch(
-      `${TG}/${method}`,
+      `https://api.telegram.org/bot${BOT_TOKEN}/${method}`,
       {
-
-        method:
-          'POST',
-
-        body:
-          form
-
+        method: 'POST',
+        body: form
       }
     );
-
 
   const data =
-    await response.json();
+    await response.json()
+      .catch(() => ({
+        ok: false,
+        description:
+          `HTTP ${response.status}`
+      }));
 
-
-  if (!data.ok) {
-
+  if (
+    !response.ok ||
+    !data.ok
+  ) {
     throw new Error(
       data.description ||
-      `Telegram API error in ${method}`
+      `Telegram HTTP ${response.status}`
     );
-
   }
-
 
   return data.result;
-
 }
 
-
-/* =========================================================
-   TELEGRAM BUTTON STYLE
-========================================================= */
-
-function telegramButtonStyle(
-  color,
-  enabled,
-  explicitStyle
+function rememberMessage(
+  chatId,
+  messageId
 ) {
+  if (!messageId) return;
 
-  /*
-    COLOR OFF
-
-    Telegram default style.
-  */
+  const key =
+    String(chatId);
 
   if (
-    enabled === false
+    !messageCache.has(key)
   ) {
-
-    return undefined;
-
+    messageCache.set(
+      key,
+      new Set()
+    );
   }
 
-
-  if (
-    explicitStyle &&
-    [
-      'primary',
-      'success',
-      'danger'
-    ].includes(
-      explicitStyle
-    )
-  ) {
-
-    return explicitStyle;
-
-  }
-
-
-  const c =
-    String(
-      color || ''
-    )
-    .toLowerCase()
-    .replace(
-      '#',
-      ''
-    );
-
-
-  if (
-    !/^[0-9a-f]{6}$/.test(c)
-  ) {
-
-    return 'primary';
-
-  }
-
-
-  const r =
-    parseInt(
-      c.slice(0,2),
-      16
-    );
-
-
-  const g =
-    parseInt(
-      c.slice(2,4),
-      16
-    );
-
-
-  const b =
-    parseInt(
-      c.slice(4,6),
-      16
-    );
-
-
-  if (
-    r > 175 &&
-    r > g * 1.22 &&
-    r > b * 1.22
-  ) {
-
-    return 'danger';
-
-  }
-
-
-  if (
-    g > 125 &&
-    g >= r * 1.12 &&
-    g >= b * 1.05
-  ) {
-
-    return 'success';
-
-  }
-
-
-  return 'primary';
-
-}
-
-
-/* =========================================================
-   URL BUTTON
-========================================================= */
-
-function makeUrlButton(
-  button
-) {
-
-  if (
-    !button ||
-    button.enabled === false ||
-    !hasValue(button.url) ||
-    !hasValue(button.text)
-  ) {
-
-    return null;
-
-  }
-
-
-  const result = {
-
-    text:
-      String(
-        button.text
-      ),
-
-    url:
-      String(
-        button.url
-      )
-
-  };
-
-
-  const style =
-    telegramButtonStyle(
-
-      button.color,
-
-      button.colorEnabled,
-
-      button.buttonStyle
-
-    );
-
-
-  if (style) {
-
-    result.style =
-      style;
-
-  }
-
-
-  return result;
-
-}
-
-
-/* =========================================================
-   CALLBACK BUTTON
-========================================================= */
-
-function makeCallbackButton(
-  text,
-  data,
-  color,
-  colorEnabled,
-  explicitStyle
-) {
-
-  const result = {
-
-    text,
-
-    callback_data:
-      data
-
-  };
-
-
-  const style =
-    telegramButtonStyle(
-
-      color,
-
-      colorEnabled,
-
-      explicitStyle
-
-    );
-
-
-  if (style) {
-
-    result.style =
-      style;
-
-  }
-
-
-  return result;
-
-}
-
-
-/* =========================================================
-   MAIN CALLBACK BUTTON
-========================================================= */
-
-function mainCallbackButton(
-  button
-) {
-
-  return makeCallbackButton(
-
-    button.text,
-
-    `main:${button.id}`,
-
-    button.buttonColor,
-
-    button.buttonColorEnabled,
-
-    button.buttonStyle
-
-  );
-
-}
-
-
-/* =========================================================
-   BACK
-========================================================= */
-
-function backButton() {
-
-  return makeCallbackButton(
-
-    '⬅️ BACK',
-
-    'back:main',
-
-    '#555b6b',
-
-    true,
-
-    'primary'
-
-  );
-
-}
-
-
-/* =========================================================
-   SLOT KEYBOARD
-========================================================= */
-
-function slotKeyboard(
-  slot
-) {
-
-  const rows = [];
-
-  const row = [];
-
-
-  const b1 =
-    makeUrlButton(
-      slot.button1
-    );
-
-
-  const b2 =
-    makeUrlButton(
-      slot.button2
-    );
-
-
-  if (b1)
-    row.push(b1);
-
-
-  if (b2)
-    row.push(b2);
-
-
-  if (
-    row.length
-  ) {
-
-    rows.push(
-      row
-    );
-
-  }
-
-
-  return rows;
-
-}
-
-
-/* =========================================================
-   MEDIA DATABASE
-========================================================= */
-
-async function getMedia(
-  mediaId
-) {
-
-  if (!mediaId)
-    return null;
-
-
-  const result =
-    await dbQuery(
-
-      `
-      SELECT
-        id,
-        kind,
-        filename,
-        mimetype,
-        data,
-        telegram_file_id
-
-      FROM bot_media
-
-      WHERE id=$1
-
-      LIMIT 1
-      `,
-
-      [
-        Number(
-          mediaId
-        )
-      ]
-
-    );
-
-
-  return (
-    result.rows[0] ||
-    null
-  );
-
-}
-
-
-/* =========================================================
-   CACHE TELEGRAM FILE ID
-========================================================= */
-
-async function setTelegramFileId(
-  mediaId,
-  fileId
-) {
-
-  await dbQuery(
-
+  messageCache
+    .get(key)
+    .add(Number(messageId));
+
+  pool.query(
     `
-    UPDATE bot_media
+      INSERT INTO bot_chat_messages(
+        chat_id,
+        message_id
+      )
+      VALUES($1,$2)
 
-    SET
-      telegram_file_id=$1
-
-    WHERE id=$2
+      ON CONFLICT DO NOTHING
     `,
-
     [
-      fileId,
-
-      Number(
-        mediaId
-      )
+      key,
+      Number(messageId)
     ]
-
-  );
-
-}
-
-
-/* =========================================================
-   BUFFER -> BLOB
-========================================================= */
-
-function inputFileForBuffer(
-  media
-) {
-
-  return new Blob(
-    [
-      media.data
-    ],
-
-    {
-      type:
-        media.mimetype ||
-        'application/octet-stream'
-    }
-
-  );
-
-}
-
-
-/* =========================================================
-   SEND UPLOADED MEDIA
-========================================================= */
-
-async function sendUploadedMedia(
-  chatId,
-  media,
-  caption = '',
-  replyMarkup
-) {
-
-  let fileId =
-    media.telegram_file_id ||
-    null;
-
-
-  /* =========================
-     CACHED TELEGRAM FILE ID
-  ========================= */
-
-  if (fileId) {
-
-    const payload = {
-
-      chat_id:
-        chatId
-
-    };
-
-
-    if (
-      media.kind ===
-        'photo'
-    ) {
-
-      payload.photo =
-        fileId;
-
-    }
-
-
-    if (
-      media.kind ===
-        'video'
-    ) {
-
-      payload.video =
-        fileId;
-
-    }
-
-
-    if (
-      media.kind ===
-        'audio'
-    ) {
-
-      payload.audio =
-        fileId;
-
-    }
-
-
-    if (caption) {
-
-      payload.caption =
-        caption;
-
-    }
-
-
-    if (replyMarkup) {
-
-      payload.reply_markup =
-        replyMarkup;
-
-    }
-
-
-    try {
-
-      return await telegram(
-
-        media.kind === 'photo'
-          ? 'sendPhoto'
-
-          : media.kind === 'video'
-            ? 'sendVideo'
-
-            : 'sendAudio',
-
-        payload
-
-      );
-
-    }
-
-    catch (_) {
-
-      fileId =
-        null;
-
-    }
-
-  }
-
-
-  /* =========================
-     UPLOAD TO TELEGRAM
-  ========================= */
-
-  const form =
-    new FormData();
-
-
-  form.append(
-    'chat_id',
-    String(chatId)
-  );
-
-
-  form.append(
-
-    media.kind === 'photo'
-      ? 'photo'
-
-      : media.kind === 'video'
-        ? 'video'
-
-        : 'audio',
-
-    inputFileForBuffer(
-      media
-    ),
-
-    media.filename ||
-      `upload-${Date.now()}`
-  );
-
-
-  if (caption) {
-
-    form.append(
-      'caption',
-      caption
-    );
-
-  }
-
-
-  if (replyMarkup) {
-
-    form.append(
-
-      'reply_markup',
-
-      JSON.stringify(
-        replyMarkup
-      )
-
-    );
-
-  }
-
-
-  const result =
-    await telegramMultipart(
-
-      media.kind === 'photo'
-        ? 'sendPhoto'
-
-        : media.kind === 'video'
-          ? 'sendVideo'
-
-          : 'sendAudio',
-
-      form
-
-    );
-
-
-  let newFileId =
-    null;
-
-
-  if (
-    media.kind ===
-      'photo'
-  ) {
-
-    newFileId =
-      result
-        ?.photo
-        ?.at(-1)
-        ?.file_id;
-
-  }
-
-
-  if (
-    media.kind ===
-      'video'
-  ) {
-
-    newFileId =
-      result
-        ?.video
-        ?.file_id;
-
-  }
-
-
-  if (
-    media.kind ===
-      'audio'
-  ) {
-
-    newFileId =
-      result
-        ?.audio
-        ?.file_id;
-
-  }
-
-
-  if (newFileId) {
-
-    try {
-
-      await setTelegramFileId(
-        media.id,
-        newFileId
-      );
-
-    }
-
-    catch (_) {}
-
-  }
-
-
-  return result;
-
-}
-
-
-/* =========================================================
-   SEND URL MEDIA
-========================================================= */
-
-async function sendUrlMedia(
-  chatId,
-  type,
-  url,
-  caption = '',
-  replyMarkup
-) {
-
-  if (
-    !hasValue(url)
-  ) {
-
-    return null;
-
-  }
-
-
-  const payload = {
-
-    chat_id:
-      chatId
-
-  };
-
-
-  if (
-    type === 'photo'
-  ) {
-
-    payload.photo =
-      url;
-
-  }
-
-  else if (
-    type === 'video'
-  ) {
-
-    payload.video =
-      url;
-
-  }
-
-  else if (
-    type === 'audio'
-  ) {
-
-    payload.audio =
-      url;
-
-  }
-
-  else {
-
-    return null;
-
-  }
-
-
-  if (caption) {
-
-    payload.caption =
-      caption;
-
-  }
-
-
-  if (replyMarkup) {
-
-    payload.reply_markup =
-      replyMarkup;
-
-  }
-
-
-  return telegram(
-
-    type === 'photo'
-      ? 'sendPhoto'
-
-      : type === 'video'
-        ? 'sendVideo'
-
-        : 'sendAudio',
-
-    payload
-
-  );
-
-}
-
-
-/* =========================================================
-   SEND CONFIGURED MEDIA
-========================================================= */
-
-async function sendConfiguredMedia(
-  chatId,
-  cfg,
-  caption = '',
-  replyMarkup
-) {
-
-  const type =
-    cfg?.mediaType ||
-    cfg?.type ||
-    'none';
-
-
-  if (
-    type === 'none'
-  ) {
-
-    return null;
-
-  }
-
-
-  try {
-
-    if (
-      cfg.mediaSource ===
-        'upload' &&
-
-      cfg.mediaId
-    ) {
-
-      const media =
-        await getMedia(
-          cfg.mediaId
-        );
-
-
-      if (media) {
-
-        return await sendUploadedMedia(
-
+  ).catch(() => {});
+
+  const seconds =
+    Number(settings.autoDelete || 0);
+
+  if (seconds > 0) {
+    setTimeout(
+      () => {
+        deleteOneMessage(
           chatId,
-
-          media,
-
-          caption,
-
-          replyMarkup
-
-        );
-
-      }
-
-    }
-
-
-    if (
-      cfg.mediaUrl
-    ) {
-
-      return await sendUrlMedia(
-
-        chatId,
-
-        type,
-
-        cfg.mediaUrl,
-
-        caption,
-
-        replyMarkup
-
-      );
-
-    }
-
-  }
-
-  catch (error) {
-
-    console.error(
-      'sendConfiguredMedia:',
-      error.message
+          messageId
+        ).catch(() => {});
+      },
+      seconds * 1000
     );
-
   }
-
-
-  return null;
-
 }
 
+async function deleteOneMessage(
+  chatId,
+  messageId
+) {
+  try {
+    await telegram(
+      'deleteMessage',
+      {
+        chat_id: chatId,
+        message_id: messageId
+      }
+    );
+  } catch {}
 
-/* =========================================================
-   SEND TEXT
-========================================================= */
+  const set =
+    messageCache.get(
+      String(chatId)
+    );
+
+  if (set) {
+    set.delete(
+      Number(messageId)
+    );
+
+    if (!set.size) {
+      messageCache.delete(
+        String(chatId)
+      );
+    }
+  }
+
+  await pool.query(
+    `
+      DELETE FROM bot_chat_messages
+      WHERE chat_id=$1
+      AND message_id=$2
+    `,
+    [
+      String(chatId),
+      Number(messageId)
+    ]
+  ).catch(() => {});
+}
+
+async function clearMessages(
+  chatId
+) {
+  const key =
+    String(chatId);
+
+  const ids =
+    new Set([
+      ...(messageCache.get(key) || [])
+    ]);
+
+  const q =
+    await pool.query(
+      `
+        SELECT message_id
+        FROM bot_chat_messages
+        WHERE chat_id=$1
+      `,
+      [key]
+    ).catch(() => ({
+      rows: []
+    }));
+
+  q.rows.forEach(row => {
+    ids.add(
+      Number(row.message_id)
+    );
+  });
+
+  for (const id of ids) {
+    try {
+      await telegram(
+        'deleteMessage',
+        {
+          chat_id: key,
+          message_id: id
+        }
+      );
+    } catch {}
+  }
+
+  messageCache.delete(key);
+
+  await pool.query(
+    `
+      DELETE FROM bot_chat_messages
+      WHERE chat_id=$1
+    `,
+    [key]
+  ).catch(() => {});
+}
 
 async function sendText(
   chatId,
   text,
-  replyMarkup
+  markup
 ) {
-
-  if (
-    !hasValue(text) &&
-    !replyMarkup
-  ) {
-
-    return null;
-
-  }
-
-
   const payload = {
-
-    chat_id:
-      chatId,
-
+    chat_id: chatId,
     text:
-      hasValue(text)
-        ? String(text)
-        : '\u2063'
-
+      str(text, '\u2063')
   };
 
-
-  if (replyMarkup) {
-
+  if (markup) {
     payload.reply_markup =
-      replyMarkup;
-
+      markup;
   }
 
-
-  return telegram(
-    'sendMessage',
-    payload
-  );
-
-}
-
-
-/* =========================================================
-   BOT MESSAGE TRACKING
-========================================================= */
-
-const memoryMessages =
-  new Map();
-
-
-function rememberMessage(
-  chatId,
-  message
-) {
-
-  if (
-    !message?.message_id
-  ) {
-
-    return message;
-
-  }
-
-
-  const cid =
-    String(chatId);
-
-
-  if (
-    !memoryMessages.has(
-      cid
-    )
-  ) {
-
-    memoryMessages.set(
-      cid,
-      new Set()
+  const message =
+    await telegram(
+      'sendMessage',
+      payload
     );
-
-  }
-
-
-  memoryMessages
-    .get(cid)
-    .add(
-      Number(
-        message.message_id
-      )
-    );
-
-
-  dbQuery(
-
-    `
-    INSERT INTO
-      bot_chat_messages(
-        chat_id,
-        message_id
-      )
-
-    VALUES(
-      $1,
-      $2
-    )
-
-    ON CONFLICT DO NOTHING
-    `,
-
-    [
-      String(chatId),
-
-      Number(
-        message.message_id
-      )
-    ]
-
-  )
-  .catch(
-    () => {}
-  );
-
-
-  return message;
-
-}
-
-
-/* =========================================================
-   REMEMBER + AUTO DELETE
-========================================================= */
-
-async function rememberAndSchedule(
-  chatId,
-  message,
-  settings
-) {
-
-  if (!message)
-    return message;
-
 
   rememberMessage(
     chatId,
-    message
+    message.message_id
   );
-
-
-  const seconds =
-    Number(
-      settings?.autoDelete ||
-      0
-    );
-
-
-  if (
-    seconds > 0
-  ) {
-
-    setTimeout(
-
-      async () => {
-
-        try {
-
-          await telegram(
-            'deleteMessage',
-            {
-              chat_id:
-                chatId,
-
-              message_id:
-                message.message_id
-            }
-          );
-
-        }
-
-        catch (_) {}
-
-
-        try {
-
-          await dbQuery(
-
-            `
-            DELETE FROM
-              bot_chat_messages
-
-            WHERE
-              chat_id=$1
-
-              AND
-              message_id=$2
-            `,
-
-            [
-              String(chatId),
-
-              Number(
-                message.message_id
-              )
-            ]
-
-          );
-
-        }
-
-        catch (_) {}
-
-
-        const set =
-          memoryMessages.get(
-            String(chatId)
-          );
-
-
-        if (set) {
-
-          set.delete(
-            Number(
-              message.message_id
-            )
-          );
-
-        }
-
-      },
-
-      seconds * 1000
-
-    );
-
-  }
-
 
   return message;
-
 }
 
-
-/* =========================================================
-   CLEAR BOT MESSAGES
-========================================================= */
-
-async function clearBotMessages(
-  chatId
-) {
-
-  const ids =
-    new Set();
-
-
-  const mem =
-    memoryMessages.get(
-      String(chatId)
-    );
-
-
-  if (mem) {
-
-    mem.forEach(
-      id =>
-        ids.add(
-          Number(id)
-        )
-    );
-
-  }
-
-
-  if (pool) {
-
-    try {
-
-      const result =
-        await dbQuery(
-
-          `
-          SELECT
-            message_id
-
-          FROM
-            bot_chat_messages
-
-          WHERE
-            chat_id=$1
-          `,
-
-          [
-            String(chatId)
-          ]
-
-        );
-
-
-      result.rows.forEach(
-        row =>
-          ids.add(
-            Number(
-              row.message_id
-            )
-          )
-      );
-
-    }
-
-    catch (_) {}
-
-  }
-
-
-  for (
-    const messageId of ids
-  ) {
-
-    try {
-
-      await telegram(
-        'deleteMessage',
-        {
-
-          chat_id:
-            chatId,
-
-          message_id:
-            messageId
-
-        }
-      );
-
-    }
-
-    catch (_) {}
-
-  }
-
-
-  if (pool) {
-
-    try {
-
-      await dbQuery(
-
-        `
-        DELETE FROM
-          bot_chat_messages
-
-        WHERE
-          chat_id=$1
-        `,
-
-        [
-          String(chatId)
-        ]
-
-      );
-
-    }
-
-    catch (_) {}
-
-  }
-
-
-  memoryMessages.delete(
-    String(chatId)
-  );
-
-}
-
-
-/* =========================================================
-   TRACKED SEND
-========================================================= */
-
-async function trackedSend(
+async function sendUrlMedia(
   chatId,
-  settings,
-  fn
+  type,
+  mediaUrl,
+  caption,
+  markup
 ) {
+  const method = {
+    photo: 'sendPhoto',
+    video: 'sendVideo',
+    audio: 'sendAudio'
+  }[type];
 
-  try {
-
-    const message =
-      await fn();
-
-
-    if (message) {
-
-      await rememberAndSchedule(
-
-        chatId,
-
-        message,
-
-        settings
-
-      );
-
-    }
-
-
-    return message;
-
+  if (!method || !mediaUrl) {
+    return null;
   }
 
-  catch (error) {
+  const payload = {
+    chat_id: chatId,
+    [type]: mediaUrl
+  };
 
-    console.error(
-      'trackedSend:',
-      error.message
+  if (caption) {
+    payload.caption =
+      caption.slice(0, 1024);
+  }
+
+  if (markup) {
+    payload.reply_markup =
+      markup;
+  }
+
+  const message =
+    await telegram(
+      method,
+      payload
     );
 
+  rememberMessage(
+    chatId,
+    message.message_id
+  );
 
-    return null;
+  return message;
+}
 
+async function getMedia(
+  id
+) {
+  const q =
+    await pool.query(
+      `
+        SELECT *
+        FROM bot_media
+        WHERE id=$1
+      `,
+      [Number(id)]
+    );
+
+  return q.rows[0] || null;
+}
+
+async function getTelegramFileId(
+  chatId,
+  row
+) {
+  if (
+    row.telegram_file_id
+  ) {
+    return row.telegram_file_id;
   }
 
-}
-
-
-/* =========================================================
-   USER NAME
-========================================================= */
-
-async function getProfileName(
-  user
-) {
-
-  const first =
-    user?.first_name ||
-    '';
-
-
-  const last =
-    user?.last_name ||
-    '';
-
-
-  const full =
-    `${first} ${last}`.trim();
-
-
-  return (
-    full ||
-    user?.username ||
-    'User'
-  );
-
-}
-
-
-/* =========================================================
-   MAIN BUTTONS
-========================================================= */
-
-function mainButtons(
-  settings
-) {
-
-  return (
-
-    settings.mainButtons ||
-    []
-
-  ).filter(
-    b =>
-      b.enabled !== false
-  );
-
-}
-
-
-/* =========================================================
-   BUTTON VISUAL CHECK
-========================================================= */
-
-function buttonHasVisual(
-  button
-) {
+  const key =
+    String(row.id);
 
   if (
-    !button?.buttonVisualEnabled
+    mediaLocks.has(key)
   ) {
-
-    return false;
-
+    return mediaLocks.get(key);
   }
 
+  const promise =
+    (async () => {
+      const form =
+        new FormData();
 
-  const hasMedia =
+      form.append(
+        'chat_id',
+        String(chatId)
+      );
 
-    button.buttonVisualMediaType &&
-    button.buttonVisualMediaType !==
-      'none' &&
+      const field =
+        row.kind === 'photo'
+          ? 'photo'
+          : row.kind === 'video'
+            ? 'video'
+            : 'audio';
 
+      const blob =
+        new Blob(
+          [row.data],
+          {
+            type:
+              row.mimetype ||
+              'application/octet-stream'
+          }
+        );
+
+      form.append(
+        field,
+        blob,
+        row.filename ||
+          `media-${row.id}`
+      );
+
+      const method =
+        row.kind === 'photo'
+          ? 'sendPhoto'
+          : row.kind === 'video'
+            ? 'sendVideo'
+            : 'sendAudio';
+
+      const result =
+        await telegramForm(
+          method,
+          form
+        );
+
+      const fileId =
+        row.kind === 'photo'
+          ? result.photo?.at(-1)?.file_id
+          : row.kind === 'video'
+            ? result.video?.file_id
+            : result.audio?.file_id;
+
+      if (fileId) {
+        await pool.query(
+          `
+            UPDATE bot_media
+            SET telegram_file_id=$1
+            WHERE id=$2
+          `,
+          [
+            fileId,
+            row.id
+          ]
+        );
+      }
+
+      // Temporary upload message delete
+      try {
+        await telegram(
+          'deleteMessage',
+          {
+            chat_id: chatId,
+            message_id:
+              result.message_id
+          }
+        );
+      } catch {}
+
+      return fileId;
+    })();
+
+  mediaLocks.set(
+    key,
+    promise
+  );
+
+  try {
+    return await promise;
+  } finally {
+    mediaLocks.delete(key);
+  }
+}
+
+async function sendDbMedia(
+  chatId,
+  id,
+  caption,
+  markup
+) {
+  const row =
+    await getMedia(id);
+
+  if (!row) {
+    throw new Error(
+      'Media not found'
+    );
+  }
+
+  const fileId =
+    await getTelegramFileId(
+      chatId,
+      row
+    );
+
+  if (!fileId) {
+    throw new Error(
+      'Telegram file id unavailable'
+    );
+  }
+
+  const method =
+    row.kind === 'photo'
+      ? 'sendPhoto'
+      : row.kind === 'video'
+        ? 'sendVideo'
+        : 'sendAudio';
+
+  const payload = {
+    chat_id: chatId,
+    [row.kind]: fileId
+  };
+
+  if (caption) {
+    payload.caption =
+      caption.slice(0, 1024);
+  }
+
+  if (markup) {
+    payload.reply_markup =
+      markup;
+  }
+
+  const message =
+    await telegram(
+      method,
+      payload
+    );
+
+  rememberMessage(
+    chatId,
+    message.message_id
+  );
+
+  return message;
+}
+
+async function sendMedia(
+  chatId,
+  type,
+  source,
+  id,
+  mediaUrl,
+  caption = '',
+  markup = null
+) {
+  type =
+    mediaType(type);
+
+  if (type === 'none') {
+    return null;
+  }
+
+  try {
+    if (
+      source === 'url'
+    ) {
+      return await sendUrlMedia(
+        chatId,
+        type,
+        cleanUrl(mediaUrl),
+        caption,
+        markup
+      );
+    }
+
+    if (id) {
+      return await sendDbMedia(
+        chatId,
+        Number(id),
+        caption,
+        markup
+      );
+    }
+  } catch (error) {
+    console.error(
+      'Media error:',
+      error.message
+    );
+  }
+
+  return null;
+}
+
+function telegramButtonStyle(
+  button,
+  colorKey = 'buttonColorEnabled'
+) {
+  if (
+    !bool(
+      button[colorKey],
+      true
+    )
+  ) {
+    return undefined;
+  }
+
+  const explicit =
+    buttonStyle(
+      button.buttonStyle ||
+      button.style
+    );
+
+  if (explicit) {
+    return explicit;
+  }
+
+  const c =
+    color(
+      button.buttonColor ||
+      button.color
+    );
+
+  const r =
+    parseInt(
+      c.slice(1, 3),
+      16
+    );
+
+  const g =
+    parseInt(
+      c.slice(3, 5),
+      16
+    );
+
+  const b =
+    parseInt(
+      c.slice(5, 7),
+      16
+    );
+
+  if (
+    r > 150 &&
+    r > g * 1.18 &&
+    r > b * 1.18
+  ) {
+    return 'danger';
+  }
+
+  if (
+    g > r * 1.15 &&
+    g > b * 1.05
+  ) {
+    return 'success';
+  }
+
+  return 'primary';
+}
+
+function mainButton(button) {
+  const item = {
+    text:
+      button.text ||
+      'BUTTON',
+
+    callback_data:
+      `main:${button.id}`
+  };
+
+  const style =
+    telegramButtonStyle(
+      button
+    );
+
+  if (style) {
+    item.style = style;
+  }
+
+  return item;
+}
+
+function backButton() {
+  return {
+    text: '⬅️ BACK',
+    callback_data: 'back:main',
+    style: 'primary'
+  };
+}
+
+function urlButton(button) {
+  const item = {
+    text:
+      button.text ||
+      'OPEN LINK',
+
+    url:
+      button.url
+  };
+
+  const style =
+    telegramButtonStyle({
+      buttonColor:
+        button.color,
+
+      colorEnabled:
+        button.colorEnabled,
+
+      buttonColorEnabled:
+        button.colorEnabled,
+
+      buttonStyle:
+        button.buttonStyle
+    });
+
+  if (style) {
+    item.style = style;
+  }
+
+  return item;
+}
+
+function makeKeyboard(rows) {
+  return {
+    inline_keyboard:
+      rows.filter(
+        row =>
+          row &&
+          row.length
+      )
+  };
+}
+
+function userName(user = {}) {
+  const full =
+    `${str(user.first_name).trim()} ${str(user.last_name).trim()}`
+      .trim();
+
+  if (full) {
+    return full;
+  }
+
+  if (user.username) {
+    return `@${user.username}`;
+  }
+
+  return 'Telegram User';
+}
+
+function getVisual(button) {
+  if (
+    !button.buttonVisualEnabled
+  ) {
+    return null;
+  }
+
+  if (
+    button.buttonVisualMediaType !== 'none' &&
     (
       button.buttonVisualMediaId ||
       button.buttonVisualMediaUrl
-    );
+    )
+  ) {
+    return {
+      type:
+        button.buttonVisualMediaType,
 
+      source:
+        button.buttonVisualMediaSource,
 
-  const hasText =
-    hasValue(
+      id:
+        button.buttonVisualMediaId,
+
+      url:
+        button.buttonVisualMediaUrl,
+
+      text:
+        button.buttonVisualText ||
+        ''
+    };
+  }
+
+  if (
+    str(
       button.buttonVisualText
-    );
+    ).trim()
+  ) {
+    return {
+      type: 'none',
+      source: 'url',
+      id: null,
+      url: '',
+      text:
+        button.buttonVisualText
+    };
+  }
 
+  // Legacy support
+  if (
+    button.buttonImageEnabled &&
+    button.buttonImageUrl
+  ) {
+    return {
+      type: 'photo',
+      source: 'url',
+      id: null,
+      url:
+        button.buttonImageUrl,
+      text:
+        button.buttonVisualText ||
+        ''
+    };
+  }
 
-  return !!(
-    hasMedia ||
-    hasText
-  );
-
+  return null;
 }
 
-
-/* =========================================================
-   MAIN BUTTON KEYBOARD
-========================================================= */
-
-function mainButtonsKeyboard(
-  settings
-) {
-
-  const buttons =
-    mainButtons(
-      settings
-    )
-    .map(
-      mainCallbackButton
-    );
-
-
-  if (
-    !buttons.length
-  ) {
-
-    return undefined;
-
-  }
-
-
-  return {
-
-    inline_keyboard:
-      buttons.map(
-        button =>
-          [button]
-      )
-
-  };
-
+function hasVisual(button) {
+  return !!getVisual(button);
 }
-
-
-/* =========================================================
-   SEND MAIN BUTTON VISUAL
-========================================================= */
-
-async function sendButtonVisual(
-  chatId,
-  button,
-  settings
-) {
-
-  if (
-    !buttonHasVisual(
-      button
-    )
-  ) {
-
-    return null;
-
-  }
-
-
-  const visual = {
-
-    mediaType:
-      button.buttonVisualMediaType ||
-      'none',
-
-    mediaSource:
-      button.buttonVisualMediaSource ||
-      'upload',
-
-    mediaId:
-      button.buttonVisualMediaId ||
-      null,
-
-    mediaUrl:
-      button.buttonVisualMediaUrl ||
-      ''
-
-  };
-
-
-  const caption =
-    button.buttonVisualText ||
-    '';
-
-
-  const keyboard = {
-
-    inline_keyboard: [
-
-      [
-        mainCallbackButton(
-          button
-        )
-      ]
-
-    ]
-
-  };
-
-
-  if (
-    visual.mediaType !==
-      'none'
-  ) {
-
-    return trackedSend(
-
-      chatId,
-
-      settings,
-
-      () =>
-        sendConfiguredMedia(
-
-          chatId,
-
-          visual,
-
-          caption,
-
-          keyboard
-
-        )
-
-    );
-
-  }
-
-
-  return trackedSend(
-
-    chatId,
-
-    settings,
-
-    () =>
-      sendText(
-
-        chatId,
-
-        caption ||
-          '\u2063',
-
-        keyboard
-
-      )
-
-  );
-
-}
-
-
-/* =========================================================
-   SEND SIX MAIN BUTTONS
-========================================================= */
-
-async function sendMainButtons(
-  chatId,
-  settings
-) {
-
-  const buttons =
-    mainButtons(
-      settings
-    );
-
-
-  if (
-    !buttons.length
-  ) {
-
-    return null;
-
-  }
-
-
-  const anyVisual =
-    buttons.some(
-      buttonHasVisual
-    );
-
-
-  /*
-    যদি কোনো Button Visual না থাকে
-
-    তাহলে ৬টি button
-    একসাথে দেখাবে।
-  */
-
-  if (
-    !anyVisual
-  ) {
-
-    return trackedSend(
-
-      chatId,
-
-      settings,
-
-      () =>
-        sendText(
-
-          chatId,
-
-          '\u2063',
-
-          mainButtonsKeyboard(
-            settings
-          )
-
-        )
-
-    );
-
-  }
-
-
-  /*
-    Visual থাকা button আলাদা message
-    হিসেবে দেখাবে।
-
-    Visual-এর নিচেই
-    তার button থাকবে।
-  */
-
-  for (
-    const button of buttons
-  ) {
-
-    if (
-      buttonHasVisual(
-        button
-      )
-    ) {
-
-      await sendButtonVisual(
-
-        chatId,
-
-        button,
-
-        settings
-
-      );
-
-    }
-
-    else {
-
-      await trackedSend(
-
-        chatId,
-
-        settings,
-
-        () =>
-          sendText(
-
-            chatId,
-
-            '\u2063',
-
-            {
-
-              inline_keyboard: [
-
-                [
-                  mainCallbackButton(
-                    button
-                  )
-
-                ]
-
-              ]
-
-            }
-
-          )
-
-      );
-
-    }
-
-  }
-
-}
-
-
-/* =========================================================
-   SEND PROFILE PHOTO
-========================================================= */
 
 async function sendProfilePhoto(
   chatId,
-  user,
-  settings
+  userId
 ) {
-
   if (
-    !settings.welcome
-      .profilePhotoEnabled
+    !settings.welcome.profilePhotoEnabled
   ) {
-
-    return null;
-
+    return;
   }
 
+  if (!userId) {
+    return;
+  }
 
   try {
-
-    const photos =
+    const result =
       await telegram(
-
         'getUserProfilePhotos',
-
         {
-
-          user_id:
-            user.id,
-
-          limit:
-            1
-
+          user_id: userId,
+          offset: 0,
+          limit: 1
         }
-
       );
 
+    const photo =
+      result.photos?.[0]?.at(-1)?.file_id;
 
-    const sizes =
-      photos
-        ?.photos
-        ?.[0] ||
-      [];
-
-
-    const largest =
-      sizes.at(-1);
-
-
-    if (
-      !largest?.file_id
-    ) {
-
-      return null;
-
+    if (!photo) {
+      return;
     }
 
+    const message =
+      await telegram(
+        'sendPhoto',
+        {
+          chat_id: chatId,
+          photo
+        }
+      );
 
-    /*
-      Telegram profile photo
-      square format.
-
-      Bot API দিয়ে exact
-      501x501 pixel force করা
-      সম্ভব নয়।
-    */
-
-    return trackedSend(
-
+    rememberMessage(
       chatId,
-
-      settings,
-
-      () =>
-        telegram(
-
-          'sendPhoto',
-
-          {
-
-            chat_id:
-              chatId,
-
-            photo:
-              largest.file_id
-
-          }
-
-        )
-
+      message.message_id
     );
-
-  }
-
-  catch (error) {
-
+  } catch (error) {
     console.error(
-      'profile photo:',
+      'Profile photo:',
       error.message
     );
-
-
-    return null;
-
   }
-
 }
 
-
-/* =========================================================
-   COMBINED PROFILE + WELCOME
-========================================================= */
-
-function combinedWelcomeText(
-  profileName,
-  welcomeText
-) {
-
+function welcomeText(user) {
   const name =
-    hasValue(
-      profileName
-    )
-
-      ? `👤 ${profileName}`
-
-      : '';
-
+    userName(user);
 
   const text =
-    hasValue(
-      welcomeText
-    )
+    str(
+      settings.welcome.text
+    ).trim();
 
-      ? String(
-          welcomeText
-        )
-
-      : '';
-
-
-  return [
-
-    name,
-
+  if (
+    name &&
     text
+  ) {
+    return `👤 ${name}\n\n${text}`;
+  }
 
-  ].filter(
-    Boolean
-  ).join(
-    '\n\n'
-  );
-
+  return name || text;
 }
-
-
-/* =========================================================
-   SEND WELCOME CONTENT
-========================================================= */
 
 async function sendWelcomeContent(
   chatId,
   user,
-  settings,
-  attachButtons
+  markup = null
 ) {
+  const w =
+    settings.welcome;
 
-  const profileName =
-    await getProfileName(
+  const caption =
+    welcomeText(user);
+
+  if (
+    w.mediaEnabled &&
+    w.mediaType !== 'none'
+  ) {
+    const message =
+      await sendMedia(
+        chatId,
+        w.mediaType,
+        w.mediaSource,
+        w.mediaId,
+        w.mediaUrl,
+        caption,
+        markup
+      );
+
+    if (message) {
+      return message;
+    }
+  }
+
+  if (caption) {
+    return await sendText(
+      chatId,
+      caption,
+      markup
+    );
+  }
+
+  if (markup) {
+    return await sendText(
+      chatId,
+      '\u2063',
+      markup
+    );
+  }
+}
+
+async function sendMainVisual(
+  chatId,
+  button,
+  attach = true
+) {
+  const visual =
+    getVisual(button);
+
+  if (!visual) {
+    return;
+  }
+
+  const markup =
+    attach
+      ? makeKeyboard([
+          [mainButton(button)]
+        ])
+      : null;
+
+  if (
+    visual.type === 'none'
+  ) {
+    return await sendText(
+      chatId,
+      visual.text ||
+        '\u2063',
+      markup
+    );
+  }
+
+  const message =
+    await sendMedia(
+      chatId,
+      visual.type,
+      visual.source,
+      visual.id,
+      visual.url,
+      visual.text || '',
+      markup
+    );
+
+  if (
+    !message &&
+    visual.text
+  ) {
+    await sendText(
+      chatId,
+      visual.text,
+      markup
+    );
+  }
+}
+
+async function sendAllMainButtons(
+  chatId
+) {
+  const buttons =
+    settings.mainButtons
+      .filter(
+        b => b.enabled
+      );
+
+  if (!buttons.length) {
+    return;
+  }
+
+  const anyVisual =
+    buttons.some(
+      hasVisual
+    );
+
+  if (!anyVisual) {
+    await sendText(
+      chatId,
+      '\u2063',
+      makeKeyboard(
+        buttons.map(
+          b => [
+            mainButton(b)
+          ]
+        )
+      )
+    );
+
+    return;
+  }
+
+  for (
+    const button of buttons
+  ) {
+    if (hasVisual(button)) {
+      await sendMainVisual(
+        chatId,
+        button,
+        true
+      );
+    } else {
+      await sendText(
+        chatId,
+        '\u2063',
+        makeKeyboard([
+          [mainButton(button)]
+        ])
+      );
+    }
+  }
+}
+
+async function showMainPage(
+  chatId,
+  user = {}
+) {
+  await clearMessages(
+    chatId
+  );
+
+  const buttons =
+    settings.mainButtons
+      .filter(
+        b => b.enabled
+      );
+
+  const anyVisual =
+    buttons.some(
+      hasVisual
+    );
+
+  if (
+    settings.welcome.layout ===
+    'buttons_profile_welcome'
+  ) {
+    await sendAllMainButtons(
+      chatId
+    );
+
+    await sendProfilePhoto(
+      chatId,
+      user.id
+    );
+
+    await sendWelcomeContent(
+      chatId,
       user
     );
 
-
-  const text =
-    combinedWelcomeText(
-
-      profileName,
-
-      settings.welcome.text
-
-    );
-
-
-  const markup =
-    attachButtons
-
-      ? mainButtonsKeyboard(
-          settings
-        )
-
-      : undefined;
-
-
-  /*
-    Welcome media ON
-  */
-
-  if (
-
-    settings.welcome
-      .mediaEnabled &&
-
-    settings.welcome
-      .mediaType !==
-        'none'
-
-  ) {
-
-    const result =
-      await trackedSend(
-
-        chatId,
-
-        settings,
-
-        () =>
-          sendConfiguredMedia(
-
-            chatId,
-
-            settings.welcome,
-
-            text,
-
-            markup
-
-          )
-
-      );
-
-
-    if (result) {
-
-      return result;
-
-    }
-
+    return;
   }
 
+  // Default:
+  // Profile Photo
+  // Name + Welcome
+  // Main Buttons
 
-  /*
-    Welcome media OFF
+  await sendProfilePhoto(
+    chatId,
+    user.id
+  );
 
-    অথবা media fail হলে
+  if (!anyVisual) {
+    const markup =
+      buttons.length
+        ? makeKeyboard(
+            buttons.map(
+              b => [
+                mainButton(b)
+              ]
+            )
+          )
+        : null;
 
-    Profile name +
-    Welcome text
-  */
+    await sendWelcomeContent(
+      chatId,
+      user,
+      markup
+    );
+
+    return;
+  }
+
+  await sendWelcomeContent(
+    chatId,
+    user
+  );
+
+  await sendAllMainButtons(
+    chatId
+  );
+}
+
+async function sendSlot(
+  chatId,
+  slot
+) {
+  if (
+    !slot ||
+    !slot.enabled
+  ) {
+    return;
+  }
+
+  const row = [];
+
+  if (
+    slot.button1?.enabled &&
+    cleanUrl(
+      slot.button1.url
+    )
+  ) {
+    row.push(
+      urlButton(
+        slot.button1
+      )
+    );
+  }
+
+  if (
+    slot.button2?.enabled &&
+    cleanUrl(
+      slot.button2.url
+    )
+  ) {
+    row.push(
+      urlButton(
+        slot.button2
+      )
+    );
+  }
+
+  const markup =
+    row.length
+      ? makeKeyboard([row])
+      : null;
+
+  const text =
+    str(slot.text).trim();
+
+  if (
+    slot.mediaType !== 'none'
+  ) {
+    const message =
+      await sendMedia(
+        chatId,
+        slot.mediaType,
+        slot.mediaSource,
+        slot.mediaId,
+        slot.mediaUrl,
+        text,
+        markup
+      );
+
+    if (
+      !message &&
+      text
+    ) {
+      await sendText(
+        chatId,
+        text,
+        markup
+      );
+    }
+
+    return;
+  }
 
   if (
     text ||
     markup
   ) {
-
-    return trackedSend(
-
+    await sendText(
       chatId,
-
-      settings,
-
-      () =>
-        sendText(
-
-          chatId,
-
-          text ||
-            '\u2063',
-
-          markup
-
-        )
-
+      text || '\u2063',
+      markup
     );
-
   }
-
-
-  return null;
-
 }
 
-
-/* =========================================================
-   SHOW MAIN PAGE
-========================================================= */
-
-async function showMainPage(
+async function sendButtonHeader(
   chatId,
-  user
+  button
 ) {
-
-  const settings =
-    await getSettings();
-
-
-  /*
-    পুরোনো bot messages clear
-  */
-
-  await clearBotMessages(
-    chatId
-  );
-
-
-  const buttons =
-    mainButtons(
-      settings
-    );
-
-
-  const anyVisual =
-    buttons.some(
-      buttonHasVisual
-    );
-
-
-  const layout =
-    settings.welcome.layout ||
-    'profile_welcome_buttons';
-
-
-  /* =======================================================
-     OPTION 2
-
-     Buttons first
-     Profile
-     Welcome
-  ======================================================= */
-
   if (
-    layout ===
-      'buttons_profile_welcome'
+    button.headerMediaType !==
+    'none'
   ) {
+    const message =
+      await sendMedia(
+        chatId,
+        button.headerMediaType,
+        button.headerMediaSource,
+        button.headerMediaId,
+        button.headerMediaUrl,
+        str(
+          button.headerText
+        ).trim()
+      );
 
-    await sendMainButtons(
-
-      chatId,
-
-      settings
-
-    );
-
-
-    await sendProfilePhoto(
-
-      chatId,
-
-      user,
-
-      settings
-
-    );
-
-
-    await sendWelcomeContent(
-
-      chatId,
-
-      user,
-
-      settings,
-
-      false
-
-    );
-
+    if (
+      !message &&
+      str(button.headerText).trim()
+    ) {
+      await sendText(
+        chatId,
+        button.headerText
+      );
+    }
 
     return;
-
   }
 
-
-  /* =======================================================
-     DEFAULT
-
-     Profile Photo
-     Welcome
-     Six Buttons
-  ======================================================= */
-
-  await sendProfilePhoto(
-
-    chatId,
-
-    user,
-
-    settings
-
-  );
-
-
-  /*
-    কোনো button-এর visual নেই
-
-    => Welcome message-এর
-       নিচেই ৬টি button
-  */
-
-  await sendWelcomeContent(
-
-    chatId,
-
-    user,
-
-    settings,
-
-    !anyVisual &&
-      buttons.length > 0
-
-  );
-
-
-  /*
-    Button visual থাকলে
-    প্রত্যেকটা আলাদা visual
-    সহ দেখাবে।
-  */
-
-  if (anyVisual) {
-
-    await sendMainButtons(
-
-      chatId,
-
-      settings
-
-    );
-
-  }
-
-  /*
-    Welcome text/media কিছুই না থাকলে
-    সরাসরি ৬টি button
-  */
-
-  else if (
-
-    !settings.welcome.text &&
-
-    !settings.welcome.mediaEnabled
-
+  if (
+    str(
+      button.headerText
+    ).trim()
   ) {
-
-    await sendMainButtons(
-
+    await sendText(
       chatId,
-
-      settings
-
+      button.headerText
     );
-
   }
-
 }
-
-
-/* =========================================================
-   SHOW SELECTED MAIN BUTTON
-========================================================= */
 
 async function showMainButton(
   chatId,
-  buttonId
+  button
 ) {
-
-  const settings =
-    await getSettings();
-
-
-  const button =
-    settings.mainButtons.find(
-
-      b =>
-        b.id ===
-        buttonId
-
-    );
-
-
   if (
     !button ||
-    button.enabled === false
+    !button.enabled
   ) {
-
     return;
-
   }
 
-
-  await clearBotMessages(
+  await clearMessages(
     chatId
   );
 
-
-  /* =========================
-     HEADER
-  ========================= */
-
-  const headerCfg = {
-
-    mediaType:
-      button.headerMediaType ||
-      'none',
-
-    mediaSource:
-      button.headerMediaSource ||
-      'upload',
-
-    mediaId:
-      button.headerMediaId ||
-      null,
-
-    mediaUrl:
-      button.headerMediaUrl ||
-      ''
-
-  };
-
-
-  if (
-    headerCfg.mediaType !==
-      'none'
-  ) {
-
-    const result =
-      await trackedSend(
-
-        chatId,
-
-        settings,
-
-        () =>
-          sendConfiguredMedia(
-
-            chatId,
-
-            headerCfg,
-
-            button.headerText ||
-              ''
-
-          )
-
-      );
-
-
-    if (
-      !result &&
-      button.headerText
-    ) {
-
-      await trackedSend(
-
-        chatId,
-
-        settings,
-
-        () =>
-          sendText(
-
-            chatId,
-
-            button.headerText
-
-          )
-
-      );
-
-    }
-
-  }
-
-  else if (
-    button.headerText
-  ) {
-
-    await trackedSend(
-
-      chatId,
-
-      settings,
-
-      () =>
-        sendText(
-
-          chatId,
-
-          button.headerText
-
-        )
-
-    );
-
-  }
-
-
-  /* =========================
-     SLOTS
-  ========================= */
+  await sendButtonHeader(
+    chatId,
+    button
+  );
 
   for (
-    const slot of
-      button.slots || []
+    const slot of button.slots || []
   ) {
-
-    if (
-      slot.enabled === false
-    ) {
-
-      continue;
-
-    }
-
-
-    const rows =
-      slotKeyboard(
-        slot
-      );
-
-
-    const markup =
-      rows.length
-
-        ? {
-            inline_keyboard:
-              rows
-          }
-
-        : undefined;
-
-
-    const cfg = {
-
-      mediaType:
-        slot.mediaType ||
-        'none',
-
-      mediaSource:
-        slot.mediaSource ||
-        'upload',
-
-      mediaId:
-        slot.mediaId ||
-        null,
-
-      mediaUrl:
-        slot.mediaUrl ||
-        ''
-
-    };
-
-
-    if (
-      cfg.mediaType !==
-        'none'
-    ) {
-
-      const result =
-        await trackedSend(
-
-          chatId,
-
-          settings,
-
-          () =>
-            sendConfiguredMedia(
-
-              chatId,
-
-              cfg,
-
-              slot.text ||
-                '',
-
-              markup
-
-            )
-
-        );
-
-
-      if (
-        !result &&
-        slot.text
-      ) {
-
-        await trackedSend(
-
-          chatId,
-
-          settings,
-
-          () =>
-            sendText(
-
-              chatId,
-
-              slot.text,
-
-              markup
-
-            )
-
-        );
-
-      }
-
-    }
-
-    else if (
-      slot.text ||
-      markup
-    ) {
-
-      await trackedSend(
-
-        chatId,
-
-        settings,
-
-        () =>
-          sendText(
-
-            chatId,
-
-            slot.text ||
-              '\u2063',
-
-            markup
-
-          )
-
-      );
-
-    }
-
+    await sendSlot(
+      chatId,
+      slot
+    );
   }
 
-
-  /* =========================
-     BACK
-  ========================= */
-
-  await trackedSend(
-
+  await sendText(
     chatId,
-
-    settings,
-
-    () =>
-      sendText(
-
-        chatId,
-
-        '\u2063',
-
-        {
-
-          inline_keyboard: [
-
-            [
-              backButton()
-            ]
-
-          ]
-
-        }
-
-      )
-
+    '\u2063',
+    makeKeyboard([
+      [backButton()]
+    ])
   );
-
 }
 
-
-/* =========================================================
-   AUDIO
-========================================================= */
-
-async function showAudio(
+async function sendAudioSystem(
   chatId
 ) {
+  const audio =
+    settings.audio;
 
-  const settings =
-    await getSettings();
-
+  if (!audio.enabled) {
+    return;
+  }
 
   if (
-    !settings.audio.enabled
+    audio.source === 'url' &&
+    audio.mediaUrl
   ) {
+    await sendMedia(
+      chatId,
+      'audio',
+      'url',
+      null,
+      audio.mediaUrl,
+      audio.text || ''
+    );
 
     return;
-
   }
-
-
-  await clearBotMessages(
-    chatId
-  );
-
-
-  const rows = [];
-
-  const row = [];
-
-
-  const b1 =
-    makeUrlButton(
-      settings.audio.button1
-    );
-
-
-  const b2 =
-    makeUrlButton(
-      settings.audio.button2
-    );
-
-
-  if (b1)
-    row.push(b1);
-
-
-  if (b2)
-    row.push(b2);
-
 
   if (
-    row.length
+    audio.mediaId
   ) {
-
-    rows.push(
-      row
-    );
-
-  }
-
-
-  const markup =
-    rows.length
-
-      ? {
-          inline_keyboard:
-            rows
-        }
-
-      : undefined;
-
-
-  const cfg = {
-
-    mediaType:
-      'audio',
-
-    mediaSource:
-      settings.audio.mediaSource,
-
-    mediaId:
-      settings.audio.mediaId,
-
-    mediaUrl:
-      settings.audio.mediaUrl
-
-  };
-
-
-  if (
-    cfg.mediaId ||
-    cfg.mediaUrl
-  ) {
-
-    const result =
-      await trackedSend(
-
-        chatId,
-
-        settings,
-
-        () =>
-          sendConfiguredMedia(
-
-            chatId,
-
-            cfg,
-
-            settings.audio.text ||
-              '',
-
-            markup
-
-          )
-
-      );
-
-
-    if (
-      !result &&
-      settings.audio.text
-    ) {
-
-      await trackedSend(
-
-        chatId,
-
-        settings,
-
-        () =>
-          sendText(
-
-            chatId,
-
-            settings.audio.text,
-
-            markup
-
-          )
-
-      );
-
-    }
-
-  }
-
-  else if (
-    settings.audio.text ||
-    markup
-  ) {
-
-    await trackedSend(
-
+    await sendMedia(
       chatId,
-
-      settings,
-
-      () =>
-        sendText(
-
-          chatId,
-
-          settings.audio.text ||
-            '\u2063',
-
-          markup
-
-        )
-
+      'audio',
+      'upload',
+      audio.mediaId,
+      '',
+      audio.text || ''
     );
 
+    return;
   }
 
-
-  await trackedSend(
-
-    chatId,
-
-    settings,
-
-    () =>
-      sendText(
-
-        chatId,
-
-        '\u2063',
-
-        {
-
-          inline_keyboard: [
-
-            [
-              backButton()
-            ]
-
-          ]
-
-        }
-
-      )
-
-  );
-
+  if (audio.text) {
+    await sendText(
+      chatId,
+      audio.text
+    );
+  }
 }
 
+async function answerCallback(
+  id,
+  text
+) {
+  try {
+    const payload = {
+      callback_query_id: id
+    };
 
-/* =========================================================
-   HANDLE TELEGRAM UPDATE
-========================================================= */
+    if (text) {
+      payload.text = text;
+    }
+
+    await telegram(
+      'answerCallbackQuery',
+      payload
+    );
+  } catch {}
+}
 
 async function handleUpdate(
   update
 ) {
+  if (!update) {
+    return;
+  }
 
-  try {
+  // /start
+  if (update.message) {
+    const message =
+      update.message;
 
-    /* =========================
-       MESSAGE
-    ========================= */
+    const chatId =
+      message.chat?.id;
+
+    if (!chatId) {
+      return;
+    }
 
     if (
-      update.message
+      message.text === '/start' ||
+      message.text === '/menu'
     ) {
+      await showMainPage(
+        chatId,
+        message.from || {}
+      );
+    }
 
-      const msg =
-        update.message;
+    return;
+  }
 
+  // Callback buttons
+  if (
+    update.callback_query
+  ) {
+    const callback =
+      update.callback_query;
 
-      const chatId =
-        msg.chat?.id;
+    const data =
+      str(callback.data);
 
+    const chatId =
+      callback.message?.chat?.id;
 
-      if (!chatId)
-        return;
-
-
-      if (
-        msg.text ===
-          '/start' ||
-
-        msg.text ===
-          '/menu'
-      ) {
-
-        await showMainPage(
-
-          chatId,
-
-          msg.from ||
-            {}
-
-        );
-
-
-        return;
-
-      }
-
-
-      if (
-        msg.text ===
-          '/audio'
-      ) {
-
-        await showAudio(
-          chatId
-        );
-
-        return;
-
-      }
-
+    if (!chatId) {
+      await answerCallback(
+        callback.id
+      );
 
       return;
-
     }
-
-
-    /* =========================
-       CALLBACK
-    ========================= */
 
     if (
-      update.callback_query
+      data === 'back:main'
     ) {
+      await answerCallback(
+        callback.id
+      );
 
-      const query =
-        update.callback_query;
+      await showMainPage(
+        chatId,
+        callback.from || {}
+      );
 
-
-      const chatId =
-        query.message
-          ?.chat
-          ?.id;
-
-
-      if (!chatId)
-        return;
-
-
-      try {
-
-        await telegram(
-
-          'answerCallbackQuery',
-
-          {
-
-            callback_query_id:
-              query.id
-
-          }
-
-        );
-
-      }
-
-      catch (_) {}
-
-
-      /* =========================
-         BACK
-      ========================= */
-
-      if (
-        query.data ===
-          'back:main'
-      ) {
-
-        await showMainPage(
-
-          chatId,
-
-          query.from ||
-            {}
-
-        );
-
-
-        return;
-
-      }
-
-
-      /* =========================
-         AUDIO
-      ========================= */
-
-      if (
-        query.data ===
-          'audio'
-      ) {
-
-        await showAudio(
-          chatId
-        );
-
-        return;
-
-      }
-
-
-      /* =========================
-         MAIN BUTTON
-      ========================= */
-
-      if (
-        query.data &&
-        query.data.startsWith(
-          'main:'
-        )
-      ) {
-
-        const id =
-          query.data.slice(
-            5
-          );
-
-
-        await showMainButton(
-
-          chatId,
-
-          id
-
-        );
-
-      }
-
+      return;
     }
 
-  }
+    if (
+      data === 'audio'
+    ) {
+      await answerCallback(
+        callback.id
+      );
 
-  catch (error) {
+      await clearMessages(
+        chatId
+      );
 
-    console.error(
-      'handleUpdate:',
-      error
+      await sendAudioSystem(
+        chatId
+      );
+
+      await sendText(
+        chatId,
+        '\u2063',
+        makeKeyboard([
+          [backButton()]
+        ])
+      );
+
+      return;
+    }
+
+    if (
+      data.startsWith('main:')
+    ) {
+      const id =
+        data.slice(5);
+
+      const button =
+        settings.mainButtons.find(
+          b => b.id === id
+        );
+
+      if (
+        !button ||
+        !button.enabled
+      ) {
+        await answerCallback(
+          callback.id,
+          'This option is unavailable.'
+        );
+
+        return;
+      }
+
+      await answerCallback(
+        callback.id
+      );
+
+      await showMainButton(
+        chatId,
+        button
+      );
+
+      return;
+    }
+
+    await answerCallback(
+      callback.id
     );
-
   }
-
 }
 
+function adminAuth(
+  req,
+  res,
+  next
+) {
+  const header =
+    str(
+      req.headers.authorization
+    );
 
-/* =========================================================
-   LOGIN API
-========================================================= */
+  const token =
+    header.startsWith('Bearer ')
+      ? header.slice(7).trim()
+      : '';
+
+  if (
+    !token ||
+    !sessions.has(token)
+  ) {
+    return res
+      .status(401)
+      .json({
+        ok: false,
+        error: 'UNAUTHORIZED'
+      });
+  }
+
+  next();
+}
+
+app.get(
+  '/',
+  (req, res) => {
+    res.sendFile(
+      path.join(
+        __dirname,
+        'Admin.html'
+      )
+    );
+  }
+);
+
+app.get(
+  '/admin.html',
+  (req, res) => {
+    res.sendFile(
+      path.join(
+        __dirname,
+        'Admin.html'
+      )
+    );
+  }
+);
+
+app.get(
+  '/health',
+  (req, res) => {
+    res.json({
+      ok: true,
+      service:
+        'telegram-bot-system',
+      time:
+        new Date().toISOString()
+    });
+  }
+);
+
+app.post(
+  '/telegram/webhook',
+  (req, res) => {
+    res.json({
+      ok: true
+    });
+
+    handleUpdate(
+      req.body
+    ).catch(error => {
+      console.error(
+        'Webhook error:',
+        error
+      );
+    });
+  }
+);
 
 app.post(
   '/api/login',
-  async (
-    req,
-    res
-  ) => {
-
+  async (req, res) => {
     try {
-
-      const password =
-        String(
-          req.body?.password ||
-          ''
-        );
-
-
       if (
-        !ADMIN_PASSWORD ||
-        password !==
-          ADMIN_PASSWORD
+        str(
+          req.body?.password
+        ) !== ADMIN_PASSWORD
       ) {
-
         return res
           .status(401)
           .json({
-
-            ok:false,
-
+            ok: false,
             error:
-              'Invalid password'
-
+              'INVALID_PASSWORD'
           });
-
       }
 
+      const session =
+        crypto
+          .randomBytes(32)
+          .toString('hex');
 
-      const token =
-        makeToken();
-
-
-      adminSessions.set(
-        token,
+      sessions.set(
+        session,
         Date.now()
       );
 
+      if (
+        sessions.size > 100
+      ) {
+        const first =
+          sessions.keys()
+            .next()
+            .value;
 
-      return res.json({
-
-        ok:true,
-
-        token
-
-      });
-
-    }
-
-    catch (error) {
-
-      return res
-        .status(500)
-        .json({
-
-          ok:false,
-
-          error:
-            error.message
-
-        });
-
-    }
-
-  }
-);
-
-
-/* =========================================================
-   GET SETTINGS
-========================================================= */
-
-app.get(
-  '/api/settings',
-  requireAdmin,
-  async (
-    req,
-    res
-  ) => {
-
-    try {
-
-      const settings =
-        await getSettings();
-
+        if (first) {
+          sessions.delete(first);
+        }
+      }
 
       res.json({
-
-        ok:true,
-
-        settings
-
+        ok: true,
+        token: session
       });
-
-    }
-
-    catch (error) {
-
+    } catch {
       res
         .status(500)
         .json({
-
-          ok:false,
-
+          ok: false,
           error:
-            error.message
-
+            'SERVER_ERROR'
         });
-
     }
-
   }
 );
 
+app.post(
+  '/api/logout',
+  adminAuth,
+  (req, res) => {
+    const header =
+      str(
+        req.headers.authorization
+      );
 
-/* =========================================================
-   SAVE SETTINGS
-========================================================= */
+    const token =
+      header
+        .slice(7)
+        .trim();
+
+    sessions.delete(
+      token
+    );
+
+    res.json({
+      ok: true
+    });
+  }
+);
+
+app.get(
+  '/api/settings',
+  adminAuth,
+  (req, res) => {
+    res.json({
+      ok: true,
+      settings:
+        normalizeSettings(
+          settings
+        )
+    });
+  }
+);
 
 app.post(
   '/api/settings',
-  requireAdmin,
-  async (
-    req,
-    res
-  ) => {
-
+  adminAuth,
+  async (req, res) => {
     try {
+      const incoming =
+        req.body?.settings ||
+        req.body;
 
-      const settings =
+      if (
+        !incoming ||
+        typeof incoming !==
+          'object'
+      ) {
+        return res
+          .status(400)
+          .json({
+            ok: false,
+            error:
+              'INVALID_SETTINGS'
+          });
+      }
+
+      const saved =
         await saveSettings(
-          req.body
+          incoming
         );
 
-
       res.json({
-
-        ok:true,
-
-        settings
-
+        ok: true,
+        settings: saved
       });
-
-    }
-
-    catch (error) {
-
+    } catch (error) {
       console.error(
         '/api/settings:',
         error
       );
 
-
       res
         .status(500)
         .json({
-
-          ok:false,
-
+          ok: false,
           error:
-            error.message
-
+            error.message ||
+            'SERVER_ERROR'
         });
-
     }
-
   }
 );
 
-
-/* =========================================================
-   UPLOAD
-========================================================= */
-
 app.post(
   '/api/upload',
-  requireAdmin,
+  adminAuth,
   upload.single('file'),
-
-  async (
-    req,
-    res
-  ) => {
-
+  async (req, res) => {
     try {
-
       if (!req.file) {
-
         return res
           .status(400)
           .json({
-
-            ok:false,
-
+            ok: false,
             error:
-              'No file uploaded'
-
+              'NO_FILE'
           });
-
       }
 
-
-      const requestedKind =
-        String(
-          req.body?.kind ||
-          ''
-        )
-        .toLowerCase();
-
-
       let kind =
-        requestedKind;
-
+        str(
+          req.body.kind
+        ).toLowerCase();
 
       if (
         ![
           'photo',
           'video',
           'audio'
-        ].includes(
-          kind
-        )
+        ].includes(kind)
       ) {
-
         if (
           req.file.mimetype
-            .startsWith(
-              'image/'
-            )
+            .startsWith('image/')
         ) {
-
-          kind =
-            'photo';
-
-        }
-
-        else if (
+          kind = 'photo';
+        } else if (
           req.file.mimetype
-            .startsWith(
-              'video/'
-            )
+            .startsWith('video/')
         ) {
-
-          kind =
-            'video';
-
-        }
-
-        else if (
+          kind = 'video';
+        } else if (
           req.file.mimetype
-            .startsWith(
-              'audio/'
-            )
+            .startsWith('audio/')
         ) {
-
-          kind =
-            'audio';
-
-        }
-
-        else {
-
+          kind = 'audio';
+        } else {
           return res
             .status(400)
             .json({
-
-              ok:false,
-
+              ok: false,
               error:
-                'Unsupported media type'
-
+                'UNSUPPORTED_MEDIA_TYPE'
             });
-
         }
-
       }
-
 
       const result =
-        await dbQuery(
-
+        await pool.query(
           `
-          INSERT INTO bot_media(
-
-            kind,
-
-            filename,
-
-            mimetype,
-
-            data
-
-          )
-
-          VALUES(
-
-            $1,
-
-            $2,
-
-            $3,
-
-            $4
-
-          )
-
-          RETURNING id
+            INSERT INTO bot_media(
+              kind,
+              filename,
+              mimetype,
+              data
+            )
+            VALUES(
+              $1,
+              $2,
+              $3,
+              $4
+            )
+            RETURNING
+              id,
+              kind,
+              filename,
+              mimetype,
+              created_at
           `,
-
           [
-
             kind,
-
-            req.file
-              .originalname ||
+            req.file.originalname ||
               `upload-${Date.now()}`,
-
-            req.file.mimetype,
-
+            req.file.mimetype ||
+              'application/octet-stream',
             req.file.buffer
-
           ]
-
         );
-
-
-      res.json({
-
-        ok:true,
-
-        mediaId:
-          Number(
-            result.rows[0].id
-          )
-
-      });
-
-    }
-
-    catch (error) {
-
-      console.error(
-        '/api/upload:',
-        error
-      );
-
-
-      res
-        .status(500)
-        .json({
-
-          ok:false,
-
-          error:
-            error.message
-
-        });
-
-    }
-
-  }
-);
-
-
-/* =========================================================
-   MEDIA PREVIEW
-========================================================= */
-
-app.get(
-  '/media/:id',
-  async (
-    req,
-    res
-  ) => {
-
-    try {
 
       const media =
-        await getMedia(
-          req.params.id
-        );
-
-
-      if (!media) {
-
-        return res
-          .status(404)
-          .send(
-            'Media not found'
-          );
-
-      }
-
-
-      res.setHeader(
-
-        'Content-Type',
-
-        media.mimetype ||
-          'application/octet-stream'
-
-      );
-
-
-      res.setHeader(
-
-        'Content-Length',
-
-        media.data.length
-
-      );
-
-
-      res.setHeader(
-
-        'Cache-Control',
-
-        'public, max-age=31536000, immutable'
-
-      );
-
-
-      res.send(
-        media.data
-      );
-
-    }
-
-    catch (error) {
-
-      res
-        .status(500)
-        .send(
-          'Media error'
-        );
-
-    }
-
-  }
-);
-
-
-/* =========================================================
-   MEDIA INFO
-========================================================= */
-
-app.get(
-  '/api/media/:id',
-  requireAdmin,
-  async (
-    req,
-    res
-  ) => {
-
-    try {
-
-      const media =
-        await getMedia(
-          req.params.id
-        );
-
-
-      if (!media) {
-
-        return res
-          .status(404)
-          .json({
-
-            ok:false,
-
-            error:
-              'Media not found'
-
-          });
-
-      }
-
+        result.rows[0];
 
       res.json({
-
-        ok:true,
+        ok: true,
 
         media: {
-
           id:
-            Number(
-              media.id
-            ),
+            Number(media.id),
 
           kind:
             media.kind,
@@ -4885,479 +2337,374 @@ app.get(
 
           url:
             `/media/${media.id}`
-
         }
-
       });
-
-    }
-
-    catch (error) {
-
-      res
-        .status(500)
-        .json({
-
-          ok:false,
-
-          error:
-            error.message
-
-        });
-
-    }
-
-  }
-);
-
-
-/* =========================================================
-   REMOVE MEDIA
-========================================================= */
-
-app.post(
-  '/api/remove-media',
-  requireAdmin,
-
-  async (
-    req,
-    res
-  ) => {
-
-    try {
-
-      const id =
-        Number(
-          req.body?.mediaId
-        );
-
-
-      if (!id) {
-
-        return res
-          .status(400)
-          .json({
-
-            ok:false,
-
-            error:
-              'mediaId required'
-
-          });
-
-      }
-
-
-      await dbQuery(
-
-        `
-        DELETE FROM
-          bot_media
-
-        WHERE
-          id=$1
-        `,
-
-        [id]
-
+    } catch (error) {
+      console.error(
+        '/api/upload:',
+        error
       );
 
-
-      res.json({
-
-        ok:true
-
-      });
-
-    }
-
-    catch (error) {
-
       res
         .status(500)
         .json({
-
-          ok:false,
-
+          ok: false,
           error:
-            error.message
-
+            error.message ||
+            'UPLOAD_FAILED'
         });
-
     }
-
   }
 );
 
+app.get(
+  '/media/:id',
+  async (req, res) => {
+    try {
+      const id =
+        Number(
+          req.params.id
+        );
 
-/* =========================================================
-   RESET
-========================================================= */
+      const result =
+        await pool.query(
+          `
+            SELECT
+              filename,
+              mimetype,
+              data
+            FROM bot_media
+            WHERE id=$1
+          `,
+          [id]
+        );
+
+      if (
+        !result.rows.length
+      ) {
+        return res
+          .status(404)
+          .send(
+            'Media not found'
+          );
+      }
+
+      const media =
+        result.rows[0];
+
+      res.setHeader(
+        'Content-Type',
+        media.mimetype ||
+          'application/octet-stream'
+      );
+
+      res.setHeader(
+        'Content-Disposition',
+        `inline; filename="${str(
+          media.filename
+        ).replace(
+          /"/g,
+          ''
+        )}"`
+      );
+
+      res.setHeader(
+        'Cache-Control',
+        'public,max-age=31536000,immutable'
+      );
+
+      res.send(
+        media.data
+      );
+    } catch {
+      res
+        .status(500)
+        .send(
+          'Media error'
+        );
+    }
+  }
+);
+
+app.get(
+  '/api/media/:id',
+  adminAuth,
+  async (req, res) => {
+    try {
+      const result =
+        await pool.query(
+          `
+            SELECT
+              id,
+              kind,
+              filename,
+              mimetype,
+              telegram_file_id,
+              created_at
+            FROM bot_media
+            WHERE id=$1
+          `,
+          [
+            Number(
+              req.params.id
+            )
+          ]
+        );
+
+      if (
+        !result.rows.length
+      ) {
+        return res
+          .status(404)
+          .json({
+            ok: false,
+            error:
+              'NOT_FOUND'
+          });
+      }
+
+      const media =
+        result.rows[0];
+
+      media.id =
+        Number(media.id);
+
+      media.url =
+        `/media/${media.id}`;
+
+      res.json({
+        ok: true,
+        media
+      });
+    } catch {
+      res
+        .status(500)
+        .json({
+          ok: false,
+          error:
+            'SERVER_ERROR'
+        });
+    }
+  }
+);
+
+app.delete(
+  '/api/media/:id',
+  adminAuth,
+  async (req, res) => {
+    try {
+      await pool.query(
+        `
+          DELETE FROM bot_media
+          WHERE id=$1
+        `,
+        [
+          Number(
+            req.params.id
+          )
+        ]
+      );
+
+      res.json({
+        ok: true
+      });
+    } catch {
+      res
+        .status(500)
+        .json({
+          ok: false,
+          error:
+            'SERVER_ERROR'
+        });
+    }
+  }
+);
 
 app.post(
   '/api/reset',
-  requireAdmin,
-
-  async (
-    req,
-    res
-  ) => {
-
+  adminAuth,
+  async (req, res) => {
     try {
-
-      const settings =
+      const saved =
         await saveSettings(
-          defaultSettings()
+          clone(
+            DEFAULT_SETTINGS
+          )
         );
 
-
       res.json({
-
-        ok:true,
-
-        settings
-
+        ok: true,
+        settings: saved
       });
-
-    }
-
-    catch (error) {
-
+    } catch {
       res
         .status(500)
         .json({
-
-          ok:false,
-
+          ok: false,
           error:
-            error.message
-
+            'RESET_FAILED'
         });
-
     }
-
   }
 );
-
-
-/* =========================================================
-   CHANGE PASSWORD
-========================================================= */
-
-app.post(
-  '/api/change-password',
-  requireAdmin,
-
-  async (
-    req,
-    res
-  ) => {
-
-    /*
-      ADMIN_PASSWORD is a Render Environment Variable.
-
-      তাই runtime-এ fake success দেখানো হবে না।
-    */
-
-    res
-      .status(400)
-      .json({
-
-        ok:false,
-
-        error:
-          'Change ADMIN_PASSWORD in Render Environment Variables, then redeploy.'
-
-      });
-
-  }
-);
-
-
-/* =========================================================
-   STATUS
-========================================================= */
 
 app.get(
   '/api/status',
-  requireAdmin,
-
-  async (
-    req,
-    res
-  ) => {
-
+  adminAuth,
+  async (req, res) => {
     try {
-
-      const bot =
+      const me =
         await telegram(
           'getMe'
         );
 
-
-      let database =
-        false;
-
-
-      if (pool) {
-
-        await dbQuery(
-          'SELECT 1'
-        );
-
-
-        database =
-          true;
-
-      }
-
-
       res.json({
-
-        ok:true,
+        ok: true,
 
         bot: {
-
-          id:
-            bot.id,
-
+          id: me.id,
           username:
-            bot.username,
-
+            me.username || '',
           name:
-            bot.first_name
-
+            me.first_name || ''
         },
 
-        database,
-
-        publicUrl:
-          PUBLIC_URL
-
+        database:
+          'connected'
       });
-
-    }
-
-    catch (error) {
-
+    } catch (error) {
       res
         .status(500)
         .json({
-
-          ok:false,
-
+          ok: false,
           error:
-            error.message
-
+            error.message ||
+            'STATUS_FAILED'
         });
+    }
+  }
+);
 
+app.use(
+  (error, req, res, next) => {
+    if (
+      error?.code ===
+      'LIMIT_FILE_SIZE'
+    ) {
+      return res
+        .status(413)
+        .json({
+          ok: false,
+          error:
+            'FILE_TOO_LARGE',
+          message:
+            'Maximum upload size is 50MB.'
+        });
     }
 
-  }
-);
-
-
-/* =========================================================
-   WEBHOOK
-========================================================= */
-
-app.post(
-  '/telegram/webhook',
-  async (
-    req,
-    res
-  ) => {
-
-    /*
-      Telegram-কে সঙ্গে সঙ্গে 200
-      পাঠানো হচ্ছে।
-    */
-
-    res.sendStatus(
-      200
-    );
-
-
-    await handleUpdate(
-      req.body
-    );
-
-  }
-);
-
-
-/* =========================================================
-   HEALTH
-========================================================= */
-
-app.get(
-  '/health',
-  (
-    req,
-    res
-  ) => {
-
-    res.json({
-
-      ok:true,
-
-      service:
-        'telegram-bot-system'
-
-    });
-
-  }
-);
-
-
-/* =========================================================
-   ADMIN HTML
-========================================================= */
-
-const adminFile =
-  path.join(
-    __dirname,
-    'Admin.html'
-  );
-
-
-app.get(
-  '/',
-  (
-    req,
-    res
-  ) => {
-
-    res.sendFile(
-      adminFile
-    );
-
-  }
-);
-
-
-app.get(
-  '/admin.html',
-  (
-    req,
-    res
-  ) => {
-
-    res.sendFile(
-      adminFile
-    );
-
-  }
-);
-
-
-/* =========================================================
-   WEBHOOK SETUP
-========================================================= */
-
-async function setupWebhook() {
-
-  if (!BOT_TOKEN)
-    return;
-
-
-  try {
-
-    await telegram(
-
-      'setWebhook',
-
-      {
-
-        url:
-          `${PUBLIC_URL}/telegram/webhook`,
-
-        allowed_updates: [
-
-          'message',
-
-          'callback_query'
-
-        ]
-
-      }
-
-    );
-
-
-    console.log(
-
-      `Telegram webhook set: ${PUBLIC_URL}/telegram/webhook`
-
-    );
-
-  }
-
-  catch (error) {
-
     console.error(
-
-      'Webhook setup failed:',
-
-      error.message
-
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   BOOTSTRAP
-========================================================= */
-
-async function bootstrap() {
-
-  try {
-
-    await initDb();
-
-
-    app.listen(
-
-      PORT,
-
-      async () => {
-
-        console.log(
-          `Server listening on ${PORT}`
-        );
-
-
-        console.log(
-          `Admin: ${PUBLIC_URL}/`
-        );
-
-
-        await setupWebhook();
-
-      }
-
-    );
-
-  }
-
-  catch (error) {
-
-    console.error(
-      'BOOTSTRAP FAILED:',
+      'Server error:',
       error
     );
 
+    res
+      .status(500)
+      .json({
+        ok: false,
+        error:
+          'SERVER_ERROR'
+      });
+  }
+);
 
-    process.exit(
-      1
+async function setWebhook() {
+  const base =
+    str(
+      process.env.RENDER_EXTERNAL_URL
+    ).trim() ||
+    (
+      process.env.RENDER_EXTERNAL_HOSTNAME
+        ? `https://${process.env.RENDER_EXTERNAL_HOSTNAME}`
+        : 'https://telegram-bot-system-kgdq.onrender.com'
     );
 
-  }
+  const webhookUrl =
+    base.replace(
+      /\/+$/,
+      ''
+    ) +
+    '/telegram/webhook';
 
+  try {
+    await telegram(
+      'setWebhook',
+      {
+        url:
+          webhookUrl,
+
+        allowed_updates: [
+          'message',
+          'callback_query'
+        ]
+      }
+    );
+
+    console.log(
+      'Telegram webhook:',
+      webhookUrl
+    );
+  } catch (error) {
+    console.error(
+      'Webhook setup:',
+      error.message
+    );
+  }
 }
 
+async function start() {
+  try {
+    await initDB();
 
-bootstrap();
+    app.listen(
+      PORT,
+      () => {
+        console.log(
+          `Server running on port ${PORT}`
+        );
+      }
+    );
+
+    await setWebhook();
+  } catch (error) {
+    console.error(
+      'Startup failed:',
+      error
+    );
+
+    process.exit(1);
+  }
+}
+
+process.on(
+  'SIGTERM',
+  async () => {
+    await pool
+      .end()
+      .catch(() => {});
+
+    process.exit(0);
+  }
+);
+
+process.on(
+  'SIGINT',
+  async () => {
+    await pool
+      .end()
+      .catch(() => {});
+
+    process.exit(0);
+  }
+);
+
+start();
