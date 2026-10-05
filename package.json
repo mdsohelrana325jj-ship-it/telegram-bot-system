@@ -1,7 +1,7 @@
 {
   "name": "telegram-bot-system",
-  "version": "4.0.0",
-  "description": "Complete Telegram Bot + Admin Panel with PostgreSQL",
+  "version": "1.0.0",
+  "description": "Complete Telegram Bot + Admin Panel",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
