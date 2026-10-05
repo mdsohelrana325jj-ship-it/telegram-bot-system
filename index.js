@@ -2598,7 +2598,7 @@ app.use(
           error:
             'FILE_TOO_LARGE',
           message:
-            'Maximum upload size is 50MB.'
+            'Maximum upload size is 500MB.'
         });
     }
 
