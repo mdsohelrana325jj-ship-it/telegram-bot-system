@@ -51,12 +51,30 @@ const pool = new Pool({
 const MAX_UPLOAD_SIZE = 50 * 1024 * 1024;
 
 const MAIN_BUTTONS = [
-  { id: "ai", text: "🤖 AI HACK All Link Check" },
-  { id: "vip", text: "🔥 VIP GROUP All Link Check" },
-  { id: "support", text: "💬 SUPPORT All Link Check" },
-  { id: "official", text: "📢 OFFICIAL CHANNEL All Link Check🥰" },
-  { id: "bonus", text: "🎁 BONUS All Link Check" },
-  { id: "admin", text: "👨‍💻 ADMIN All Link Check" }
+  {
+    id: "ai",
+    text: "🤖 AI HACK All Link Check ✅"
+  },
+  {
+    id: "vip",
+    text: "🔥 VIP GROUP All Link Check"
+  },
+  {
+    id: "support",
+    text: "💬 SUPPORT All Link Check"
+  },
+  {
+    id: "official",
+    text: "📢 OFFICIAL CHANNEL All Link Check"
+  },
+  {
+    id: "bonus",
+    text: "🎁 BONUS All Link Check"
+  },
+  {
+    id: "admin",
+    text: "👨‍💻 ADMIN All Link Check"
+  }
 ];
 
 /* =========================================================
@@ -69,6 +87,21 @@ function clone(obj) {
 
 function cleanText(value) {
   return String(value ?? "").trim();
+}
+
+function validUrl(value) {
+  const url = cleanText(value);
+  if (!url) return false;
+  try {
+    const parsed = new URL(url);
+    return (
+      parsed.protocol === "http:" ||
+      parsed.protocol === "https:" ||
+      parsed.protocol === "tg:"
+    );
+  } catch {
+    return false;
+  }
 }
 
 function normalizeHex(value) {
@@ -86,6 +119,7 @@ function normalizeHex(value) {
 function slotDefault() {
   return {
     enabled: true,
+    mediaEnabled: false,
     mediaType: "none",
     mediaSource: "upload",
     mediaId: null,
@@ -96,14 +130,16 @@ function slotDefault() {
       text: "OPEN LINK",
       url: "",
       colorEnabled: true,
-      color: "#6d5dfc"
+      color: "#6d5dfc",
+      style: "primary"
     },
     button2: {
       enabled: false,
       text: "SUPPORT",
       url: "",
       colorEnabled: true,
-      color: "#6d5dfc"
+      color: "#6d5dfc",
+      style: "success"
     }
   };
 }
@@ -121,13 +157,14 @@ function mainDefault(id, text) {
     buttonColor: "#6d5dfc",
     buttonStyle: "primary",
     buttonVisualEnabled: false,
-    buttonVisualMediaType: "none",
-    buttonVisualMediaSource: "upload",
-    buttonVisualMediaId: null,
-    buttonVisualMediaUrl: "",
+    buttonVisualType: "none",
+    buttonVisualSource: "upload",
+    buttonVisualId: null,
+    buttonVisualUrl: "",
     buttonVisualText: "",
     buttonImageEnabled: false,
     buttonImageUrl: "",
+    headerMediaEnabled: false,
     headerMediaType: "none",
     headerMediaSource: "upload",
     headerMediaId: null,
@@ -151,7 +188,7 @@ function welcomeDefault() {
     mediaId: null,
     mediaUrl: "",
     text: "👋 Welcome to our Telegram Bot!",
-    layout: "profile_welcome_buttons"
+    layout: "profile_welcome_buttons" // Options: profile_welcome_buttons, buttons_profile_welcome, buttons_profile_welcome_reversed etc.
   };
 }
 
@@ -162,9 +199,10 @@ function welcomeDefault() {
 function audioDefault() {
   return {
     enabled: false,
+    mediaEnabled: true,
     text: "",
     mediaType: "audio",
-    mediaSource: "url",
+    mediaSource: "upload",
     mediaId: null,
     mediaUrl: "",
     button1: {
@@ -172,14 +210,16 @@ function audioDefault() {
       text: "OPEN LINK",
       url: "",
       colorEnabled: true,
-      color: "#6d5dfc"
+      color: "#6d5dfc",
+      style: "primary"
     },
     button2: {
       enabled: false,
       text: "SUPPORT",
       url: "",
       colorEnabled: true,
-      color: "#6d5dfc"
+      color: "#6d5dfc",
+      style: "success"
     }
   };
 }
@@ -196,6 +236,10 @@ function defaultSettings() {
     audio: audioDefault()
   };
 }
+
+/* =========================================================
+   DEEP MERGE & NORMALIZE
+========================================================= */
 
 function mergeObject(base, incoming) {
   if (!incoming || typeof incoming !== "object" || Array.isArray(incoming)) {
@@ -225,8 +269,9 @@ function normalizeSlot(slot) {
   return mergeObject(base, slot || {});
 }
 
-function normalizeMainButton(button, fallbackItem) {
-  const base = mainDefault(button?.id || fallbackItem.id, button?.text || fallbackItem.text);
+function normalizeMainButton(button, index) {
+  const fallback = MAIN_BUTTONS[index] || MAIN_BUTTONS[0];
+  const base = mainDefault(button?.id || fallback.id, button?.text || fallback.text);
   const result = mergeObject(base, button || {});
   result.slots = Array.isArray(result.slots) ? result.slots.map(normalizeSlot) : [];
   return result;
@@ -234,24 +279,23 @@ function normalizeMainButton(button, fallbackItem) {
 
 function normalizeSettings(data) {
   const defaults = defaultSettings();
-  if (!data || typeof data !== "object") {
-    return defaults;
-  }
+  if (!data || typeof data !== "object") return defaults;
   const result = mergeObject(defaults, data);
   result.welcome = mergeObject(welcomeDefault(), data.welcome || {});
-  
-  const rawMain = Array.isArray(data.mainButtons) ? data.mainButtons : [];
-  result.mainButtons = MAIN_BUTTONS.map((item, index) => {
-    const found = rawMain.find(x => x && x.id === item.id) || rawMain[index] || item;
-    return normalizeMainButton(found, item);
-  });
-
+  if (Array.isArray(data.mainButtons)) {
+    result.mainButtons = data.mainButtons.map(normalizeMainButton);
+  }
+  for (const item of MAIN_BUTTONS) {
+    if (!result.mainButtons.some(b => b.id === item.id)) {
+      result.mainButtons.push(mainDefault(item.id, item.text));
+    }
+  }
   result.audio = mergeObject(audioDefault(), data.audio || {});
   return result;
 }
 
 /* =========================================================
-   DATABASE INIT
+   DATABASE INIT & HELPERS
 ========================================================= */
 
 async function dbInit() {
@@ -308,7 +352,7 @@ async function saveSettings(data) {
 }
 
 /* =========================================================
-   ADMIN SESSION
+   ADMIN SESSION & TELEGRAM UTILS
 ========================================================= */
 
 const sessions = new Map();
@@ -332,10 +376,6 @@ function checkAdmin(req, res, next) {
   }
   next();
 }
-
-/* =========================================================
-   TELEGRAM
-========================================================= */
 
 const TG = `https://api.telegram.org/bot${BOT_TOKEN}`;
 
@@ -364,10 +404,7 @@ async function telegramFile(method, fields, fileField, buffer, filename, mime) {
     new Blob([buffer], { type: mime || "application/octet-stream" }),
     filename || "upload"
   );
-  const response = await fetch(`${TG}/${method}`, {
-    method: "POST",
-    body: form
-  });
+  const response = await fetch(`${TG}/${method}`, { method: "POST", body: form });
   const data = await response.json();
   if (!data.ok) {
     throw new Error(data.description || `Telegram upload error: ${method}`);
@@ -383,54 +420,25 @@ function rememberMessage(chatId, messageId, deleteAfter = 0) {
     chatMessages.set(chatId, new Set());
   }
   chatMessages.get(chatId).add(messageId);
-  pool.query(
-    `INSERT INTO bot_chat_messages (chat_id, message_id) VALUES ($1, $2)`,
-    [String(chatId), messageId]
-  ).catch(() => {});
-
-  if (Number(deleteAfter) > 0) {
-    setTimeout(async () => {
-      try {
-        await telegram("deleteMessage", { chat_id: chatId, message_id: messageId });
-      } catch (_) {}
-      pool.query(
-        `DELETE FROM bot_chat_messages WHERE chat_id = $1 AND message_id = $2`,
-        [String(chatId), messageId]
-      ).catch(() => {});
-    }, Number(deleteAfter) * 1000);
-  }
 }
 
 async function clearBotMessages(chatId) {
-  const ids = new Set();
   const memory = chatMessages.get(chatId);
   if (memory) {
-    for (const id of memory) ids.add(id);
-  }
-  try {
-    const result = await pool.query(
-      `SELECT message_id FROM bot_chat_messages WHERE chat_id = $1`,
-      [String(chatId)]
-    );
-    for (const row of result.rows) {
-      ids.add(Number(row.message_id));
+    for (const messageId of memory) {
+      try {
+        await telegram("deleteMessage", { chat_id: chatId, message_id: messageId });
+      } catch (_) {}
     }
-  } catch (_) {}
-
-  for (const messageId of ids) {
-    try {
-      await telegram("deleteMessage", { chat_id: chatId, message_id: messageId });
-    } catch (_) {}
   }
-  await pool.query(`DELETE FROM bot_chat_messages WHERE chat_id = $1`, [String(chatId)]).catch(() => {});
   chatMessages.delete(chatId);
 }
 
 function telegramButtonStyle(button) {
-  if (!button || button.colorEnabled === false) {
+  if (!button || button.colorEnabled === false || button.buttonColorEnabled === false) {
     return undefined;
   }
-  const hex = normalizeHex(button.color);
+  const hex = normalizeHex(button.buttonColor || button.color);
   if (hex) {
     const r = parseInt(hex.substring(0, 2), 16);
     const g = parseInt(hex.substring(2, 4), 16);
@@ -451,7 +459,7 @@ function telegramButtonStyle(button) {
     }
     return nearest.name;
   }
-  return "primary";
+  return undefined;
 }
 
 function makeMainButton(button) {
@@ -460,9 +468,7 @@ function makeMainButton(button) {
     callback_data: `main:${button.id}`
   };
   const style = telegramButtonStyle(button);
-  if (style) {
-    item.style = style;
-  }
+  if (style) item.style = style;
   return item;
 }
 
@@ -478,13 +484,7 @@ function mainKeyboard(settings) {
 function backKeyboard() {
   return {
     inline_keyboard: [
-      [
-        {
-          text: "⬅️ BACK",
-          callback_data: "back:main",
-          style: "primary"
-        }
-      ]
+      [{ text: "⬅️ BACK", callback_data: "back:main", style: "primary" }]
     ]
   };
 }
@@ -512,41 +512,6 @@ function mediaMethod(type) {
   }
 }
 
-async function uploadDbMediaToUser(chatId, media, caption, markup, settings) {
-  const info = mediaMethod(media.kind);
-  if (!info) return null;
-  const [method, field] = info;
-  const fields = { chat_id: chatId };
-  if (caption && caption.length <= 1024) fields.caption = caption;
-  if (markup) fields.reply_markup = JSON.stringify(markup);
-
-  const result = await telegramFile(method, fields, field, media.data, media.filename, media.mimetype);
-  let fileId = null;
-  if (media.kind === "photo") fileId = result.photo?.[result.photo.length - 1]?.file_id || null;
-  if (media.kind === "video") fileId = result.video?.file_id || null;
-  if (media.kind === "audio") fileId = result.audio?.file_id || null;
-
-  if (fileId) {
-    await pool.query(`UPDATE bot_media SET telegram_file_id = $1 WHERE id = $2`, [fileId, media.id]);
-  }
-  rememberMessage(chatId, result.message_id, Number(settings?.autoDelete || 0));
-  if (caption && caption.length > 1024) {
-    await sendText(chatId, caption, undefined, settings);
-  }
-  return result;
-}
-
-async function sendText(chatId, text, markup, settings) {
-  const value = String(text || "");
-  const finalText = value || "\u2063";
-  const payload = { chat_id: chatId, text: finalText };
-  if (markup) payload.reply_markup = markup;
-
-  const message = await telegram("sendMessage", payload);
-  rememberMessage(chatId, message.message_id, Number(settings?.autoDelete || 0));
-  return message;
-}
-
 async function sendConfiguredMedia(chatId, mediaType, mediaSource, mediaId, mediaUrl, text, markup, settings) {
   const requestedType = String(mediaType || "none").toLowerCase();
   if (requestedType === "none") {
@@ -562,51 +527,45 @@ async function sendConfiguredMedia(chatId, mediaType, mediaSource, mediaId, medi
   const info = mediaMethod(actualType);
   if (!info) return sendText(chatId, text, markup, settings);
 
-  if (dbMedia) {
-    if (dbMedia.telegram_file_id) {
-      const [method, field] = info;
-      const payload = { chat_id: chatId, [field]: dbMedia.telegram_file_id };
-      if (text && text.length <= 1024) payload.caption = text;
-      if (markup) payload.reply_markup = markup;
-      try {
-        const message = await telegram(method, payload);
-        rememberMessage(chatId, message.message_id, Number(settings?.autoDelete || 0));
-        return message;
-      } catch (_) {
-        dbMedia.telegram_file_id = null;
-      }
-    }
-    try {
-      return await uploadDbMediaToUser(chatId, dbMedia, text, markup, settings);
-    } catch (_) {
-      return sendText(chatId, text, markup, settings);
-    }
-  }
-
-  const source = cleanText(mediaUrl);
-  if (!source) return sendText(chatId, text, markup, settings);
-
   const [method, field] = info;
-  const payload = { chat_id: chatId, [field]: source };
+  const payload = { chat_id: chatId };
   if (text && text.length <= 1024) payload.caption = text;
   if (markup) payload.reply_markup = markup;
 
-  try {
-    const message = await telegram(method, payload);
-    rememberMessage(chatId, message.message_id, Number(settings?.autoDelete || 0));
-    return message;
-  } catch (_) {
-    return sendText(chatId, text, markup, settings);
+  if (dbMedia) {
+    payload[field] = dbMedia.telegram_file_id || Buffer.from(dbMedia.data);
+    try {
+      const res = await telegramFile(method, payload, field, dbMedia.data, dbMedia.filename, dbMedia.mimetype);
+      rememberMessage(chatId, res.message_id, Number(settings?.autoDelete || 0));
+      return res;
+    } catch (e) {
+      console.error("Media send error:", e.message);
+    }
+  } else if (mediaUrl) {
+    payload[field] = mediaUrl;
+    try {
+      const res = await telegram(method, payload);
+      rememberMessage(chatId, res.message_id, Number(settings?.autoDelete || 0));
+      return res;
+    } catch (e) {
+      console.error("URL Media error:", e.message);
+    }
   }
+  return sendText(chatId, text, markup, settings);
+}
+
+async function sendText(chatId, text, markup, settings) {
+  const payload = { chat_id: chatId, text: text || "\u2063" };
+  if (markup) payload.reply_markup = markup;
+  const message = await telegram("sendMessage", payload);
+  rememberMessage(chatId, message.message_id, Number(settings?.autoDelete || 0));
+  return message;
 }
 
 async function getUserDisplayName(chatId) {
   try {
     const chat = await telegram("getChat", { chat_id: chatId });
-    const name = [chat.first_name, chat.last_name].filter(Boolean).join(" ").trim();
-    if (name) return name;
-    if (chat.username) return `@${chat.username}`;
-    return "User";
+    return [chat.first_name, chat.last_name].filter(Boolean).join(" ").trim() || chat.username || "User";
   } catch {
     return "User";
   }
@@ -614,20 +573,17 @@ async function getUserDisplayName(chatId) {
 
 async function sendProfilePhoto(chatId, settings) {
   const welcome = settings.welcome || {};
-  const enabled = welcome.profilePhotoEnabled !== undefined ? welcome.profilePhotoEnabled : welcome.profilePhoto;
-  if (!enabled) return null;
-
+  if (welcome.profilePhotoEnabled === false && welcome.profilePhoto === false) return null;
   try {
-    const result = await telegram("getUserProfilePhotos", { user_id: chatId, offset: 0, limit: 1 });
-    const photos = result.photos || [];
+    const res = await telegram("getUserProfilePhotos", { user_id: chatId, limit: 1 });
+    const photos = res.photos || [];
     if (!photos.length) return null;
-    const sizes = photos[0] || [];
+    const sizes = photos[0];
     const photo = sizes[sizes.length - 1];
     if (!photo?.file_id) return null;
-
-    const message = await telegram("sendPhoto", { chat_id: chatId, photo: photo.file_id });
-    rememberMessage(chatId, message.message_id, Number(settings?.autoDelete || 0));
-    return message;
+    const msg = await telegram("sendPhoto", { chat_id: chatId, photo: photo.file_id });
+    rememberMessage(chatId, msg.message_id, Number(settings?.autoDelete || 0));
+    return msg;
   } catch {
     return null;
   }
@@ -636,26 +592,25 @@ async function sendProfilePhoto(chatId, settings) {
 async function getWelcomeText(chatId, settings) {
   const name = await getUserDisplayName(chatId);
   const welcomeText = cleanText(settings.welcome?.text);
-  if (welcomeText) return `👤 ${name}\n\n${welcomeText}`;
-  return `👤 ${name}`;
+  return welcomeText ? `👤 ${name}\n\n${welcomeText}` : `👤 ${name}`;
 }
 
 function hasWelcomeMedia(welcome) {
-  if (!welcome || !welcome.mediaEnabled) return false;
+  if (!welcome || welcome.mediaEnabled === false) return false;
   if (!welcome.mediaType || welcome.mediaType === "none") return false;
   return !!(welcome.mediaId || welcome.mediaUrl);
 }
 
 function getMainButtonVisual(button) {
-  if (!button || !button.buttonVisualEnabled) return null;
-  const type = button.buttonVisualMediaType || "none";
-  const source = button.buttonVisualMediaSource || "upload";
-  const id = button.buttonVisualMediaId || null;
-  const url = button.buttonVisualMediaUrl || button.buttonImageUrl || "";
-  const text = button.buttonVisualText || "";
-
-  if (type !== "none" || text) {
-    return { type, source, id, url, text };
+  if (!button || button.buttonVisualEnabled === false) return null;
+  if (button.buttonVisualType && button.buttonVisualType !== "none" && (button.buttonVisualId || button.buttonVisualUrl)) {
+    return {
+      type: button.buttonVisualType,
+      source: button.buttonVisualSource || "upload",
+      id: button.buttonVisualId || null,
+      url: button.buttonVisualUrl || "",
+      text: button.buttonVisualText || ""
+    };
   }
   return null;
 }
@@ -664,16 +619,13 @@ async function sendMainButtonVisual(chatId, button, settings) {
   const visual = getMainButtonVisual(button);
   if (!visual) return null;
   if (visual.type === "none") {
-    if (visual.text) {
-      return sendText(chatId, visual.text, undefined, settings);
-    }
-    return null;
+    return sendText(chatId, visual.text, undefined, settings);
   }
   return sendConfiguredMedia(chatId, visual.type, visual.source, visual.id, visual.url, visual.text, undefined, settings);
 }
 
 async function sendSixMainButtons(chatId, settings) {
-  const enabled = (settings.mainButtons || []).filter(button => button.enabled);
+  const enabled = (settings.mainButtons || []).filter(b => b.enabled);
   if (!enabled.length) return null;
 
   for (const button of enabled) {
@@ -682,250 +634,156 @@ async function sendSixMainButtons(chatId, settings) {
   }
 }
 
-async function sendWelcomeContent(chatId, settings, attachKeyboard = false) {
-  const welcome = settings.welcome || {};
-  const text = await getWelcomeText(chatId, settings);
-  const keyboard = attachKeyboard ? mainKeyboard(settings) : undefined;
-
-  if (!hasWelcomeMedia(welcome)) {
-    return sendText(chatId, text, keyboard, settings);
-  }
-
-  return sendConfiguredMedia(chatId, welcome.mediaType, welcome.mediaSource, welcome.mediaId, welcome.mediaUrl, text, keyboard, settings);
-}
-
-/* =========================================================
-   MAIN PAGE
-========================================================= */
-
 async function showMainPage(chatId) {
   const settings = await getSettings();
   await clearBotMessages(chatId);
 
   const layout = settings.welcome?.layout || "profile_welcome_buttons";
+  const welcome = settings.welcome || {};
 
+  // Layout handling as requested by user
   if (layout === "buttons_profile_welcome") {
     await sendSixMainButtons(chatId, settings);
     await sendProfilePhoto(chatId, settings);
-    await sendWelcomeContent(chatId, settings, false);
+    const text = await getWelcomeText(chatId, settings);
+    await sendConfiguredMedia(chatId, welcome.mediaType, welcome.mediaSource, welcome.mediaId, welcome.mediaUrl, text, undefined, settings);
     return;
   }
 
+  // Default: Profile Photo -> Welcome Media/Text -> 6 Buttons
   await sendProfilePhoto(chatId, settings);
-  await sendWelcomeContent(chatId, settings, false);
-  await sendSixMainButtons(chatId, settings);
+  const text = await getWelcomeText(chatId, settings);
+  
+  if (hasWelcomeMedia(welcome)) {
+    await sendConfiguredMedia(chatId, welcome.mediaType, welcome.mediaSource, welcome.mediaId, welcome.mediaUrl, text, undefined, settings);
+    await sendSixMainButtons(chatId, settings);
+  } else {
+    // If no welcome media, buttons can go right below welcome text or separate
+    await sendText(chatId, text, mainKeyboard(settings), settings);
+  }
 }
 
 async function showMainButton(chatId, buttonId) {
   const settings = await getSettings();
   await clearBotMessages(chatId);
-
   const button = (settings.mainButtons || []).find(item => item.id === buttonId);
   if (!button || !button.enabled) {
-    await showMainPage(chatId);
-    return;
+    return showMainPage(chatId);
   }
 
   const visual = getMainButtonVisual(button);
   if (visual) {
-    if (visual.type === "none" && visual.text) {
-      await sendText(chatId, visual.text, undefined, settings);
-    } else if (visual.type !== "none") {
-      await sendConfiguredMedia(chatId, visual.type, visual.source, visual.id, visual.url, visual.text, undefined, settings);
-    }
-  }
-
-  if (button.headerMediaType && button.headerMediaType !== "none" && (button.headerMediaId || button.headerMediaUrl)) {
-    await sendConfiguredMedia(chatId, button.headerMediaType, button.headerMediaSource, button.headerMediaId, button.headerMediaUrl, button.headerText, undefined, settings);
-  } else if (button.headerText) {
-    await sendText(chatId, button.headerText, undefined, settings);
+    await sendConfiguredMedia(chatId, visual.type, visual.source, visual.id, visual.url, visual.text, undefined, settings);
   }
 
   for (const slot of button.slots || []) {
     if (!slot || !slot.enabled) continue;
-    
-    let slotMarkup = undefined;
-    const b1 = slot.button1?.enabled ? { text: slot.button1.text, url: slot.button1.url } : null;
-    const b2 = slot.button2?.enabled ? { text: slot.button2.text, url: slot.button2.url } : null;
-    
-    const inlineRows = [];
-    if (b1) {
-      inlineRows.push([{ text: b1.text, url: b1.url || undefined, callback_data: b1.url ? undefined : `slot:btn1` }]);
-    }
-    if (b2) {
-      inlineRows.push([{ text: b2.text, url: b2.url || undefined, callback_data: b2.url ? undefined : `slot:btn2` }]);
-    }
-    if (inlineRows.length > 0) {
-      slotMarkup = { inline_keyboard: inlineRows };
-    }
-
-    if (slot.mediaType === "none") {
-      await sendText(slotIdForChat => slotIdForChat, slot.text || "", slotMarkup, settings);
-    } else {
-      await sendConfiguredMedia(chatId, slot.mediaType, slot.mediaSource, slot.mediaId, slot.mediaUrl, slot.text, slotMarkup, settings);
-    }
+    await sendConfiguredMedia(chatId, slot.mediaType, slot.mediaSource, slot.mediaId, slot.mediaUrl, slot.text, undefined, settings);
   }
 
   await sendText(chatId, "⬅️ BACK", backKeyboard(), settings);
 }
 
-/* =========================================================
-   UPDATE HANDLER & EXPRESS ROUTES
-========================================================= */
-
 async function handleUpdate(update) {
-  if (update.message) {
-    const message = update.message;
-    if (message.text && message.text.trim().toLowerCase() === "/start") {
-      await showMainPage(message.chat.id);
-      return;
-    }
+  if (update.message?.text?.trim().toLowerCase() === "/start") {
+    await showMainPage(update.message.chat.id);
+    return;
   }
-
   if (update.callback_query) {
     const query = update.callback_query;
     const chatId = query.message?.chat?.id;
     const data = String(query.data || "");
     if (!chatId) return;
 
-    try {
-      await telegram("answerCallbackQuery", { callback_query_id: query.id });
-    } catch (_) {}
+    try { await telegram("answerCallbackQuery", { callback_query_id: query.id }); } catch {}
 
     if (data === "back:main") {
       await showMainPage(chatId);
       return;
     }
-
     if (data.startsWith("main:")) {
-      const buttonId = data.substring(5);
-      await showMainButton(chatId, buttonId);
+      await showMainButton(chatId, data.substring(5));
       return;
     }
   }
 }
 
+/* =========================================================
+   ROUTES & WEBHOOK
+========================================================= */
+
 app.post("/telegram-webhook", async (req, res) => {
   res.status(200).json({ ok: true });
   try {
     await handleUpdate(req.body);
-  } catch (error) {
-    console.error("Telegram update error:", error);
+  } catch (e) {
+    console.error("Webhook error:", e);
   }
 });
 
 app.post("/api/login", async (req, res) => {
-  try {
-    const password = String(req.body.password || "");
-    if (password !== ADMIN_PASSWORD) {
-      return res.status(401).json({ ok: false, error: "Wrong password" });
-    }
-    const token = createAdminToken();
-    res.json({ ok: true, token });
-  } catch (error) {
-    res.status(500).json({ ok: false, error: error.message });
+  const password = String(req.body.password || "");
+  if (password !== ADMIN_PASSWORD) {
+    return res.status(401).json({ ok: false, error: "Wrong password" });
   }
+  res.json({ ok: true, token: createAdminToken() });
 });
 
 app.get("/api/settings", checkAdmin, async (req, res) => {
-  try {
-    res.json({ ok: true, settings: await getSettings() });
-  } catch (error) {
-    res.status(500).json({ ok: false, error: error.message });
-  }
+  res.json({ ok: true, settings: await getSettings() });
 });
 
 app.post("/api/settings", checkAdmin, async (req, res) => {
-  try {
-    const settings = await saveSettings(req.body);
-    res.json({ ok: true, settings });
-  } catch (error) {
-    res.status(500).json({ ok: false, error: error.message });
-  }
+  const settings = await saveSettings(req.body);
+  res.json({ ok: true, settings });
 });
 
-app.post("/api/reset", checkAdmin, async (req, res) => {
-  try {
-    const defaults = defaultSettings();
-    const settings = await saveSettings(defaults);
-    res.json({ ok: true, settings });
-  } catch (error) {
-    res.status(500).json({ ok: false, error: error.message });
-  }
-});
-
-const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: { fileSize: MAX_UPLOAD_SIZE }
-});
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: MAX_UPLOAD_SIZE } });
 
 app.post("/api/upload", checkAdmin, upload.single("file"), async (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ ok: false, error: "No file selected" });
-    }
-    const requested = cleanText(req.body.kind).toLowerCase();
-    let kind = "photo";
-    if (requested === "video") kind = "video";
-    if (requested === "audio") kind = "audio";
+  if (!req.file) return res.status(400).json({ ok: false, error: "No file selected" });
+  let kind = "photo";
+  if (req.file.mimetype.startsWith("video/")) kind = "video";
+  else if (req.file.mimetype.startsWith("audio/")) kind = "audio";
 
-    const result = await pool.query(
-      `INSERT INTO bot_media (kind, filename, mimetype, data) VALUES ($1, $2, $3, $4) RETURNING id`,
-      [kind, req.file.originalname, req.file.mimetype, req.file.buffer]
-    );
+  const result = await pool.query(
+    `INSERT INTO bot_media (kind, filename, mimetype, data) VALUES ($1, $2, $3, $4) RETURNING id`,
+    [kind, req.file.originalname, req.file.mimetype, req.file.buffer]
+  );
 
-    res.json({
-      ok: true,
-      mediaId: result.rows[0].id,
-      kind,
-      url: `/media/${result.rows[0].id}`
-    });
-  } catch (error) {
-    res.status(500).json({ ok: false, error: error.message });
-  }
+  res.json({ ok: true, mediaId: result.rows[0].id, kind, url: `/media/${result.rows[0].id}` });
 });
 
 app.get("/media/:id", async (req, res) => {
-  try {
-    const result = await pool.query(`SELECT mimetype, data, filename FROM bot_media WHERE id = $1`, [req.params.id]);
-    if (!result.rows.length) return res.status(404).send("Media not found");
-    const media = result.rows[0];
-    res.setHeader("Content-Type", media.mimetype || "application/octet-stream");
-    res.send(media.data);
-  } catch {
-    res.status(500).send("Media error");
-  }
+  const result = await pool.query(`SELECT mimetype, data, filename FROM bot_media WHERE id = $1`, [req.params.id]);
+  if (!result.rows.length) return res.status(404).send("Not found");
+  res.setHeader("Content-Type", result.rows[0].mimetype);
+  res.send(result.rows[0].data);
 });
 
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "Admin.html"));
+app.post("/api/reset", checkAdmin, async (req, res) => {
+  const settings = await saveSettings(defaultSettings());
+  res.json({ ok: true, settings });
 });
 
-app.get("/admin.html", (req, res) => {
-  res.sendFile(path.join(__dirname, "Admin.html"));
-});
+app.get("/", (req, res) => res.sendFile(path.join(__dirname, "Admin.html")));
+app.get("/admin.html", (req, res) => res.sendFile(path.join(__dirname, "Admin.html")));
 
 async function setupWebhook() {
   const base = process.env.RENDER_EXTERNAL_URL || "https://telegram-bot-system-kgdq.onrender.com";
-  const webhook = `${base}/telegram-webhook`;
   try {
-    await telegram("setWebhook", { url: webhook, allowed_updates: ["message", "callback_query"] });
-  } catch (error) {
-    console.error("Webhook setup error:", error.message);
+    await telegram("setWebhook", { url: `${base}/telegram-webhook`, allowed_updates: ["message", "callback_query"] });
+  } catch (e) {
+    console.error("Webhook error:", e.message);
   }
 }
 
 async function start() {
-  try {
-    await dbInit();
-    app.listen(PORT, async () => {
-      console.log(`Server running on port ${PORT}`);
-      await setupWebhook();
-    });
-  } catch (error) {
-    console.error("Startup error:", error);
-    process.exit(1);
-  }
+  await dbInit();
+  app.listen(PORT, async () => {
+    console.log(`Server running on port ${PORT}`);
+    await setupWebhook();
+  });
 }
 
 start();
