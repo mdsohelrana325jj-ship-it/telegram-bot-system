@@ -1,0 +1,2049 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+
+<title>Telegram Bot Admin</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+:root{
+  --primary:#6d3df5;
+  --primary2:#8b5cf6;
+  --bg:#f5f6fa;
+  --card:#fff;
+  --text:#171923;
+  --muted:#7b8192;
+  --border:#e4e6ed;
+  --success:#087f5b;
+  --danger:#d92d20;
+  --shadow:0 12px 35px rgba(20,20,40,.10);
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+button,
+input,
+textarea,
+select{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.hidden{
+  display:none!important;
+}
+
+/* LOGIN */
+
+#loginPage{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.loginBox{
+  width:min(100%,400px);
+  background:#fff;
+  border-radius:24px;
+  padding:28px 22px;
+  box-shadow:var(--shadow);
+}
+
+.logo{
+  width:72px;
+  height:72px;
+  margin:0 auto 16px;
+  border-radius:22px;
+  background:linear-gradient(135deg,var(--primary),var(--primary2));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:34px;
+  color:white;
+}
+
+.loginBox h1{
+  margin:0;
+  text-align:center;
+  font-size:24px;
+}
+
+.loginBox p{
+  text-align:center;
+  color:var(--muted);
+  margin:8px 0 22px;
+}
+
+input,
+textarea,
+select{
+  width:100%;
+  border:1px solid var(--border);
+  background:#fafbfc;
+  border-radius:12px;
+  padding:12px 13px;
+  outline:none;
+  color:var(--text);
+}
+
+textarea{
+  min-height:100px;
+  resize:vertical;
+}
+
+input:focus,
+textarea:focus,
+select:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px rgba(109,61,245,.10);
+}
+
+.primary{
+  border:0;
+  color:white;
+  background:linear-gradient(135deg,var(--primary),var(--primary2));
+  border-radius:12px;
+  padding:13px 18px;
+  font-weight:700;
+}
+
+.full{
+  width:100%;
+}
+
+.danger{
+  background:#fff0ef;
+  color:var(--danger);
+  border:1px solid #ffd5d1;
+}
+
+.secondary{
+  background:#f2efff;
+  color:var(--primary);
+  border:1px solid #ded6ff;
+}
+
+/* APP */
+
+#app{
+  min-height:100vh;
+}
+
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:50;
+  background:#fff;
+  border-bottom:1px solid var(--border);
+  padding:12px 14px;
+}
+
+.topbarInner{
+  max-width:1100px;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.brandIcon{
+  width:42px;
+  height:42px;
+  border-radius:12px;
+  background:linear-gradient(135deg,var(--primary),var(--primary2));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  font-size:21px;
+}
+
+.brand strong{
+  display:block;
+  font-size:15px;
+}
+
+.brand small{
+  color:var(--muted);
+}
+
+.topActions{
+  display:flex;
+  gap:7px;
+}
+
+.smallBtn{
+  border:0;
+  padding:9px 11px;
+  border-radius:10px;
+  font-size:12px;
+  font-weight:700;
+}
+
+.container{
+  max-width:1100px;
+  margin:auto;
+  padding:16px;
+}
+
+.dashboard{
+  display:grid;
+  grid-template-columns:210px 1fr;
+  gap:14px;
+}
+
+.sidebar{
+  background:#fff;
+  border-radius:18px;
+  padding:10px;
+  box-shadow:var(--shadow);
+  height:max-content;
+  position:sticky;
+  top:78px;
+}
+
+.navBtn{
+  width:100%;
+  border:0;
+  background:transparent;
+  padding:12px 11px;
+  margin-bottom:5px;
+  border-radius:11px;
+  text-align:left;
+  font-weight:700;
+  color:#50566a;
+}
+
+.navBtn.active,
+.navBtn:hover{
+  background:#f0ebff;
+  color:var(--primary);
+}
+
+.content{
+  min-width:0;
+}
+
+.section{
+  display:none;
+}
+
+.section.active{
+  display:block;
+}
+
+.card{
+  background:#fff;
+  border-radius:18px;
+  padding:16px;
+  box-shadow:var(--shadow);
+  margin-bottom:14px;
+}
+
+.card h2{
+  margin:0 0 6px;
+  font-size:19px;
+}
+
+.card h3{
+  margin:0 0 12px;
+  font-size:15px;
+}
+
+.desc{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.5;
+}
+
+.row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.field{
+  margin-bottom:12px;
+}
+
+.field label{
+  display:block;
+  margin-bottom:6px;
+  font-size:12px;
+  font-weight:700;
+}
+
+.switch{
+  display:flex;
+  gap:7px;
+}
+
+.switch button{
+  flex:1;
+  border:1px solid var(--border);
+  background:#fafafa;
+  border-radius:10px;
+  padding:9px;
+  font-weight:700;
+}
+
+.switch button.on.active{
+  color:#087f5b;
+  background:#e8f7f1;
+  border-color:#b9e6d4;
+}
+
+.switch button.off.active{
+  color:#d92d20;
+  background:#fff0ef;
+  border-color:#ffd0cc;
+}
+
+.buttonGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.slot{
+  border:1px solid var(--border);
+  border-radius:15px;
+  padding:14px;
+  margin-bottom:12px;
+  background:#fcfcfd;
+}
+
+.slotTitle{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:12px;
+}
+
+.slotTitle strong{
+  font-size:14px;
+}
+
+.badge{
+  padding:5px 8px;
+  border-radius:8px;
+  font-size:10px;
+  font-weight:700;
+  background:#f0ebff;
+  color:var(--primary);
+}
+
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.categoryTabs{
+  display:flex;
+  gap:7px;
+  overflow-x:auto;
+  padding-bottom:8px;
+}
+
+.categoryTabs button{
+  white-space:nowrap;
+  border:1px solid var(--border);
+  background:#fff;
+  border-radius:10px;
+  padding:9px 12px;
+  font-size:12px;
+  font-weight:700;
+}
+
+.categoryTabs button.active{
+  background:#f0ebff;
+  color:var(--primary);
+  border-color:#d8ceff;
+}
+
+.mediaInfo{
+  padding:9px;
+  border-radius:10px;
+  background:#f4f5f8;
+  font-size:11px;
+  color:var(--muted);
+  word-break:break-all;
+}
+
+.preview{
+  max-width:410px;
+  margin:auto;
+  border-radius:22px;
+  background:#eef0f5;
+  padding:14px;
+}
+
+.tgMessage{
+  background:#fff;
+  border-radius:16px;
+  padding:12px;
+  box-shadow:0 3px 10px rgba(0,0,0,.07);
+}
+
+.previewAvatar{
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  background:#e9e4ff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:23px;
+  margin-bottom:8px;
+}
+
+.previewName{
+  font-weight:700;
+  margin-bottom:3px;
+}
+
+.previewChannel{
+  font-size:11px;
+  color:var(--muted);
+  margin-bottom:8px;
+}
+
+.previewText{
+  white-space:pre-wrap;
+  line-height:1.45;
+  margin-bottom:10px;
+}
+
+.previewButton{
+  width:100%;
+  display:block;
+  padding:9px;
+  border-radius:9px;
+  background:#eeeaff;
+  color:#5732d6;
+  text-align:center;
+  margin-top:6px;
+  font-size:12px;
+  font-weight:700;
+}
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:20px;
+  transform:translateX(-50%) translateY(20px);
+  background:#16181f;
+  color:#fff;
+  padding:11px 16px;
+  border-radius:11px;
+  font-size:13px;
+  opacity:0;
+  pointer-events:none;
+  transition:.25s;
+  z-index:1000;
+}
+
+.toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
+.loading{
+  opacity:.55;
+  pointer-events:none;
+}
+
+@media(max-width:760px){
+  .dashboard{
+    grid-template-columns:1fr;
+  }
+
+  .sidebar{
+    position:static;
+    display:flex;
+    overflow-x:auto;
+    gap:5px;
+    padding:7px;
+  }
+
+  .navBtn{
+    min-width:max-content;
+    width:auto;
+    margin:0;
+    white-space:nowrap;
+  }
+
+  .row,
+  .buttonGrid{
+    grid-template-columns:1fr;
+  }
+
+  .container{
+    padding:10px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+
+<div id="loginPage">
+
+  <div class="loginBox">
+
+    <div class="logo">🤖</div>
+
+    <h1>Telegram Bot Admin</h1>
+
+    <p>Secure Control Panel</p>
+
+    <div class="field">
+      <label>Admin Password</label>
+      <input id="loginPassword"
+             type="password"
+             placeholder="Enter password">
+    </div>
+
+    <button class="primary full"
+            onclick="login()">
+      🔐 LOGIN
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- APP -->
+
+<div id="app" class="hidden">
+
+  <div class="topbar">
+
+    <div class="topbarInner">
+
+      <div class="brand">
+
+        <div class="brandIcon">🤖</div>
+
+        <div>
+          <strong>Telegram Bot System</strong>
+          <small>Admin Control Panel</small>
+        </div>
+
+      </div>
+
+      <div class="topActions">
+
+        <button class="smallBtn secondary"
+                onclick="showSection('preview')">
+          👁️ Preview
+        </button>
+
+        <button class="smallBtn danger"
+                onclick="logout()">
+          Logout
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="container">
+
+    <div class="dashboard">
+
+      <aside class="sidebar">
+
+        <button class="navBtn active"
+                onclick="showSection('general',this)">
+          👋 Welcome
+        </button>
+
+        <button class="navBtn"
+                onclick="showSection('main',this)">
+          🔘 Main Buttons
+        </button>
+
+        <button class="navBtn"
+                onclick="showSection('categories',this)">
+          🤖 Categories
+        </button>
+
+        <button class="navBtn"
+                onclick="showSection('audio',this)">
+          🎵 Audio
+        </button>
+
+        <button class="navBtn"
+                onclick="showSection('preview',this)">
+          👁️ Preview
+        </button>
+
+        <button class="navBtn"
+                onclick="showSection('security',this)">
+          🔐 Security
+        </button>
+
+      </aside>
+
+
+      <main class="content">
+
+        <!-- GENERAL -->
+
+        <section id="section-general"
+                 class="section active">
+
+          <div class="card">
+
+            <h2>👋 Welcome System</h2>
+
+            <p class="desc">
+              Configure the first message shown by the bot.
+            </p>
+
+            <div class="field">
+              <label>Welcome ON / OFF</label>
+              <div id="welcomeEnabled"></div>
+            </div>
+
+            <div class="field">
+              <label>Profile Photo ON / OFF</label>
+              <div id="profileEnabled"></div>
+            </div>
+
+            <div class="field">
+              <label>Channel / Group Name</label>
+              <input id="channelName">
+            </div>
+
+            <div class="field">
+              <label>Welcome Text</label>
+              <textarea id="welcomeText"></textarea>
+              <small class="desc">
+                You can use {name}, {username}, {channel}
+              </small>
+            </div>
+
+            <div class="row">
+
+              <div class="field">
+                <label>Welcome Text Size</label>
+
+                <select id="welcomeSize">
+                  <option value="small">Small</option>
+                  <option value="medium">Medium</option>
+                  <option value="large">Large</option>
+                </select>
+
+              </div>
+
+              <div class="field">
+                <label>Auto Delete</label>
+
+                <select id="autoDelete">
+                  <option value="30">30 Seconds</option>
+                  <option value="60">1 Minute</option>
+                  <option value="120">2 Minutes</option>
+                  <option value="300">5 Minutes</option>
+                  <option value="600">10 Minutes</option>
+                  <option value="900">15 Minutes</option>
+                </select>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="card">
+
+            <h2>🚀 Start Media</h2>
+
+            <p class="desc">
+              Optional media shown when the user presses /start.
+            </p>
+
+            <div class="field">
+              <label>Start Media ON / OFF</label>
+              <div id="startMediaEnabled"></div>
+            </div>
+
+            <div class="row">
+
+              <div class="field">
+
+                <label>Media Type</label>
+
+                <select id="startMediaType">
+                  <option value="none">None</option>
+                  <option value="video">Video</option>
+                  <option value="image">Image</option>
+                  <option value="audio">Audio</option>
+                </select>
+
+              </div>
+
+              <div class="field">
+
+                <label>Media URL</label>
+
+                <input id="startMediaUrl"
+                       placeholder="https://...">
+
+              </div>
+
+            </div>
+
+            <div class="field">
+              <label>Uploaded File ID</label>
+              <input id="startMediaFileId"
+                     readonly>
+            </div>
+
+            <div class="actions">
+
+              <input type="file"
+                     id="startMediaFile"
+                     accept="video/*,image/*,audio/*">
+
+              <button class="secondary smallBtn"
+                      onclick="uploadMedia('startMedia')">
+                ⬆️ Upload
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <div class="card">
+
+            <h2>🔘 Welcome Buttons</h2>
+
+            <div id="welcomeButtons"></div>
+
+          </div>
+
+        </section>
+
+
+        <!-- MAIN BUTTONS -->
+
+        <section id="section-main"
+                 class="section">
+
+          <div class="card">
+
+            <h2>🔘 Main Category Buttons</h2>
+
+            <p class="desc">
+              These are the 6 main buttons shown after Welcome.
+            </p>
+
+            <div id="mainButtons"></div>
+
+          </div>
+
+        </section>
+
+
+        <!-- CATEGORIES -->
+
+        <section id="section-categories"
+                 class="section">
+
+          <div class="card">
+
+            <h2>🤖 Category Content</h2>
+
+            <p class="desc">
+              Each category contains 10 configurable content slots.
+            </p>
+
+            <div class="categoryTabs">
+
+              <button class="active"
+                      onclick="selectCategory('aiHack',this)">
+                🤖 AI HACK
+              </button>
+
+              <button onclick="selectCategory('vip',this)">
+                🔥 VIP
+              </button>
+
+              <button onclick="selectCategory('support',this)">
+                💬 SUPPORT
+              </button>
+
+              <button onclick="selectCategory('official',this)">
+                📢 OFFICIAL
+              </button>
+
+              <button onclick="selectCategory('bonus',this)">
+                🎁 BONUS
+              </button>
+
+              <button onclick="selectCategory('admin',this)">
+                👨‍💻 ADMIN
+              </button>
+
+            </div>
+
+          </div>
+
+          <div id="categorySlots"></div>
+
+        </section>
+
+
+        <!-- AUDIO -->
+
+        <section id="section-audio"
+                 class="section">
+
+          <div class="card">
+
+            <h2>🎵 Audio System</h2>
+
+            <div class="field">
+              <label>Audio ON / OFF</label>
+              <div id="audioEnabled"></div>
+            </div>
+
+            <div class="field">
+              <label>Audio Text</label>
+              <textarea id="audioText"></textarea>
+            </div>
+
+            <div class="row">
+
+              <div class="field">
+                <label>Audio URL</label>
+                <input id="audioUrl">
+              </div>
+
+              <div class="field">
+                <label>Uploaded Audio File ID</label>
+                <input id="audioFileId" readonly>
+              </div>
+
+            </div>
+
+            <div class="actions">
+
+              <input type="file"
+                     id="audioFile"
+                     accept="audio/*">
+
+              <button class="secondary smallBtn"
+                      onclick="uploadMedia('audio')">
+                ⬆️ Upload Audio
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <div class="card">
+
+            <h2>🎵 Audio Buttons</h2>
+
+            <div id="audioButtons"></div>
+
+          </div>
+
+        </section>
+
+
+        <!-- PREVIEW -->
+
+        <section id="section-preview"
+                 class="section">
+
+          <div class="card">
+
+            <h2>👁️ All System Preview</h2>
+
+            <p class="desc">
+              This preview shows the general Telegram appearance.
+            </p>
+
+            <div class="preview">
+
+              <div class="tgMessage">
+
+                <div class="previewAvatar">
+                  👤
+                </div>
+
+                <div class="previewName">
+                  User Name
+                </div>
+
+                <div class="previewChannel"
+                     id="previewChannel">
+                </div>
+
+                <div class="previewText"
+                     id="previewText">
+                </div>
+
+                <div id="previewButtons"></div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- SECURITY -->
+
+        <section id="section-security"
+                 class="section">
+
+          <div class="card">
+
+            <h2>🔐 Change Admin Password</h2>
+
+            <div class="field">
+              <label>Current Password</label>
+              <input id="currentPassword"
+                     type="password">
+            </div>
+
+            <div class="field">
+              <label>New Password</label>
+              <input id="newPassword"
+                     type="password">
+            </div>
+
+            <div class="field">
+              <label>Confirm New Password</label>
+              <input id="confirmPassword"
+                     type="password">
+            </div>
+
+            <button class="primary"
+                    onclick="changePassword()">
+              🔑 CHANGE PASSWORD
+            </button>
+
+          </div>
+
+        </section>
+
+
+        <!-- SAVE -->
+
+        <div class="card">
+
+          <div class="buttonGrid">
+
+            <button class="primary"
+                    onclick="saveAll()">
+              💾 ALL WELCOME SYSTEM SAVE
+            </button>
+
+            <button class="danger"
+                    onclick="resetAll()">
+              ♻️ ALL WELCOME SYSTEM RESET
+            </button>
+
+          </div>
+
+        </div>
+
+      </main>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<div id="toast"
+     class="toast">
+</div>
+
+
+<script>
+
+let config = null;
+let selectedCategory = "aiHack";
+
+const categories = [
+  "aiHack",
+  "vip",
+  "support",
+  "official",
+  "bonus",
+  "admin"
+];
+
+const categoryNames = {
+  aiHack:"AI HACK",
+  vip:"VIP",
+  support:"SUPPORT",
+  official:"OFFICIAL CHANNEL",
+  bonus:"BONUS",
+  admin:"ADMIN"
+};
+
+
+function toast(message){
+
+  const el = document.getElementById("toast");
+
+  el.textContent = message;
+
+  el.classList.add("show");
+
+  setTimeout(()=>{
+    el.classList.remove("show");
+  },2500);
+}
+
+
+/* LOGIN */
+
+async function login(){
+
+  const password =
+    document.getElementById("loginPassword").value;
+
+  if(!password){
+    toast("Password required");
+    return;
+  }
+
+  try{
+
+    const r = await fetch("/api/login",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({password})
+    });
+
+    const data = await r.json();
+
+    if(!data.ok){
+
+      toast(data.message || "Login failed");
+
+      return;
+    }
+
+    document
+      .getElementById("loginPage")
+      .classList.add("hidden");
+
+    document
+      .getElementById("app")
+      .classList.remove("hidden");
+
+    await loadSettings();
+
+  }catch(e){
+
+    toast("Server connection error");
+
+  }
+
+}
+
+
+document
+  .getElementById("loginPassword")
+  .addEventListener("keydown",e=>{
+    if(e.key==="Enter") login();
+  });
+
+
+async function logout(){
+
+  await fetch("/api/logout",{
+    method:"POST"
+  });
+
+  location.reload();
+
+}
+
+
+/* SETTINGS */
+
+async function loadSettings(){
+
+  const r = await fetch("/api/settings");
+
+  if(r.status===401){
+
+    location.reload();
+
+    return;
+  }
+
+  config = await r.json();
+
+  renderAll();
+
+}
+
+
+function setSwitch(id,value,callback){
+
+  const el = document.getElementById(id);
+
+  el.innerHTML = `
+
+    <div class="switch">
+
+      <button
+        class="on ${value ? "active":""}"
+        onclick="${callback}(true)">
+        ON
+      </button>
+
+      <button
+        class="off ${!value ? "active":""}"
+        onclick="${callback}(false)">
+        OFF
+      </button>
+
+    </div>
+
+  `;
+
+}
+
+
+function renderAll(){
+
+  if(!config) return;
+
+  setSwitch(
+    "welcomeEnabled",
+    config.welcome.enabled,
+    "setWelcomeEnabled"
+  );
+
+  setSwitch(
+    "profileEnabled",
+    config.welcome.profilePhoto,
+    "setProfileEnabled"
+  );
+
+  document.getElementById("channelName").value =
+    config.welcome.channelName || "";
+
+  document.getElementById("welcomeText").value =
+    config.welcome.text || "";
+
+  document.getElementById("welcomeSize").value =
+    config.welcome.size || "medium";
+
+  document.getElementById("autoDelete").value =
+    String(config.autoDelete || 600);
+
+  setSwitch(
+    "startMediaEnabled",
+    config.startMedia.enabled,
+    "setStartMediaEnabled"
+  );
+
+  document.getElementById("startMediaType").value =
+    config.startMedia.type || "none";
+
+  document.getElementById("startMediaUrl").value =
+    config.startMedia.url || "";
+
+  document.getElementById("startMediaFileId").value =
+    config.startMedia.fileId || "";
+
+  renderWelcomeButtons();
+  renderMainButtons();
+  renderAudio();
+  renderCategorySlots();
+  updatePreview();
+
+}
+
+
+function setWelcomeEnabled(v){
+
+  config.welcome.enabled = v;
+  renderAll();
+
+}
+
+function setProfileEnabled(v){
+
+  config.welcome.profilePhoto = v;
+  renderAll();
+
+}
+
+function setStartMediaEnabled(v){
+
+  config.startMedia.enabled = v;
+  renderAll();
+
+}
+
+
+/* WELCOME BUTTONS */
+
+function renderWelcomeButtons(){
+
+  const box =
+    document.getElementById("welcomeButtons");
+
+  box.innerHTML = "";
+
+  config.welcome.buttons.forEach((b,i)=>{
+
+    box.innerHTML += `
+
+      <div class="slot">
+
+        <div class="slotTitle">
+
+          <strong>
+            Welcome Button ${i+1}
+          </strong>
+
+          <span class="badge">
+            BUTTON
+          </span>
+
+        </div>
+
+        <div class="field">
+
+          <label>Status</label>
+
+          <div id="wb${i}"></div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="field">
+
+            <label>Text</label>
+
+            <input
+              value="${esc(b.text)}"
+              oninput="config.welcome.buttons[${i}].text=this.value">
+
+          </div>
+
+          <div class="field">
+
+            <label>URL</label>
+
+            <input
+              value="${esc(b.url)}"
+              oninput="config.welcome.buttons[${i}].url=this.value">
+
+          </div>
+
+        </div>
+
+      </div>
+
+    `;
+
+  });
+
+  config.welcome.buttons.forEach((b,i)=>{
+
+    setSwitch(
+      "wb"+i,
+      b.enabled,
+      `v=>{config.welcome.buttons[${i}].enabled=v;renderWelcomeButtons()}`
+    );
+
+  });
+
+}
+
+
+/* MAIN BUTTONS */
+
+function renderMainButtons(){
+
+  const box =
+    document.getElementById("mainButtons");
+
+  box.innerHTML = "";
+
+  config.mainButtons.forEach((b,i)=>{
+
+    box.innerHTML += `
+
+      <div class="slot">
+
+        <div class="slotTitle">
+          <strong>Main Button ${i+1}</strong>
+          <span class="badge">${categoryNames[b.category]}</span>
+        </div>
+
+        <div class="field">
+          <label>Status</label>
+          <div id="mb${i}"></div>
+        </div>
+
+        <div class="row">
+
+          <div class="field">
+
+            <label>Button Text</label>
+
+            <input
+              value="${esc(b.text)}"
+              oninput="config.mainButtons[${i}].text=this.value">
+
+          </div>
+
+          <div class="field">
+
+            <label>Action Category</label>
+
+            <select
+              onchange="config.mainButtons[${i}].category=this.value">
+
+              ${categories.map(c=>`
+                <option value="${c}"
+                  ${b.category===c?"selected":""}>
+                  ${categoryNames[c]}
+                </option>
+              `).join("")}
+
+            </select>
+
+          </div>
+
+        </div>
+
+        <div class="field">
+
+          <label>Optional URL</label>
+
+          <input
+            value="${esc(b.url || "")}"
+            placeholder="Leave empty for category"
+            oninput="config.mainButtons[${i}].url=this.value">
+
+        </div>
+
+      </div>
+
+    `;
+
+  });
+
+  config.mainButtons.forEach((b,i)=>{
+
+    setSwitch(
+      "mb"+i,
+      b.enabled,
+      `v=>{config.mainButtons[${i}].enabled=v;renderMainButtons()}`
+    );
+
+  });
+
+}
+
+
+/* CATEGORY */
+
+function selectCategory(category,button){
+
+  selectedCategory = category;
+
+  document
+    .querySelectorAll(".categoryTabs button")
+    .forEach(x=>x.classList.remove("active"));
+
+  button.classList.add("active");
+
+  renderCategorySlots();
+
+}
+
+
+function renderCategorySlots(){
+
+  const box =
+    document.getElementById("categorySlots");
+
+  box.innerHTML = "";
+
+  const list =
+    config.categories[selectedCategory];
+
+  list.forEach((item,i)=>{
+
+    box.innerHTML += `
+
+      <div class="card">
+
+        <div class="slotTitle">
+
+          <strong>
+            ${categoryNames[selectedCategory]} ${i+1}
+          </strong>
+
+          <span class="badge">
+            SLOT ${i+1}
+          </span>
+
+        </div>
+
+        <div class="field">
+
+          <label>Status</label>
+          <div id="cs${i}"></div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="field">
+
+            <label>Media Type</label>
+
+            <select
+              onchange="config.categories['${selectedCategory}'][${i}].type=this.value">
+
+              <option value="none"
+                ${item.type==="none"?"selected":""}>
+                None
+              </option>
+
+              <option value="video"
+                ${item.type==="video"?"selected":""}>
+                🎥 Video
+              </option>
+
+              <option value="image"
+                ${item.type==="image"?"selected":""}>
+                📸 Image
+              </option>
+
+              <option value="audio"
+                ${item.type==="audio"?"selected":""}>
+                🎵 Audio
+              </option>
+
+            </select>
+
+          </div>
+
+          <div class="field">
+
+            <label>Media URL</label>
+
+            <input
+              value="${esc(item.url || "")}"
+              oninput="config.categories['${selectedCategory}'][${i}].url=this.value">
+
+          </div>
+
+        </div>
+
+        <div class="field">
+
+          <label>Uploaded File ID</label>
+
+          <input
+            readonly
+            value="${esc(item.fileId || "")}">
+
+        </div>
+
+        <div class="actions">
+
+          <input
+            type="file"
+            id="file-${selectedCategory}-${i}"
+            accept="video/*,image/*,audio/*">
+
+          <button
+            class="secondary smallBtn"
+            onclick="uploadCategoryMedia(${i})">
+            ⬆️ Upload Media
+          </button>
+
+        </div>
+
+        <br>
+
+        <div class="field">
+
+          <label>Content Text</label>
+
+          <textarea
+            oninput="config.categories['${selectedCategory}'][${i}].text=this.value">${esc(item.text || "")}</textarea>
+
+        </div>
+
+        <div class="buttonGrid">
+
+          <div class="slot">
+
+            <strong>Button 1</strong>
+
+            <div id="cb1-${i}"></div>
+
+            <input
+              value="${esc(item.buttons[0].text)}"
+              placeholder="Button text"
+              oninput="config.categories['${selectedCategory}'][${i}].buttons[0].text=this.value">
+
+            <br>
+
+            <input
+              value="${esc(item.buttons[0].url)}"
+              placeholder="https://..."
+              oninput="config.categories['${selectedCategory}'][${i}].buttons[0].url=this.value">
+
+          </div>
+
+          <div class="slot">
+
+            <strong>Button 2</strong>
+
+            <div id="cb2-${i}"></div>
+
+            <input
+              value="${esc(item.buttons[1].text)}"
+              placeholder="Button text"
+              oninput="config.categories['${selectedCategory}'][${i}].buttons[1].text=this.value">
+
+            <br>
+
+            <input
+              value="${esc(item.buttons[1].url)}"
+              placeholder="https://..."
+              oninput="config.categories['${selectedCategory}'][${i}].buttons[1].url=this.value">
+
+          </div>
+
+        </div>
+
+      </div>
+
+    `;
+
+  });
+
+
+  list.forEach((item,i)=>{
+
+    setSwitch(
+      "cs"+i,
+      item.enabled,
+      `v=>{config.categories['${selectedCategory}'][${i}].enabled=v;renderCategorySlots()}`
+    );
+
+    setSwitch(
+      "cb1-"+i,
+      item.buttons[0].enabled,
+      `v=>{config.categories['${selectedCategory}'][${i}].buttons[0].enabled=v;renderCategorySlots()}`
+    );
+
+    setSwitch(
+      "cb2-"+i,
+      item.buttons[1].enabled,
+      `v=>{config.categories['${selectedCategory}'][${i}].buttons[1].enabled=v;renderCategorySlots()}`
+    );
+
+  });
+
+}
+
+
+/* AUDIO */
+
+function renderAudio(){
+
+  setSwitch(
+    "audioEnabled",
+    config.audio.enabled,
+    "v=>{config.audio.enabled=v;renderAudio()}"
+  );
+
+  document.getElementById("audioText").value =
+    config.audio.text || "";
+
+  document.getElementById("audioUrl").value =
+    config.audio.url || "";
+
+  document.getElementById("audioFileId").value =
+    config.audio.fileId || "";
+
+  const box =
+    document.getElementById("audioButtons");
+
+  box.innerHTML = "";
+
+  config.audio.buttons.forEach((b,i)=>{
+
+    box.innerHTML += `
+
+      <div class="slot">
+
+        <strong>Audio Button ${i+1}</strong>
+
+        <div id="ab${i}"></div>
+
+        <div class="row">
+
+          <input
+            value="${esc(b.text)}"
+            placeholder="Button Text"
+            oninput="config.audio.buttons[${i}].text=this.value">
+
+          <input
+            value="${esc(b.url)}"
+            placeholder="https://..."
+            oninput="config.audio.buttons[${i}].url=this.value">
+
+        </div>
+
+      </div>
+
+    `;
+
+  });
+
+  config.audio.buttons.forEach((b,i)=>{
+
+    setSwitch(
+      "ab"+i,
+      b.enabled,
+      `v=>{config.audio.buttons[${i}].enabled=v;renderAudio()}`
+    );
+
+  });
+
+}
+
+
+/* UPLOAD */
+
+async function uploadMedia(target){
+
+  const input =
+    document.getElementById(
+      target==="startMedia"
+        ? "startMediaFile"
+        : "audioFile"
+    );
+
+  if(!input.files.length){
+
+    toast("Select a file first");
+
+    return;
+  }
+
+  const fd = new FormData();
+
+  fd.append("file",input.files[0]);
+
+  fd.append(
+    "mediaType",
+    target==="audio" ? "audio" :
+    config.startMedia.type
+  );
+
+  try{
+
+    toast("Uploading...");
+
+    const r =
+      await fetch("/api/upload",{
+        method:"POST",
+        body:fd
+      });
+
+    const data = await r.json();
+
+    if(!data.ok){
+
+      toast(data.message || "Upload failed");
+
+      return;
+    }
+
+    if(target==="startMedia"){
+
+      config.startMedia.fileId =
+        data.fileId;
+
+    }else{
+
+      config.audio.fileId =
+        data.fileId;
+
+    }
+
+    renderAll();
+
+    toast("Upload successful");
+
+  }catch(e){
+
+    toast("Upload error");
+
+  }
+
+}
+
+
+async function uploadCategoryMedia(index){
+
+  const input =
+    document.getElementById(
+      `file-${selectedCategory}-${index}`
+    );
+
+  if(!input.files.length){
+
+    toast("Select a file");
+
+    return;
+  }
+
+  const item =
+    config.categories[selectedCategory][index];
+
+  const fd = new FormData();
+
+  fd.append("file",input.files[0]);
+
+  fd.append("mediaType",item.type);
+
+  try{
+
+    toast("Uploading...");
+
+    const r =
+      await fetch("/api/upload",{
+        method:"POST",
+        body:fd
+      });
+
+    const data = await r.json();
+
+    if(!data.ok){
+
+      toast(data.message || "Upload failed");
+
+      return;
+    }
+
+    item.fileId = data.fileId;
+
+    renderCategorySlots();
+
+    toast("Media uploaded");
+
+  }catch(e){
+
+    toast("Upload error");
+
+  }
+
+}
+
+
+/* SAVE */
+
+function collectInputs(){
+
+  config.welcome.channelName =
+    document.getElementById("channelName").value;
+
+  config.welcome.text =
+    document.getElementById("welcomeText").value;
+
+  config.welcome.size =
+    document.getElementById("welcomeSize").value;
+
+  config.autoDelete =
+    Number(document.getElementById("autoDelete").value);
+
+  config.startMedia.type =
+    document.getElementById("startMediaType").value;
+
+  config.startMedia.url =
+    document.getElementById("startMediaUrl").value;
+
+  config.audio.text =
+    document.getElementById("audioText").value;
+
+  config.audio.url =
+    document.getElementById("audioUrl").value;
+
+}
+
+
+async function saveAll(){
+
+  collectInputs();
+
+  try{
+
+    const r =
+      await fetch("/api/settings",{
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify(config)
+      });
+
+    const data = await r.json();
+
+    if(!data.ok){
+
+      toast(data.message || "Save failed");
+
+      return;
+    }
+
+    toast("✅ ALL SYSTEM SAVED");
+
+  }catch(e){
+
+    toast("Save error");
+
+  }
+
+}
+
+
+/* RESET */
+
+async function resetAll(){
+
+  if(!confirm(
+    "All settings will be reset. Continue?"
+  )) return;
+
+  const r =
+    await fetch("/api/reset",{
+      method:"POST"
+    });
+
+  const data = await r.json();
+
+  if(data.ok){
+
+    config = data.config;
+
+    renderAll();
+
+    toast("System reset");
+
+  }else{
+
+    toast(data.message || "Reset failed");
+
+  }
+
+}
+
+
+/* PASSWORD */
+
+async function changePassword(){
+
+  const current =
+    document.getElementById("currentPassword").value;
+
+  const password =
+    document.getElementById("newPassword").value;
+
+  const confirmPassword =
+    document.getElementById("confirmPassword").value;
+
+  if(!current || !password){
+
+    toast("All password fields required");
+
+    return;
+  }
+
+  if(password!==confirmPassword){
+
+    toast("New passwords do not match");
+
+    return;
+  }
+
+  const r =
+    await fetch("/api/change-password",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        current,
+        password
+      })
+    });
+
+  const data = await r.json();
+
+  if(data.ok){
+
+    toast("Password changed");
+
+    document.getElementById("currentPassword").value="";
+    document.getElementById("newPassword").value="";
+    document.getElementById("confirmPassword").value="";
+
+  }else{
+
+    toast(data.message || "Password change failed");
+
+  }
+
+}
+
+
+/* PREVIEW */
+
+function updatePreview(){
+
+  if(!config) return;
+
+  document.getElementById("previewChannel").textContent =
+    config.welcome.channelName || "Channel Name";
+
+  let text =
+    config.welcome.text || "";
+
+  text =
+    text
+      .replaceAll("{name}","User Name")
+      .replaceAll("{username}","username")
+      .replaceAll("{channel}",
+        config.welcome.channelName || "Channel");
+
+  document.getElementById("previewText").textContent =
+    text;
+
+  const box =
+    document.getElementById("previewButtons");
+
+  box.innerHTML = "";
+
+  config.welcome.buttons
+    .filter(x=>x.enabled && x.text)
+    .forEach(x=>{
+
+      box.innerHTML += `
+        <div class="previewButton">
+          ${esc(x.text)}
+        </div>
+      `;
+
+    });
+
+}
+
+
+/* NAV */
+
+function showSection(name,button){
+
+  document
+    .querySelectorAll(".section")
+    .forEach(x=>x.classList.remove("active"));
+
+  document
+    .getElementById("section-"+name)
+    .classList.add("active");
+
+  document
+    .querySelectorAll(".navBtn")
+    .forEach(x=>x.classList.remove("active"));
+
+  if(button){
+
+    button.classList.add("active");
+
+  }
+
+  if(name==="preview"){
+
+    updatePreview();
+
+  }
+
+}
+
+
+/* ESCAPE */
+
+function esc(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+</script>
+
+</body>
+  </html>
