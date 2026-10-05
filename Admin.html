@@ -4,156 +4,5109 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Telegram Admin Panel</title>
+
 <style>
-*{box-sizing:border-box}html,body{margin:0;padding:0;width:100%;min-height:100%;font-family:Arial,Helvetica,sans-serif;background:#f1f3f8;color:#171923}body.dark{background:#08090c;color:#f4f4f5}button,input,textarea,select{font:inherit}button{cursor:pointer}.hidden{display:none!important}.page{width:100%;min-height:100vh;padding:18px}.page-inner{width:100%;max-width:720px;margin:auto}.topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px}.brand{font-size:22px;font-weight:900}.top-actions{display:flex;gap:8px}.icon-btn{min-width:44px;height:44px;border:0;border-radius:14px;background:#fff;box-shadow:0 4px 18px #0001;font-size:16px;font-weight:800}.dark .icon-btn{background:#17191f;color:#fff}.card,.login-box{background:#fff;border-radius:22px;padding:18px;margin-bottom:16px;box-shadow:0 5px 25px #00000012}.dark .card,.dark .login-box{background:#15171c;box-shadow:none}.card-title{font-size:19px;font-weight:900;margin-bottom:14px}.menu-btn{width:100%;min-height:62px;border:1px solid #e1e4eb;background:#fff;border-radius:18px;margin-bottom:12px;padding:14px 16px;text-align:left;font-weight:900;font-size:16px;color:#171923;transition:.15s}.menu-btn:active{transform:scale(.98)}.dark .menu-btn{background:#111318;border-color:#292d36;color:#fff}.back-btn{width:100%;min-height:58px;border:0;border-radius:17px;background:#e9ecf2;color:#20232c;font-weight:900;font-size:18px;margin-bottom:16px}.dark .back-btn{background:#20232b;color:#fff}label{display:block;font-size:14px;font-weight:800;margin-bottom:7px}.field{margin-bottom:16px}input[type=text],input[type=url],input[type=password],input[type=number],textarea,select{width:100%;border:1px solid #dfe2e8;border-radius:15px;background:#fafbfc;padding:13px 14px;outline:0;color:#171923}textarea{min-height:110px;resize:vertical}.dark input,.dark textarea,.dark select{background:#0e1014;border-color:#30343d;color:#fff}input:focus,textarea:focus,select:focus{border-color:#6d5dfc}.switch-row{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:12px 0}.switch{position:relative;width:54px;height:30px;margin:0}.switch input{display:none}.slider{position:absolute;inset:0;background:#c8ccd4;border-radius:30px;transition:.2s}.slider:before{content:"";position:absolute;width:24px;height:24px;left:3px;top:3px;border-radius:50%;background:#fff;transition:.2s}.switch input:checked+.slider{background:#6d5dfc}.switch input:checked+.slider:before{transform:translateX(24px)}.save-btn{width:100%;min-height:56px;border:0;border-radius:17px;background:#6d5dfc;color:#fff;font-size:17px;font-weight:900;margin-top:8px}.add-slot{width:100%;min-height:54px;border:2px dashed #8b82ff;background:#f3f1ff;color:#5546dc;border-radius:16px;font-weight:900;margin:12px 0}.dark .add-slot{background:#19162d}.slot{border:1px solid #dfe2e8;border-radius:20px;padding:15px;margin-bottom:15px;background:#fafbfc}.dark .slot{background:#101217;border-color:#2c3038}.slot-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}.slot-title{font-weight:900;font-size:17px}.remove-slot{border:0;background:#ffe5e3;color:#c72e23;border-radius:12px;padding:8px 12px;font-weight:800}.upload-box{border:2px dashed #c7cad2;border-radius:17px;padding:14px;margin-top:8px;margin-bottom:16px}.upload-box input{width:100%}.preview{margin-top:16px;border-radius:20px;background:#eef0f5;padding:15px}.dark .preview{background:#0d0f13}.preview-title{font-size:16px;font-weight:900;margin-bottom:12px}.preview-media{width:100%;aspect-ratio:2/1;border-radius:16px;overflow:hidden;background:#252836;display:flex;align-items:center;justify-content:center;color:#fff;margin-bottom:10px}.preview-media img,.preview-media video{width:100%;height:100%;object-fit:cover}.preview-text{background:#fff;border-radius:14px;padding:13px;margin-bottom:10px;white-space:pre-wrap}.dark .preview-text{background:#181b21}.fake-telegram-btn{width:100%;min-height:46px;border-radius:13px;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;margin-top:8px;background:#6d5dfc;background-size:cover;background-position:center}.small{font-size:12px;color:#7f879d;line-height:1.45}.dark .small{color:#9aa1b2}.login-box{width:100%;max-width:430px;margin:10vh auto}.login-title{font-size:25px;font-weight:900;margin-bottom:18px}#toast{position:fixed;left:50%;bottom:25px;transform:translateX(-50%);background:#15171c;color:#fff;padding:12px 18px;border-radius:13px;display:none;z-index:9999;max-width:90%;text-align:center}.hr{height:1px;background:#ddd;margin:18px 0}.dark .hr{background:#30343d}.preview img,.preview video{max-width:100%}.danger{color:#d83228!important;background:#fff0ee!important}.dark .danger{background:#301714!important}.status{padding:10px 12px;border-radius:12px;background:#eef0f5;margin-bottom:12px;font-size:13px}.dark .status{background:#101217}.media-note{font-size:12px;color:#777;margin-top:6px}@media(max-width:520px){.page{padding:12px}.card{padding:14px}.brand{font-size:19px}}
+*{
+  box-sizing:border-box;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  width:100%;
+  min-height:100%;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f1f3f8;
+  color:#171923;
+}
+
+body.dark{
+  background:#08090c;
+  color:#f4f4f5;
+}
+
+button,
+input,
+textarea,
+select{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.hidden{
+  display:none!important;
+}
+
+.page{
+  width:100%;
+  min-height:100vh;
+  padding:18px;
+}
+
+.page-inner{
+  width:100%;
+  max-width:720px;
+  margin:auto;
+}
+
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:16px;
+}
+
+.brand{
+  font-size:22px;
+  font-weight:900;
+}
+
+.top-actions{
+  display:flex;
+  gap:8px;
+}
+
+.icon-btn{
+  min-width:44px;
+  height:44px;
+  border:0;
+  border-radius:14px;
+  background:#fff;
+  box-shadow:0 4px 18px #0001;
+  font-size:16px;
+  font-weight:800;
+}
+
+.dark .icon-btn{
+  background:#17191f;
+  color:#fff;
+}
+
+.card,
+.login-box{
+  background:#fff;
+  border-radius:22px;
+  padding:18px;
+  margin-bottom:16px;
+  box-shadow:0 5px 25px #00000012;
+}
+
+.dark .card,
+.dark .login-box{
+  background:#15171c;
+  box-shadow:none;
+}
+
+.card-title{
+  font-size:19px;
+  font-weight:900;
+  margin-bottom:14px;
+}
+
+.menu-btn{
+  width:100%;
+  min-height:62px;
+  border:1px solid #e1e4eb;
+  background:#fff;
+  border-radius:18px;
+  margin-bottom:12px;
+  padding:14px 16px;
+  text-align:left;
+  font-weight:900;
+  font-size:16px;
+  color:#171923;
+  transition:.15s;
+}
+
+.menu-btn:active{
+  transform:scale(.98);
+}
+
+.dark .menu-btn{
+  background:#111318;
+  border-color:#292d36;
+  color:#fff;
+}
+
+.back-btn{
+  width:100%;
+  min-height:58px;
+  border:0;
+  border-radius:17px;
+  background:#e9ecf2;
+  color:#20232c;
+  font-weight:900;
+  font-size:18px;
+  margin-bottom:16px;
+}
+
+.dark .back-btn{
+  background:#20232b;
+  color:#fff;
+}
+
+label{
+  display:block;
+  font-size:14px;
+  font-weight:800;
+  margin-bottom:7px;
+}
+
+.field{
+  margin-bottom:16px;
+}
+
+input[type=text],
+input[type=url],
+input[type=password],
+input[type=number],
+textarea,
+select{
+  width:100%;
+  border:1px solid #dfe2e8;
+  border-radius:15px;
+  background:#fafbfc;
+  padding:13px 14px;
+  outline:0;
+  color:#171923;
+}
+
+textarea{
+  min-height:110px;
+  resize:vertical;
+}
+
+.dark input,
+.dark textarea,
+.dark select{
+  background:#0e1014;
+  border-color:#30343d;
+  color:#fff;
+}
+
+input:focus,
+textarea:focus,
+select:focus{
+  border-color:#6d5dfc;
+}
+
+.switch-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  padding:12px 0;
+}
+
+.switch{
+  position:relative;
+  width:54px;
+  height:30px;
+  margin:0;
+  flex-shrink:0;
+}
+
+.switch input{
+  display:none;
+}
+
+.slider{
+  position:absolute;
+  inset:0;
+  background:#c8ccd4;
+  border-radius:30px;
+  transition:.2s;
+}
+
+.slider:before{
+  content:"";
+  position:absolute;
+  width:24px;
+  height:24px;
+  left:3px;
+  top:3px;
+  border-radius:50%;
+  background:#fff;
+  transition:.2s;
+}
+
+.switch input:checked+.slider{
+  background:#6d5dfc;
+}
+
+.switch input:checked+.slider:before{
+  transform:translateX(24px);
+}
+
+.save-btn{
+  width:100%;
+  min-height:56px;
+  border:0;
+  border-radius:17px;
+  background:#6d5dfc;
+  color:#fff;
+  font-size:17px;
+  font-weight:900;
+  margin-top:8px;
+}
+
+.add-slot{
+  width:100%;
+  min-height:54px;
+  border:2px dashed #8b82ff;
+  background:#f3f1ff;
+  color:#5546dc;
+  border-radius:16px;
+  font-weight:900;
+  margin:12px 0;
+}
+
+.dark .add-slot{
+  background:#19162d;
+}
+
+.slot{
+  border:1px solid #dfe2e8;
+  border-radius:20px;
+  padding:15px;
+  margin-bottom:15px;
+  background:#fafbfc;
+}
+
+.dark .slot{
+  background:#101217;
+  border-color:#2c3038;
+}
+
+.slot-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:12px;
+}
+
+.slot-title{
+  font-weight:900;
+  font-size:17px;
+}
+
+.remove-slot{
+  border:0;
+  background:#ffe5e3;
+  color:#c72e23;
+  border-radius:12px;
+  padding:8px 12px;
+  font-weight:800;
+}
+
+.dark .remove-slot{
+  background:#301714;
+  color:#ff8d85;
+}
+
+.upload-box{
+  border:2px dashed #c7cad2;
+  border-radius:17px;
+  padding:14px;
+  margin-top:8px;
+  margin-bottom:16px;
+}
+
+.upload-box input{
+  width:100%;
+}
+
+.preview{
+  margin-top:16px;
+  border-radius:20px;
+  background:#eef0f5;
+  padding:15px;
+}
+
+.dark .preview{
+  background:#0d0f13;
+}
+
+.preview-title{
+  font-size:16px;
+  font-weight:900;
+  margin-bottom:12px;
+}
+
+.preview-media{
+  width:100%;
+  aspect-ratio:2/1;
+  border-radius:16px;
+  overflow:hidden;
+  background:#252836;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  margin-bottom:10px;
+}
+
+.preview-media img,
+.preview-media video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.preview-media audio{
+  width:90%;
+}
+
+.preview-text{
+  background:#fff;
+  border-radius:14px;
+  padding:13px;
+  margin-bottom:10px;
+  white-space:pre-wrap;
+  word-break:break-word;
+}
+
+.dark .preview-text{
+  background:#181b21;
+}
+
+.fake-telegram-btn{
+  width:100%;
+  min-height:48px;
+  border-radius:13px;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  margin-top:8px;
+  background:#6d5dfc;
+  background-size:cover;
+  background-position:center;
+  text-align:center;
+  padding:8px 12px;
+}
+
+.preview-separator{
+  height:1px;
+  background:#d6d9df;
+  margin:18px 0;
+}
+
+.dark .preview-separator{
+  background:#30343d;
+}
+
+.small{
+  font-size:12px;
+  color:#7f879d;
+  line-height:1.45;
+}
+
+.dark .small{
+  color:#9aa1b2;
+}
+
+.login-box{
+  width:100%;
+  max-width:430px;
+  margin:10vh auto;
+}
+
+.login-title{
+  font-size:25px;
+  font-weight:900;
+  margin-bottom:18px;
+}
+
+#toast{
+  position:fixed;
+  left:50%;
+  bottom:25px;
+  transform:translateX(-50%);
+  background:#15171c;
+  color:#fff;
+  padding:12px 18px;
+  border-radius:13px;
+  display:none;
+  z-index:9999;
+  max-width:90%;
+  text-align:center;
+}
+
+.hr{
+  height:1px;
+  background:#ddd;
+  margin:18px 0;
+}
+
+.dark .hr{
+  background:#30343d;
+}
+
+.danger{
+  color:#d83228!important;
+  background:#fff0ee!important;
+}
+
+.dark .danger{
+  background:#301714!important;
+}
+
+.status{
+  padding:10px 12px;
+  border-radius:12px;
+  background:#eef0f5;
+  margin-bottom:12px;
+  font-size:13px;
+}
+
+.dark .status{
+  background:#101217;
+}
+
+.media-note{
+  font-size:12px;
+  color:#777;
+  margin-top:6px;
+}
+
+.color-preview{
+  width:100%;
+  height:50px;
+  border-radius:13px;
+  border:1px solid #ddd;
+  margin-top:8px;
+}
+
+.dark .color-preview{
+  border-color:#444;
+}
+
+@media(max-width:520px){
+  .page{
+    padding:12px;
+  }
+
+  .card{
+    padding:14px;
+  }
+
+  .brand{
+    font-size:19px;
+  }
+}
 </style>
 </head>
+
 <body>
+
 <div id="toast"></div>
 
+<!-- LOGIN -->
 <section id="loginPage" class="page">
   <div class="login-box">
-    <div class="login-title" data-i18n="adminPanel">🔐 Admin Panel</div>
-    <div class="field"><label data-i18n="adminPassword">Admin Password</label><input id="loginPassword" type="password" data-ph="enterPassword"></div>
-    <button class="save-btn" onclick="login()" data-i18n="login">LOGIN</button>
+
+    <div class="login-title" data-i18n="adminPanel">
+      🔐 Admin Panel
+    </div>
+
+    <div class="field">
+      <label data-i18n="adminPassword">Admin Password</label>
+      <input
+        id="loginPassword"
+        type="password"
+        data-ph="enterPassword"
+      >
+    </div>
+
+    <button
+      class="save-btn"
+      onclick="login()"
+      data-i18n="login"
+    >
+      LOGIN
+    </button>
+
   </div>
 </section>
 
-<section id="mainPage" class="page hidden"><div class="page-inner">
-  <div class="topbar"><div class="brand" data-i18n="adminTitle">⚙️ ADMIN PANEL</div><div class="top-actions"><button class="icon-btn" onclick="toggleTheme()" title="Theme">🌞</button><button class="icon-btn" onclick="toggleLanguage()" id="languageBtn">🇧🇩 বাংলা</button></div></div>
-  <div class="card">
-    <button class="menu-btn" onclick="openWelcomePage()" data-i18n="welcomeSettings">👋 Welcome Settings</button>
-    <button class="menu-btn" onclick="openMainButtonsPage()" data-i18n="mainButtons">🏠 Main Buttons</button>
-    <button class="menu-btn" onclick="openAudioPage()" data-i18n="audioSystem">🎧 Audio System</button>
-    <button class="menu-btn" onclick="openSystemSettingsPage()" data-i18n="systemSettings">⚙️ System Settings</button>
-    <button class="menu-btn" onclick="openAllViewPage()" data-i18n="allSystemView">👁️ ALL SYSTEM VIEW</button>
-    <button class="menu-btn danger" onclick="resetAll()" data-i18n="resetAll">ALL WELCOME SYSTEM RESET</button>
+
+<!-- MAIN -->
+<section id="mainPage" class="page hidden">
+  <div class="page-inner">
+
+    <div class="topbar">
+
+      <div
+        class="brand"
+        data-i18n="adminTitle"
+      >
+        ⚙️ ADMIN PANEL
+      </div>
+
+      <div class="top-actions">
+
+        <button
+          class="icon-btn"
+          onclick="toggleTheme()"
+          title="Theme"
+        >
+          🌞
+        </button>
+
+        <button
+          class="icon-btn"
+          onclick="toggleLanguage()"
+          id="languageBtn"
+        >
+          🇧🇩 English
+        </button>
+
+      </div>
+    </div>
+
+
+    <div class="card">
+
+      <button
+        class="menu-btn"
+        onclick="openWelcomePage()"
+        data-i18n="welcomeSettings"
+      >
+        👋 Welcome Settings
+      </button>
+
+      <button
+        class="menu-btn"
+        onclick="openMainButtonsPage()"
+        data-i18n="mainButtons"
+      >
+        🏠 Main Buttons
+      </button>
+
+      <button
+        class="menu-btn"
+        onclick="openAudioPage()"
+        data-i18n="audioSystem"
+      >
+        🎧 Audio System
+      </button>
+
+      <button
+        class="menu-btn"
+        onclick="openSystemSettingsPage()"
+        data-i18n="systemSettings"
+      >
+        ⚙️ System Settings
+      </button>
+
+      <button
+        class="menu-btn"
+        onclick="openAllViewPage()"
+        data-i18n="allSystemView"
+      >
+        👁️ ALL SYSTEM VIEW
+      </button>
+
+      <button
+        class="menu-btn danger"
+        onclick="resetAll()"
+        data-i18n="resetAll"
+      >
+        ALL WELCOME SYSTEM RESET
+      </button>
+
+    </div>
+
   </div>
-</div></section>
+</section>
 
-<section id="welcomePage" class="page hidden"><div class="page-inner">
-  <button class="back-btn" onclick="goMain()" data-i18n="back">← BACK</button>
-  <div class="card">
-    <div class="card-title" data-i18n="welcomeSettings">👋 Welcome Settings</div>
-    <div class="switch-row"><span data-i18n="profilePhoto">Profile Photo</span><label class="switch"><input id="profilePhoto" type="checkbox"><span class="slider"></span></label></div>
-    <div class="field"><label data-i18n="welcomeMediaType">Welcome Media Type</label><select id="welcomeMediaType"><option value="none" data-i18n="none">None</option><option value="photo" data-i18n="image">Image</option><option value="video" data-i18n="video">Video</option><option value="audio" data-i18n="audio">Audio</option></select></div>
-    <div class="field"><label data-i18n="mediaSource">Media Source</label><select id="welcomeMediaSource"><option value="upload" data-i18n="upload">Upload</option><option value="url" data-i18n="urlLink">URL Link</option></select></div>
-    <div class="upload-box"><label data-i18n="uploadMedia">Upload Media</label><input id="welcomeFile" type="file" accept="image/*,video/*,audio/*"><div class="media-note" data-i18n="max50">Maximum 50 MB</div></div>
-    <div class="field"><label data-i18n="mediaUrl">Media URL</label><input id="welcomeMediaUrl" type="url" data-ph="mediaUrlPlaceholder"></div>
-    <div class="field"><label data-i18n="welcomeText">Welcome Text</label><textarea id="welcomeText" data-ph="welcomeTextPlaceholder"></textarea></div>
-    <button class="save-btn" onclick="saveWelcome()" data-i18n="save">💾 SAVE</button>
-    <div id="welcomeView" class="preview"></div>
+
+<!-- WELCOME -->
+<section id="welcomePage" class="page hidden">
+  <div class="page-inner">
+
+    <button
+      class="back-btn"
+      onclick="goMain()"
+      data-i18n="back"
+    >
+      ← BACK
+    </button>
+
+    <div class="card">
+
+      <div
+        class="card-title"
+        data-i18n="welcomeSettings"
+      >
+        👋 Welcome Settings
+      </div>
+
+
+      <div class="switch-row">
+        <span data-i18n="profilePhoto">
+          Profile Photo
+        </span>
+
+        <label class="switch">
+          <input
+            id="profilePhoto"
+            type="checkbox"
+          >
+          <span class="slider"></span>
+        </label>
+      </div>
+
+
+      <div class="field">
+        <label data-i18n="welcomeMediaType">
+          Welcome Media Type
+        </label>
+
+        <select id="welcomeMediaType">
+
+          <option
+            value="none"
+            data-i18n="none"
+          >
+            None
+          </option>
+
+          <option
+            value="photo"
+            data-i18n="image"
+          >
+            Image
+          </option>
+
+          <option
+            value="video"
+            data-i18n="video"
+          >
+            Video
+          </option>
+
+          <option
+            value="audio"
+            data-i18n="audio"
+          >
+            Audio
+          </option>
+
+        </select>
+      </div>
+
+
+      <div class="field">
+        <label data-i18n="mediaSource">
+          Media Source
+        </label>
+
+        <select id="welcomeMediaSource">
+
+          <option
+            value="upload"
+            data-i18n="upload"
+          >
+            Upload
+          </option>
+
+          <option
+            value="url"
+            data-i18n="urlLink"
+          >
+            URL Link
+          </option>
+
+        </select>
+      </div>
+
+
+      <div class="upload-box">
+
+        <label data-i18n="uploadMedia">
+          Upload Media
+        </label>
+
+        <input
+          id="welcomeFile"
+          type="file"
+          accept="image/*,video/*,audio/*"
+        >
+
+        <div
+          class="media-note"
+          data-i18n="max50"
+        >
+          Maximum 50 MB
+        </div>
+
+      </div>
+
+
+      <div class="field">
+
+        <label data-i18n="mediaUrl">
+          Media URL
+        </label>
+
+        <input
+          id="welcomeMediaUrl"
+          type="url"
+          data-ph="mediaUrlPlaceholder"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label data-i18n="welcomeText">
+          Welcome Text
+        </label>
+
+        <textarea
+          id="welcomeText"
+          data-ph="welcomeTextPlaceholder"
+        ></textarea>
+
+      </div>
+
+
+      <button
+        class="save-btn"
+        onclick="saveWelcome()"
+        data-i18n="save"
+      >
+        💾 SAVE
+      </button>
+
+
+      <div
+        id="welcomeView"
+        class="preview"
+      ></div>
+
+    </div>
+
   </div>
-</div></section>
+</section>
 
-<section id="mainButtonsPage" class="page hidden"><div class="page-inner">
-  <button class="back-btn" onclick="goMain()" data-i18n="back">← BACK</button>
-  <div class="card"><div class="card-title" data-i18n="mainButtons">🏠 Main Buttons</div><div id="mainButtonsList"></div></div>
-</div></section>
 
-<section id="mainEditorPage" class="page hidden"><div class="page-inner">
-  <button class="back-btn" onclick="openMainButtonsPage()" data-i18n="back">← BACK</button>
-  <div class="card">
-    <div id="mainEditorTitle" class="card-title"></div>
-    <div class="switch-row"><span data-i18n="onOff">ON / OFF</span><label class="switch"><input id="mainEnabled" type="checkbox"><span class="slider"></span></label></div>
-    <div class="field"><label data-i18n="mainButtonName">Main Button Name</label><input id="mainButtonText" type="text"></div>
-    <div class="field"><label data-i18n="buttonColor">Button Color</label><input id="mainButtonColor" type="color" value="#6d5dfc" style="width:100%;height:52px"></div>
-    <div class="field"><label data-i18n="buttonBgImage">Button Background Image URL</label><input id="mainButtonImage" type="url" data-ph="buttonImagePlaceholder"></div>
-    <div class="hr"></div>
-    <div class="card-title" data-i18n="headerMedia">Header Media</div>
-    <div class="field"><label data-i18n="mediaType">Header Media Type</label><select id="headerMediaType"><option value="none" data-i18n="none">None</option><option value="photo" data-i18n="image">Image</option><option value="video" data-i18n="video">Video</option><option value="audio" data-i18n="audio">Audio</option></select></div>
-    <div class="field"><label data-i18n="source">Source</label><select id="headerMediaSource"><option value="upload" data-i18n="upload">Upload</option><option value="url" data-i18n="urlLink">URL Link</option></select></div>
-    <div class="upload-box"><label data-i18n="headerUpload">Header Upload</label><input id="headerFile" type="file" accept="image/*,video/*,audio/*"><div class="media-note" data-i18n="max50">Maximum 50 MB</div></div>
-    <div class="field"><label data-i18n="headerUrl">Header URL</label><input id="headerMediaUrl" type="url" data-ph="mediaUrlPlaceholder"></div>
-    <div class="field"><label data-i18n="headerText">Header Text</label><textarea id="headerText"></textarea></div>
-    <div class="hr"></div>
-    <div class="card-title" data-i18n="slots">Slots</div>
-    <div id="slotsContainer"></div>
-    <button class="add-slot" onclick="addSlot()" data-i18n="addSlot">+ ADD SLOT</button>
-    <button class="save-btn" onclick="saveMainButton()" data-i18n="save">💾 SAVE</button>
-    <div id="mainSystemView" class="preview"></div>
+<!-- MAIN BUTTON LIST -->
+<section id="mainButtonsPage" class="page hidden">
+
+  <div class="page-inner">
+
+    <button
+      class="back-btn"
+      onclick="goMain()"
+      data-i18n="back"
+    >
+      ← BACK
+    </button>
+
+    <div class="card">
+
+      <div
+        class="card-title"
+        data-i18n="mainButtons"
+      >
+        🏠 Main Buttons
+      </div>
+
+      <div id="mainButtonsList"></div>
+
+    </div>
+
   </div>
-</div></section>
 
-<section id="audioPage" class="page hidden"><div class="page-inner">
-  <button class="back-btn" onclick="goMain()" data-i18n="back">← BACK</button>
-  <div class="card"><div class="card-title" data-i18n="audioSystem">🎧 Audio System</div>
-    <div class="switch-row"><span data-i18n="onOff">ON / OFF</span><label class="switch"><input id="audioEnabled" type="checkbox"><span class="slider"></span></label></div>
-    <div class="field"><label data-i18n="audioText">Audio Text</label><textarea id="audioText"></textarea></div>
-    <div class="field"><label data-i18n="audioUrl">Audio URL</label><input id="audioUrl" type="url" data-ph="audioUrlPlaceholder"></div>
-    <div class="upload-box"><label data-i18n="audioUpload">Audio Upload</label><input id="audioFile" type="file" accept="audio/*"></div>
-    <div class="hr"></div>
-    <div class="card-title">Button 1</div><div class="switch-row"><span data-i18n="onOff">ON / OFF</span><label class="switch"><input id="audioB1Enabled" type="checkbox"><span class="slider"></span></label></div>
-    <div class="field"><label data-i18n="buttonText">Button Text</label><input id="audioB1Text" type="text"></div><div class="field"><label data-i18n="buttonUrl">Button URL</label><input id="audioB1Url" type="url"></div>
-    <div class="card-title">Button 2</div><div class="switch-row"><span data-i18n="onOff">ON / OFF</span><label class="switch"><input id="audioB2Enabled" type="checkbox"><span class="slider"></span></label></div>
-    <div class="field"><label data-i18n="buttonText">Button Text</label><input id="audioB2Text" type="text"></div><div class="field"><label data-i18n="buttonUrl">Button URL</label><input id="audioB2Url" type="url"></div>
-    <button class="save-btn" onclick="saveAudio()" data-i18n="save">💾 SAVE</button><div id="audioView" class="preview"></div>
+</section>
+
+
+<!-- MAIN BUTTON EDITOR -->
+<section id="mainEditorPage" class="page hidden">
+
+  <div class="page-inner">
+
+    <button
+      class="back-btn"
+      onclick="openMainButtonsPage()"
+      data-i18n="back"
+    >
+      ← BACK
+    </button>
+
+
+    <div class="card">
+
+      <div
+        id="mainEditorTitle"
+        class="card-title"
+      ></div>
+
+
+      <div class="switch-row">
+
+        <span data-i18n="onOff">
+          ON / OFF
+        </span>
+
+        <label class="switch">
+          <input
+            id="mainEnabled"
+            type="checkbox"
+          >
+          <span class="slider"></span>
+        </label>
+
+      </div>
+
+
+      <div class="field">
+
+        <label data-i18n="mainButtonName">
+          Main Button Name
+        </label>
+
+        <input
+          id="mainButtonText"
+          type="text"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label data-i18n="buttonColor">
+          Button Color
+        </label>
+
+        <input
+          id="mainButtonColor"
+          type="color"
+          value="#6d5dfc"
+          style="width:100%;height:52px"
+        >
+
+        <div
+          id="buttonColorPreview"
+          class="color-preview"
+        ></div>
+
+      </div>
+
+
+      <div class="field">
+
+        <label data-i18n="buttonBgImage">
+          Button Background Image URL
+        </label>
+
+        <input
+          id="mainButtonImage"
+          type="url"
+          data-ph="buttonImagePlaceholder"
+        >
+
+      </div>
+
+
+      <div class="hr"></div>
+
+
+      <div
+        class="card-title"
+        data-i18n="headerMedia"
+      >
+        Header Media
+      </div>
+
+
+      <div class="field">
+
+        <label data-i18n="mediaType">
+          Header Media Type
+        </label>
+
+        <select id="headerMediaType">
+
+          <option
+            value="none"
+            data-i18n="none"
+          >
+            None
+          </option>
+
+          <option
+            value="photo"
+            data-i18n="image"
+          >
+            Image
+          </option>
+
+          <option
+            value="video"
+            data-i18n="video"
+          >
+            Video
+          </option>
+
+          <option
+            value="audio"
+            data-i18n="audio"
+          >
+            Audio
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="field">
+
+        <label data-i18n="source">
+          Source
+        </label>
+
+        <select id="headerMediaSource">
+
+          <option
+            value="upload"
+            data-i18n="upload"
+          >
+            Upload
+          </option>
+
+          <option
+            value="url"
+            data-i18n="urlLink"
+          >
+            URL Link
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="upload-box">
+
+        <label data-i18n="headerUpload">
+          Header Upload
+        </label>
+
+        <input
+          id="headerFile"
+          type="file"
+          accept="image/*,video/*,audio/*"
+        >
+
+        <div
+          class="media-note"
+          data-i18n="max50"
+        >
+          Maximum 50 MB
+        </div>
+
+      </div>
+
+
+      <div class="field">
+
+        <label data-i18n="headerUrl">
+          Header URL
+        </label>
+
+        <input
+          id="headerMediaUrl"
+          type="url"
+          data-ph="mediaUrlPlaceholder"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label data-i18n="headerText">
+          Header Text
+        </label>
+
+        <textarea id="headerText"></textarea>
+
+      </div>
+
+
+      <div class="hr"></div>
+
+
+      <div
+        class="card-title"
+        data-i18n="slots"
+      >
+        Slots
+      </div>
+
+
+      <div id="slotsContainer"></div>
+
+
+      <button
+        class="add-slot"
+        onclick="addSlot()"
+        data-i18n="addSlot"
+      >
+        + ADD SLOT
+      </button>
+
+
+      <button
+        class="save-btn"
+        onclick="saveMainButton()"
+        data-i18n="save"
+      >
+        💾 SAVE
+      </button>
+
+
+      <div
+        id="mainSystemView"
+        class="preview"
+      ></div>
+
+    </div>
+
   </div>
-</div></section>
 
-<section id="systemSettingsPage" class="page hidden"><div class="page-inner">
-  <button class="back-btn" onclick="goMain()" data-i18n="back">← BACK</button><div class="card"><div class="card-title" data-i18n="systemSettings">⚙️ System Settings</div>
-  <div class="field"><label data-i18n="autoDelete">Auto Delete</label><select id="autoDelete"><option value="0" data-i18n="off">OFF</option><option value="30">30 Seconds</option><option value="60">1 Minute</option><option value="120">2 Minutes</option><option value="300">5 Minutes</option><option value="600">10 Minutes</option><option value="900">15 Minutes</option></select></div>
-  <button class="save-btn" onclick="saveSystemSettings()" data-i18n="save">💾 SAVE</button></div>
-</div></section>
+</section>
 
-<section id="allViewPage" class="page hidden"><div class="page-inner">
-  <button class="back-btn" onclick="goMain()" data-i18n="back">← BACK</button><div class="card"><div class="card-title" data-i18n="allSystemView">👁️ ALL SYSTEM VIEW</div><div id="allView"></div></div>
-</div></section>
+
+<!-- AUDIO -->
+<section id="audioPage" class="page hidden">
+
+  <div class="page-inner">
+
+    <button
+      class="back-btn"
+      onclick="goMain()"
+      data-i18n="back"
+    >
+      ← BACK
+    </button>
+
+
+    <div class="card">
+
+      <div
+        class="card-title"
+        data-i18n="audioSystem"
+      >
+        🎧 Audio System
+      </div>
+
+
+      <div class="switch-row">
+
+        <span data-i18n="onOff">
+          ON / OFF
+        </span>
+
+        <label class="switch">
+
+          <input
+            id="audioEnabled"
+            type="checkbox"
+          >
+
+          <span class="slider"></span>
+
+        </label>
+
+      </div>
+
+
+      <div class="field">
+
+        <label data-i18n="audioText">
+          Audio Text
+        </label>
+
+        <textarea id="audioText"></textarea>
+
+      </div>
+
+
+      <div class="field">
+
+        <label data-i18n="audioUrl">
+          Audio URL
+        </label>
+
+        <input
+          id="audioUrl"
+          type="url"
+          data-ph="audioUrlPlaceholder"
+        >
+
+      </div>
+
+
+      <div class="upload-box">
+
+        <label data-i18n="audioUpload">
+          Audio Upload
+        </label>
+
+        <input
+          id="audioFile"
+          type="file"
+          accept="audio/*"
+        >
+
+        <div
+          class="media-note"
+          data-i18n="max50"
+        >
+          Maximum 50 MB
+        </div>
+
+      </div>
+
+
+      <div class="hr"></div>
+
+
+      <div
+        class="card-title"
+        data-i18n="button1"
+      >
+        Button 1
+      </div>
+
+
+      <div class="switch-row">
+
+        <span data-i18n="onOff">
+          ON / OFF
+        </span>
+
+        <label class="switch">
+
+          <input
+            id="audioB1Enabled"
+            type="checkbox"
+          >
+
+          <span class="slider"></span>
+
+        </label>
+
+      </div>
+
+
+      <div class="field">
+
+        <label data-i18n="buttonText">
+          Button Text
+        </label>
+
+        <input
+          id="audioB1Text"
+          type="text"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label data-i18n="buttonUrl">
+          Button URL
+        </label>
+
+        <input
+          id="audioB1Url"
+          type="url"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label data-i18n="buttonColor">
+          Button Color
+        </label>
+
+        <input
+          id="audioB1Color"
+          type="color"
+          value="#6d5dfc"
+          style="width:100%;height:48px"
+        >
+
+      </div>
+
+
+      <div
+        class="card-title"
+        data-i18n="button2"
+      >
+        Button 2
+      </div>
+
+
+      <div class="switch-row">
+
+        <span data-i18n="onOff">
+          ON / OFF
+        </span>
+
+        <label class="switch">
+
+          <input
+            id="audioB2Enabled"
+            type="checkbox"
+          >
+
+          <span class="slider"></span>
+
+        </label>
+
+      </div>
+
+
+      <div class="field">
+
+        <label data-i18n="buttonText">
+          Button Text
+        </label>
+
+        <input
+          id="audioB2Text"
+          type="text"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label data-i18n="buttonUrl">
+          Button URL
+        </label>
+
+        <input
+          id="audioB2Url"
+          type="url"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label data-i18n="buttonColor">
+          Button Color
+        </label>
+
+        <input
+          id="audioB2Color"
+          type="color"
+          value="#6d5dfc"
+          style="width:100%;height:48px"
+        >
+
+      </div>
+
+
+      <button
+        class="save-btn"
+        onclick="saveAudio()"
+        data-i18n="save"
+      >
+        💾 SAVE
+      </button>
+
+
+      <div
+        id="audioView"
+        class="preview"
+      ></div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- SYSTEM SETTINGS -->
+<section id="systemSettingsPage" class="page hidden">
+
+  <div class="page-inner">
+
+    <button
+      class="back-btn"
+      onclick="goMain()"
+      data-i18n="back"
+    >
+      ← BACK
+    </button>
+
+
+    <div class="card">
+
+      <div
+        class="card-title"
+        data-i18n="systemSettings"
+      >
+        ⚙️ System Settings
+      </div>
+
+
+      <div class="field">
+
+        <label data-i18n="autoDelete">
+          Auto Delete
+        </label>
+
+        <select id="autoDelete">
+
+          <option
+            value="0"
+            data-i18n="off"
+          >
+            OFF
+          </option>
+
+          <option
+            value="30"
+            data-i18n="sec30"
+          >
+            30 Seconds
+          </option>
+
+          <option
+            value="60"
+            data-i18n="min1"
+          >
+            1 Minute
+          </option>
+
+          <option
+            value="120"
+            data-i18n="min2"
+          >
+            2 Minutes
+          </option>
+
+          <option
+            value="300"
+            data-i18n="min5"
+          >
+            5 Minutes
+          </option>
+
+          <option
+            value="600"
+            data-i18n="min10"
+          >
+            10 Minutes
+          </option>
+
+          <option
+            value="900"
+            data-i18n="min15"
+          >
+            15 Minutes
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <button
+        class="save-btn"
+        onclick="saveSystemSettings()"
+        data-i18n="save"
+      >
+        💾 SAVE
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ALL VIEW -->
+<section id="allViewPage" class="page hidden">
+
+  <div class="page-inner">
+
+    <button
+      class="back-btn"
+      onclick="goMain()"
+      data-i18n="back"
+    >
+      ← BACK
+    </button>
+
+
+    <div class="card">
+
+      <div
+        class="card-title"
+        data-i18n="allSystemView"
+      >
+        👁️ ALL SYSTEM VIEW
+      </div>
+
+      <div id="allView"></div>
+
+    </div>
+
+  </div>
+
+</section>
+
 
 <script>
-let token=localStorage.getItem('admin_token')||'',settings=null,currentButtonId=null,currentLanguage=localStorage.getItem('admin_language')||'bn';
-const $=id=>document.getElementById(id);
-const tr={
- bn:{adminPanel:'🔐 Admin Panel',adminPassword:'Admin Password',enterPassword:'পাসওয়ার্ড দিন',login:'LOGIN',adminTitle:'⚙️ ADMIN PANEL',welcomeSettings:'👋 Welcome Settings',mainButtons:'🏠 Main Buttons',audioSystem:'🎧 Audio System',systemSettings:'⚙️ System Settings',allSystemView:'👁️ ALL SYSTEM VIEW',resetAll:'ALL WELCOME SYSTEM RESET',back:'← BACK',profilePhoto:'Profile Photo',welcomeMediaType:'Welcome Media Type',none:'None',image:'Image',video:'Video',audio:'Audio',mediaSource:'Media Source',upload:'Upload',urlLink:'URL Link',uploadMedia:'Upload Media',max50:'Maximum 50 MB',mediaUrl:'Media URL',welcomeText:'Welcome Text',save:'💾 SAVE',onOff:'ON / OFF',mainButtonName:'Main Button Name',buttonColor:'Button Color',buttonBgImage:'Button Background Image URL',headerMedia:'Header Media',mediaType:'Header Media Type',source:'Source',headerUpload:'Header Upload',headerUrl:'Header URL',headerText:'Header Text',slots:'Slots',addSlot:'+ ADD SLOT',audioText:'Audio Text',audioUrl:'Audio URL',audioUpload:'Audio Upload',buttonText:'Button Text',buttonUrl:'Button URL',autoDelete:'Auto Delete',off:'OFF',mediaUrlPlaceholder:'https://example.com/video.mp4',welcomeTextPlaceholder:'Welcome message...',buttonImagePlaceholder:'https://example.com/button.jpg'},
- en:{adminPanel:'🔐 Admin Panel',adminPassword:'Admin Password',enterPassword:'Enter password',login:'LOGIN',adminTitle:'⚙️ ADMIN PANEL',welcomeSettings:'👋 Welcome Settings',mainButtons:'🏠 Main Buttons',audioSystem:'🎧 Audio System',systemSettings:'⚙️ System Settings',allSystemView:'👁️ ALL SYSTEM VIEW',resetAll:'ALL WELCOME SYSTEM RESET',back:'← BACK',profilePhoto:'Profile Photo',welcomeMediaType:'Welcome Media Type',none:'None',image:'Image',video:'Video',audio:'Audio',mediaSource:'Media Source',upload:'Upload',urlLink:'URL Link',uploadMedia:'Upload Media',max50:'Maximum 50 MB',mediaUrl:'Media URL',welcomeText:'Welcome Text',save:'💾 SAVE',onOff:'ON / OFF',mainButtonName:'Main Button Name',buttonColor:'Button Color',buttonBgImage:'Button Background Image URL',headerMedia:'Header Media',mediaType:'Header Media Type',source:'Source',headerUpload:'Header Upload',headerUrl:'Header URL',headerText:'Header Text',slots:'Slots',addSlot:'+ ADD SLOT',audioText:'Audio Text',audioUrl:'Audio URL',audioUpload:'Audio Upload',buttonText:'Button Text',buttonUrl:'Button URL',autoDelete:'Auto Delete',off:'OFF',mediaUrlPlaceholder:'https://example.com/video.mp4',welcomeTextPlaceholder:'Welcome message...',buttonImagePlaceholder:'https://example.com/button.jpg'}
+
+let token =
+  localStorage.getItem('admin_token') || '';
+
+let settings = null;
+
+let currentButtonId = null;
+
+let currentLanguage =
+  localStorage.getItem('admin_language') || 'bn';
+
+
+const $ = id =>
+  document.getElementById(id);
+
+
+/* =========================
+   TRANSLATION
+========================= */
+
+const tr = {
+
+  bn: {
+
+    adminPanel:'🔐 Admin Panel',
+
+    adminPassword:'Admin Password',
+
+    enterPassword:'পাসওয়ার্ড দিন',
+
+    login:'LOGIN',
+
+    adminTitle:'⚙️ ADMIN PANEL',
+
+    welcomeSettings:'👋 Welcome Settings',
+
+    mainButtons:'🏠 Main Buttons',
+
+    audioSystem:'🎧 Audio System',
+
+    systemSettings:'⚙️ System Settings',
+
+    allSystemView:'👁️ ALL SYSTEM VIEW',
+
+    resetAll:'ALL WELCOME SYSTEM RESET',
+
+    back:'← BACK',
+
+    profilePhoto:'Profile Photo',
+
+    welcomeMediaType:'Welcome Media Type',
+
+    none:'None',
+
+    image:'Image',
+
+    video:'Video',
+
+    audio:'Audio',
+
+    mediaSource:'Media Source',
+
+    upload:'Upload',
+
+    urlLink:'URL Link',
+
+    uploadMedia:'Upload Media',
+
+    max50:'Maximum 50 MB',
+
+    mediaUrl:'Media URL',
+
+    welcomeText:'Welcome Text',
+
+    save:'💾 SAVE',
+
+    onOff:'ON / OFF',
+
+    mainButtonName:'Main Button Name',
+
+    buttonColor:'Button Color',
+
+    buttonBgImage:'Button Background Image URL',
+
+    headerMedia:'Header Media',
+
+    mediaType:'Header Media Type',
+
+    source:'Source',
+
+    headerUpload:'Header Upload',
+
+    headerUrl:'Header URL',
+
+    headerText:'Header Text',
+
+    slots:'Slots',
+
+    slot:'Slot',
+
+    addSlot:'+ ADD SLOT',
+
+    remove:'REMOVE',
+
+    button1:'Button 1',
+
+    button2:'Button 2',
+
+    audioText:'Audio Text',
+
+    audioUrl:'Audio URL',
+
+    audioUpload:'Audio Upload',
+
+    buttonText:'Button Text',
+
+    buttonUrl:'Button URL',
+
+    autoDelete:'Auto Delete',
+
+    off:'OFF',
+
+    sec30:'30 Seconds',
+
+    min1:'1 Minute',
+
+    min2:'2 Minutes',
+
+    min5:'5 Minutes',
+
+    min10:'10 Minutes',
+
+    min15:'15 Minutes',
+
+    mediaUrlPlaceholder:'https://example.com/video.mp4',
+
+    audioUrlPlaceholder:'https://example.com/audio.mp3',
+
+    welcomeTextPlaceholder:'Welcome message...',
+
+    buttonImagePlaceholder:'https://example.com/button.jpg',
+
+    uploading:'Uploading...',
+
+    uploadComplete:'Upload complete',
+
+    uploadFailed:'Upload failed',
+
+    welcomeSaved:'Welcome Settings Saved',
+
+    buttonSaved:'Main Button Saved',
+
+    audioSaved:'Audio Saved',
+
+    systemSaved:'System Settings Saved',
+
+    resetConfirm:'সব settings default করতে চান?',
+
+    resetDone:'সব reset হয়েছে',
+
+    englishMode:'English Mode',
+
+    banglaMode:'বাংলা মোড',
+
+    maxSlots:'Maximum 20 slots',
+
+    loginFailed:'Login failed',
+
+    saveFailed:'Save failed',
+
+    sessionExpired:'Session expired',
+
+    systemView:'SYSTEM VIEW',
+
+    noMedia:'No Media',
+
+    backButton:'⬅️ BACK',
+
+    openLink:'OPEN LINK',
+
+    support:'SUPPORT'
+
+  },
+
+
+  en: {
+
+    adminPanel:'🔐 Admin Panel',
+
+    adminPassword:'Admin Password',
+
+    enterPassword:'Enter password',
+
+    login:'LOGIN',
+
+    adminTitle:'⚙️ ADMIN PANEL',
+
+    welcomeSettings:'👋 Welcome Settings',
+
+    mainButtons:'🏠 Main Buttons',
+
+    audioSystem:'🎧 Audio System',
+
+    systemSettings:'⚙️ System Settings',
+
+    allSystemView:'👁️ ALL SYSTEM VIEW',
+
+    resetAll:'ALL WELCOME SYSTEM RESET',
+
+    back:'← BACK',
+
+    profilePhoto:'Profile Photo',
+
+    welcomeMediaType:'Welcome Media Type',
+
+    none:'None',
+
+    image:'Image',
+
+    video:'Video',
+
+    audio:'Audio',
+
+    mediaSource:'Media Source',
+
+    upload:'Upload',
+
+    urlLink:'URL Link',
+
+    uploadMedia:'Upload Media',
+
+    max50:'Maximum 50 MB',
+
+    mediaUrl:'Media URL',
+
+    welcomeText:'Welcome Text',
+
+    save:'💾 SAVE',
+
+    onOff:'ON / OFF',
+
+    mainButtonName:'Main Button Name',
+
+    buttonColor:'Button Color',
+
+    buttonBgImage:'Button Background Image URL',
+
+    headerMedia:'Header Media',
+
+    mediaType:'Header Media Type',
+
+    source:'Source',
+
+    headerUpload:'Header Upload',
+
+    headerUrl:'Header URL',
+
+    headerText:'Header Text',
+
+    slots:'Slots',
+
+    slot:'Slot',
+
+    addSlot:'+ ADD SLOT',
+
+    remove:'REMOVE',
+
+    button1:'Button 1',
+
+    button2:'Button 2',
+
+    audioText:'Audio Text',
+
+    audioUrl:'Audio URL',
+
+    audioUpload:'Audio Upload',
+
+    buttonText:'Button Text',
+
+    buttonUrl:'Button URL',
+
+    autoDelete:'Auto Delete',
+
+    off:'OFF',
+
+    sec30:'30 Seconds',
+
+    min1:'1 Minute',
+
+    min2:'2 Minutes',
+
+    min5:'5 Minutes',
+
+    min10:'10 Minutes',
+
+    min15:'15 Minutes',
+
+    mediaUrlPlaceholder:'https://example.com/video.mp4',
+
+    audioUrlPlaceholder:'https://example.com/audio.mp3',
+
+    welcomeTextPlaceholder:'Welcome message...',
+
+    buttonImagePlaceholder:'https://example.com/button.jpg',
+
+    uploading:'Uploading...',
+
+    uploadComplete:'Upload complete',
+
+    uploadFailed:'Upload failed',
+
+    welcomeSaved:'Welcome Settings Saved',
+
+    buttonSaved:'Main Button Saved',
+
+    audioSaved:'Audio Saved',
+
+    systemSaved:'System Settings Saved',
+
+    resetConfirm:'Reset everything to default?',
+
+    resetDone:'All systems reset',
+
+    englishMode:'English Mode',
+
+    banglaMode:'বাংলা মোড',
+
+    maxSlots:'Maximum 20 slots',
+
+    loginFailed:'Login failed',
+
+    saveFailed:'Save failed',
+
+    sessionExpired:'Session expired',
+
+    systemView:'SYSTEM VIEW',
+
+    noMedia:'No Media',
+
+    backButton:'⬅️ BACK',
+
+    openLink:'OPEN LINK',
+
+    support:'SUPPORT'
+
+  }
+
 };
-function t(k){return (tr[currentLanguage]||tr.en)[k]||k}
-function toast(m){const e=$('toast');e.textContent=m;e.style.display='block';clearTimeout(window.tt);window.tt=setTimeout(()=>e.style.display='none',2200)}
-async function api(url,opt={}){opt.headers={...(opt.headers||{}),Authorization:token?`Bearer ${token}`:''};const r=await fetch(url,opt);if(r.status===401){localStorage.removeItem('admin_token');token='';showOnly('loginPage');throw Error('Session expired')}return r.json()}
-async function login(){const password=$('loginPassword').value.trim();if(!password)return toast(t('enterPassword'));try{const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password})});const d=await r.json();if(!d.ok)return toast(d.error||'Login failed');token=d.token;localStorage.setItem('admin_token',token);await loadSettings();showOnly('mainPage');applyLanguage()}catch(e){toast(e.message||'Login failed')}}
-async function loadSettings(){const d=await api('/api/settings');if(!d.ok)throw Error(d.error||'Unable to load settings');settings=normalizeSettings(d.settings)}
-function normalizeSettings(s){s=s||{};s.welcome=s.welcome||{};s.audio=s.audio||{enabled:false,text:'',mediaUrl:'',mediaId:null,mediaSource:'url',button1:{enabled:false,text:'',url:''},button2:{enabled:false,text:'',url:''}};s.mainButtons=Array.isArray(s.mainButtons)?s.mainButtons:[];s.mainButtons.forEach(b=>{b.slots=Array.isArray(b.slots)?b.slots:[];b.buttonColor=b.buttonColor||'#6d5dfc';b.buttonImageUrl=b.buttonImageUrl||'';b.headerMediaType=b.headerMediaType||'none';b.headerMediaSource=b.headerMediaSource||'upload';b.headerMediaUrl=b.headerMediaUrl||'';b.headerText=b.headerText||''});return s}
-function showOnly(id){document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));const e=$(id);if(e){e.classList.remove('hidden');window.scrollTo(0,0)}}
-function goMain(){showOnly('mainPage')}
-function openWelcomePage(){renderWelcome();showOnly('welcomePage');applyLanguage()}
-function openMainButtonsPage(){renderMainButtons();showOnly('mainButtonsPage');applyLanguage()}
-function openAudioPage(){renderAudio();showOnly('audioPage');applyLanguage()}
-function openSystemSettingsPage(){renderSystemSettings();showOnly('systemSettingsPage');applyLanguage()}
-function openAllViewPage(){renderAllView();showOnly('allViewPage');applyLanguage()}
-function renderWelcome(){const w=settings.welcome;$('profilePhoto').checked=!!w.profilePhoto;$('welcomeMediaType').value=w.mediaType||'none';$('welcomeMediaSource').value=w.mediaSource||'upload';$('welcomeMediaUrl').value=w.mediaUrl||'';$('welcomeText').value=w.text||'';renderWelcomeView()}
-async function saveWelcome(){const w=settings.welcome;w.profilePhoto=$('profilePhoto').checked;w.mediaType=$('welcomeMediaType').value;w.mediaSource=$('welcomeMediaSource').value;w.mediaUrl=$('welcomeMediaUrl').value.trim();w.text=$('welcomeText').value;const f=$('welcomeFile').files[0];if(w.mediaSource==='upload'&&f){const id=await uploadFile(f,w.mediaType);if(!id)return;w.mediaId=id}else if(w.mediaSource==='url'){w.mediaId=null}if(await saveSettings()){renderWelcomeView();toast('Welcome Settings Saved')}}
-function renderWelcomeView(){const w=settings.welcome||{};let h=`<div class="preview-title">👁️ ${escapeHtml(t('welcomeSettings').replace(/^👋 /,''))}</div>`;if(w.mediaType&&w.mediaType!=='none'&&(w.mediaId||w.mediaUrl))h+=mediaPreview(w.mediaType,w.mediaSource,w.mediaId,w.mediaUrl);if(w.text)h+=`<div class="preview-text">${escapeHtml(w.text)}</div>`;h+=`<div class="fake-telegram-btn" style="background:#6d5dfc">${escapeHtml(t('mainButtons'))}</div>`;$('welcomeView').innerHTML=h}
-function renderMainButtons(){const box=$('mainButtonsList');box.innerHTML='';(settings.mainButtons||[]).forEach(b=>{const el=document.createElement('button');el.className='menu-btn';el.innerHTML=`${b.enabled?'🟢':'🔴'} ${escapeHtml(b.text||b.id)}<div class="small" style="margin-top:5px">${escapeHtml(b.buttonColor||'#6d5dfc')} ${b.buttonImageUrl?'• 🖼️':''}</div>`;el.onclick=()=>openMainEditor(b.id);box.appendChild(el)})}
-function openMainEditor(id){currentButtonId=id;const b=getCurrentButton();if(!b)return;$('mainEditorTitle').textContent=b.text||'Main Button';$('mainEnabled').checked=!!b.enabled;$('mainButtonText').value=b.text||'';$('mainButtonColor').value=b.buttonColor||'#6d5dfc';$('mainButtonImage').value=b.buttonImageUrl||'';$('headerMediaType').value=b.headerMediaType||'none';$('headerMediaSource').value=b.headerMediaSource||'upload';$('headerMediaUrl').value=b.headerMediaUrl||'';$('headerText').value=b.headerText||'';renderSlots(b);renderMainSystemView();showOnly('mainEditorPage');applyLanguage()}
-function getCurrentButton(){return (settings.mainButtons||[]).find(b=>b.id===currentButtonId)}
-function createSlotElement(slot,index){const w=document.createElement('div');w.className='slot';w.innerHTML=`<div class="slot-head"><div class="slot-title">${t('slots').slice(0,-1)} ${index+1}</div><button class="remove-slot" type="button">${currentLanguage==='bn'?'REMOVE':'REMOVE'}</button></div><div class="switch-row"><span>${t('onOff')}</span><label class="switch"><input class="slot-enabled" type="checkbox" ${slot.enabled?'checked':''}><span class="slider"></span></label></div><div class="field"><label>${t('mediaType')}</label><select class="slot-media-type"><option value="none" ${slot.mediaType==='none'?'selected':''}>${t('none')}</option><option value="photo" ${slot.mediaType==='photo'?'selected':''}>${t('image')}</option><option value="video" ${slot.mediaType==='video'?'selected':''}>${t('video')}</option><option value="audio" ${slot.mediaType==='audio'?'selected':''}>${t('audio')}</option></select></div><div class="field"><label>${t('mediaSource')}</label><select class="slot-media-source"><option value="upload" ${slot.mediaSource==='upload'?'selected':''}>${t('upload')}</option><option value="url" ${slot.mediaSource==='url'?'selected':''}>${t('urlLink')}</option></select></div><div class="upload-box"><label>${t('upload')}</label><input class="slot-file" type="file" accept="image/*,video/*,audio/*"></div><div class="field"><label>${t('mediaUrl')}</label><input class="slot-url" type="url" value="${escapeAttr(slot.mediaUrl||'')}" placeholder="${t('mediaUrlPlaceholder')}"></div><div class="field"><label>${t('welcomeText')}</label><textarea class="slot-text">${escapeHtml(slot.text||'')}</textarea></div><div class="hr"></div><div class="card-title">Button 1</div><div class="switch-row"><span>${t('onOff')}</span><label class="switch"><input class="b1-enabled" type="checkbox" ${slot.button1?.enabled?'checked':''}><span class="slider"></span></label></div><div class="field"><label>${t('buttonText')}</label><input class="b1-text" type="text" value="${escapeAttr(slot.button1?.text||'')}"></div><div class="field"><label>${t('buttonUrl')}</label><input class="b1-url" type="url" value="${escapeAttr(slot.button1?.url||'')}"></div><div class="field"><label>${t('buttonColor')}</label><input class="b1-color" type="color" value="${slot.button1?.color||'#6d5dfc'}" style="width:100%;height:48px"></div><div class="card-title">Button 2</div><div class="switch-row"><span>${t('onOff')}</span><label class="switch"><input class="b2-enabled" type="checkbox" ${slot.button2?.enabled?'checked':''}><span class="slider"></span></label></div><div class="field"><label>${t('buttonText')}</label><input class="b2-text" type="text" value="${escapeAttr(slot.button2?.text||'')}"></div><div class="field"><label>${t('buttonUrl')}</label><input class="b2-url" type="url" value="${escapeAttr(slot.button2?.url||'')}"></div><div class="field"><label>${t('buttonColor')}</label><input class="b2-color" type="color" value="${slot.button2?.color||'#6d5dfc'}" style="width:100%;height:48px"></div>`;w.querySelector('.remove-slot').onclick=()=>{const b=getCurrentButton();b.slots.splice(index,1);renderSlots(b);renderMainSystemView()};w.querySelectorAll('input,textarea,select').forEach(e=>{e.addEventListener('input',()=>{updateSlotsFromDOM();renderMainSystemView()});e.addEventListener('change',()=>{updateSlotsFromDOM();renderMainSystemView()})});return w}
-function renderSlots(b){const c=$('slotsContainer');c.innerHTML='';(b.slots||[]).forEach((s,i)=>c.appendChild(createSlotElement(s,i)))}
-function addSlot(){const b=getCurrentButton();if(!b)return;if((b.slots||[]).length>=20)return toast('Maximum 20 slots');b.slots.push({enabled:true,mediaType:'none',mediaSource:'upload',mediaId:null,mediaUrl:'',text:'',button1:{enabled:true,text:'OPEN LINK',url:'',color:'#6d5dfc'},button2:{enabled:false,text:'SUPPORT',url:'',color:'#6d5dfc'}});renderSlots(b);renderMainSystemView()}
-function updateSlotsFromDOM(){const b=getCurrentButton();if(!b)return;document.querySelectorAll('.slot').forEach((el,i)=>{const s=b.slots[i];if(!s)return;s.enabled=el.querySelector('.slot-enabled').checked;s.mediaType=el.querySelector('.slot-media-type').value;s.mediaSource=el.querySelector('.slot-media-source').value;s.mediaUrl=el.querySelector('.slot-url').value.trim();s.text=el.querySelector('.slot-text').value;s.button1=s.button1||{};s.button2=s.button2||{};s.button1.enabled=el.querySelector('.b1-enabled').checked;s.button1.text=el.querySelector('.b1-text').value;s.button1.url=el.querySelector('.b1-url').value.trim();s.button1.color=el.querySelector('.b1-color').value;s.button2.enabled=el.querySelector('.b2-enabled').checked;s.button2.text=el.querySelector('.b2-text').value;s.button2.url=el.querySelector('.b2-url').value.trim();s.button2.color=el.querySelector('.b2-color').value})}
-async function saveMainButton(){const b=getCurrentButton();if(!b)return;b.enabled=$('mainEnabled').checked;b.text=$('mainButtonText').value.trim();b.buttonColor=$('mainButtonColor').value;b.buttonImageUrl=$('mainButtonImage').value.trim();b.headerMediaType=$('headerMediaType').value;b.headerMediaSource=$('headerMediaSource').value;b.headerMediaUrl=$('headerMediaUrl').value.trim();b.headerText=$('headerText').value;updateSlotsFromDOM();const f=$('headerFile').files[0];if(b.headerMediaSource==='upload'&&f){const id=await uploadFile(f,b.headerMediaType);if(!id)return;b.headerMediaId=id}else if(b.headerMediaSource==='url'){b.headerMediaId=null}for(let i=0;i<document.querySelectorAll('.slot').length;i++){const f2=document.querySelectorAll('.slot')[i].querySelector('.slot-file').files[0];if(f2&&b.slots[i]&&b.slots[i].mediaSource==='upload'){const id2=await uploadFile(f2,b.slots[i].mediaType);if(!id2)return;b.slots[i].mediaId=id2}else if(b.slots[i]&&b.slots[i].mediaSource==='url'){b.slots[i].mediaId=null}}if(await saveSettings()){renderMainSystemView();toast('Main Button Saved')}}
-async function uploadFile(file,kind){if(!file)return null;if(file.size>50*1024*1024){toast(t('max50'));return null}let k=['photo','video','audio'].includes(kind)?kind:(file.type.startsWith('image/')?'photo':file.type.startsWith('video/')?'video':'audio');const fd=new FormData();fd.append('kind',k);fd.append('file',file);toast('Uploading...');try{const r=await fetch('/api/upload',{method:'POST',headers:{Authorization:`Bearer ${token}`},body:fd});const d=await r.json();if(!d.ok){toast(d.error||'Upload failed');return null}toast('Upload complete');return d.mediaId}catch(e){toast(e.message||'Upload failed');return null}}
-async function saveSettings(){try{const d=await api('/api/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(settings)});if(!d.ok){toast(d.error||'Save failed');return false}settings=normalizeSettings(d.settings);return true}catch(e){toast(e.message||'Save failed');return false}}
-function mediaPreview(type,source,id,url){let src=source==='upload'&&id?`/media/${id}`:url||'';if(!src)return `<div class="preview-media">No Media</div>`;if(type==='photo')return `<div class="preview-media"><img src="${escapeAttr(src)}"></div>`;if(type==='video')return `<div class="preview-media"><video src="${escapeAttr(src)}" controls playsinline></video></div>`;if(type==='audio')return `<div style="margin-bottom:10px"><audio src="${escapeAttr(src)}" controls style="width:100%"></audio></div>`;return ''}
-function renderMainSystemView(){const b=getCurrentButton();if(!b)return;let h=`<div class="preview-title">👁️ SYSTEM VIEW</div>`;if(b.headerMediaType!=='none')h+=mediaPreview(b.headerMediaType,b.headerMediaSource,b.headerMediaId,b.headerMediaUrl);if(b.headerText)h+=`<div class="preview-text">${escapeHtml(b.headerText)}</div>`;h+=fakeButton(b.text,b.buttonColor,b.buttonImageUrl);(b.slots||[]).forEach(s=>{if(!s.enabled)return;h+='<div class="hr"></div>';if(s.mediaType!=='none')h+=mediaPreview(s.mediaType,s.mediaSource,s.mediaId,s.mediaUrl);if(s.text)h+=`<div class="preview-text">${escapeHtml(s.text)}</div>`;if(s.button1?.enabled)h+=fakeButton(s.button1.text,s.button1.color,s.button1.imageUrl);if(s.button2?.enabled)h+=fakeButton(s.button2.text,s.button2.color,s.button2.imageUrl)});h+=fakeButton('⬅️ BACK','#555b6b','');$('mainSystemView').innerHTML=h}
-function fakeButton(text,color,img){return `<div class="fake-telegram-btn" style="background:${escapeAttr(color||'#6d5dfc')};${img?`background-image:url('${escapeAttr(img)}');`:''}">${escapeHtml(text||'OPEN')}</div>`}
-function renderAudio(){const a=settings.audio||{};$('audioEnabled').checked=!!a.enabled;$('audioText').value=a.text||'';$('audioUrl').value=a.mediaUrl||'';$('audioB1Enabled').checked=!!a.button1?.enabled;$('audioB1Text').value=a.button1?.text||'';$('audioB1Url').value=a.button1?.url||'';$('audioB2Enabled').checked=!!a.button2?.enabled;$('audioB2Text').value=a.button2?.text||'';$('audioB2Url').value=a.button2?.url||'';renderAudioView()}
-async function saveAudio(){const a=settings.audio;$('audioEnabled').checked&&(a.enabled=true);a.enabled=$('audioEnabled').checked;a.text=$('audioText').value;a.mediaUrl=$('audioUrl').value.trim();a.mediaType='audio';a.mediaSource='url';a.button1=a.button1||{};a.button2=a.button2||{};a.button1.enabled=$('audioB1Enabled').checked;a.button1.text=$('audioB1Text').value;a.button1.url=$('audioB1Url').value.trim();a.button2.enabled=$('audioB2Enabled').checked;a.button2.text=$('audioB2Text').value;a.button2.url=$('audioB2Url').value.trim();const f=$('audioFile').files[0];if(f){const id=await uploadFile(f,'audio');if(!id)return;a.mediaId=id;a.mediaSource='upload'}else if(a.mediaUrl)a.mediaId=null;if(await saveSettings()){renderAudioView();toast('Audio Saved')}}
-function renderAudioView(){const a=settings.audio||{};let h='<div class="preview-title">👁️ SYSTEM VIEW</div>';if(a.mediaId||a.mediaUrl)h+=mediaPreview('audio',a.mediaSource,a.mediaId,a.mediaUrl);if(a.text)h+=`<div class="preview-text">${escapeHtml(a.text)}</div>`;if(a.button1?.enabled)h+=fakeButton(a.button1.text,a.button1.color,'');if(a.button2?.enabled)h+=fakeButton(a.button2.text,a.button2.color,'');$('audioView').innerHTML=h}
-function renderSystemSettings(){$('autoDelete').value=String(settings.autoDelete||0)}
-async function saveSystemSettings(){settings.autoDelete=Number($('autoDelete').value);if(await saveSettings())toast('System Settings Saved')}
-function renderAllView(){let h='<div class="preview-title">👋 WELCOME</div>';const w=settings.welcome||{};if(w.mediaId||w.mediaUrl)h+=mediaPreview(w.mediaType,w.mediaSource,w.mediaId,w.mediaUrl);if(w.text)h+=`<div class="preview-text">${escapeHtml(w.text)}</div>`;(settings.mainButtons||[]).forEach(b=>{h+='<div class="hr"></div><div class="preview-title">'+escapeHtml(b.text||b.id)+'</div>';if(b.headerMediaId||b.headerMediaUrl)h+=mediaPreview(b.headerMediaType,b.headerMediaSource,b.headerMediaId,b.headerMediaUrl);if(b.headerText)h+=`<div class="preview-text">${escapeHtml(b.headerText)}</div>`;h+=fakeButton(b.text,b.buttonColor,b.buttonImageUrl)});$('allView').innerHTML=h}
-async function resetAll(){if(!confirm(currentLanguage==='bn'?'সব settings default করতে চান?':'Reset everything to default?'))return;try{const d=await api('/api/reset',{method:'POST'});if(!d.ok)return toast(d.error||'Reset failed');settings=normalizeSettings(d.settings);showOnly('mainPage');toast(currentLanguage==='bn'?'সব reset হয়েছে':'All systems reset')}catch(e){toast(e.message)}}
-function toggleTheme(){document.body.classList.toggle('dark');localStorage.setItem('admin_theme',document.body.classList.contains('dark')?'dark':'light')}
-function toggleLanguage(){currentLanguage=currentLanguage==='bn'?'en':'bn';localStorage.setItem('admin_language',currentLanguage);applyLanguage();rerenderVisible();toast(currentLanguage==='bn'?'বাংলা মোড':'English Mode')}
-function rerenderVisible(){if(!$('mainPage').classList.contains('hidden'))return;if(!$('welcomePage').classList.contains('hidden'))renderWelcome();else if(!$('mainButtonsPage').classList.contains('hidden'))renderMainButtons();else if(!$('mainEditorPage').classList.contains('hidden'))openMainEditor(currentButtonId);else if(!$('audioPage').classList.contains('hidden'))renderAudio();else if(!$('systemSettingsPage').classList.contains('hidden'))renderSystemSettings();else if(!$('allViewPage').classList.contains('hidden'))renderAllView()}
-function applyLanguage(){document.querySelectorAll('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n)});document.querySelectorAll('[data-ph]').forEach(e=>e.placeholder=t(e.dataset.ph));$('languageBtn').textContent=currentLanguage==='bn'?'🇧🇩 English':'🇺🇸 বাংলা'}
-function escapeHtml(v){return String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;')}
-function escapeAttr(v){return escapeHtml(v)}
-['mainEnabled','mainButtonText','mainButtonColor','mainButtonImage','headerMediaType','headerMediaSource','headerMediaUrl','headerText'].forEach(id=>{const e=$(id);if(e){e.addEventListener('input',()=>{updateSlotsFromDOM();renderMainSystemView()});e.addEventListener('change',()=>{updateSlotsFromDOM();renderMainSystemView()})}})
-(function(){if(localStorage.getItem('admin_theme')==='dark')document.body.classList.add('dark');applyLanguage()})();
-async function boot(){if(!token){showOnly('loginPage');applyLanguage();return}try{await loadSettings();showOnly('mainPage');applyLanguage()}catch(e){localStorage.removeItem('admin_token');token='';showOnly('loginPage');applyLanguage()}}
+
+
+function t(key){
+
+  return (
+    tr[currentLanguage] &&
+    tr[currentLanguage][key]
+  ) || key;
+
+}
+
+
+/* =========================
+   DEFAULT SIX BUTTONS
+========================= */
+
+function defaultMainButtons(){
+
+  return [
+
+    {
+      id:'ai',
+      enabled:true,
+      text:'🤖 AI HACK All Link Check',
+      buttonColor:'#67a74a',
+      buttonImageUrl:'',
+      buttonStyle:'success',
+      headerMediaType:'none',
+      headerMediaSource:'upload',
+      headerMediaId:null,
+      headerMediaUrl:'',
+      headerText:'',
+      slots:[]
+    },
+
+    {
+      id:'vip',
+      enabled:true,
+      text:'🔥 VIP GROUP All Link Check',
+      buttonColor:'#6d5dfc',
+      buttonImageUrl:'',
+      buttonStyle:'primary',
+      headerMediaType:'none',
+      headerMediaSource:'upload',
+      headerMediaId:null,
+      headerMediaUrl:'',
+      headerText:'',
+      slots:[]
+    },
+
+    {
+      id:'support',
+      enabled:true,
+      text:'💬 SUPPORT All Link Check',
+      buttonColor:'#e89b24',
+      buttonImageUrl:'',
+      buttonStyle:'primary',
+      headerMediaType:'none',
+      headerMediaSource:'upload',
+      headerMediaId:null,
+      headerMediaUrl:'',
+      headerText:'',
+      slots:[]
+    },
+
+    {
+      id:'official',
+      enabled:true,
+      text:'📢 OFFICIAL CHANNEL All Link Check🥰',
+      buttonColor:'#ff3b30',
+      buttonImageUrl:'',
+      buttonStyle:'danger',
+      headerMediaType:'none',
+      headerMediaSource:'upload',
+      headerMediaId:null,
+      headerMediaUrl:'',
+      headerText:'',
+      slots:[]
+    },
+
+    {
+      id:'bonus',
+      enabled:true,
+      text:'🎁 BONUS All Link Check',
+      buttonColor:'#16a085',
+      buttonImageUrl:'',
+      buttonStyle:'success',
+      headerMediaType:'none',
+      headerMediaSource:'upload',
+      headerMediaId:null,
+      headerMediaUrl:'',
+      headerText:'',
+      slots:[]
+    },
+
+    {
+      id:'admin',
+      enabled:true,
+      text:'👨‍💻 ADMIN All Link Check',
+      buttonColor:'#8e44ad',
+      buttonImageUrl:'',
+      buttonStyle:'primary',
+      headerMediaType:'none',
+      headerMediaSource:'upload',
+      headerMediaId:null,
+      headerMediaUrl:'',
+      headerText:'',
+      slots:[]
+    }
+
+  ];
+
+}
+
+
+/* =========================
+   TOAST
+========================= */
+
+function toast(message){
+
+  const el = $('toast');
+
+  el.textContent = message;
+
+  el.style.display = 'block';
+
+  clearTimeout(window.__toastTimer);
+
+  window.__toastTimer =
+    setTimeout(() => {
+
+      el.style.display = 'none';
+
+    },2300);
+
+}
+
+
+/* =========================
+   API
+========================= */
+
+async function api(url,opt={}){
+
+  opt.headers = {
+
+    ...(opt.headers || {}),
+
+    Authorization:
+      token
+        ? `Bearer ${token}`
+        : ''
+
+  };
+
+  const response =
+    await fetch(url,opt);
+
+  if(response.status === 401){
+
+    localStorage.removeItem(
+      'admin_token'
+    );
+
+    token = '';
+
+    showOnly('loginPage');
+
+    throw new Error(
+      t('sessionExpired')
+    );
+
+  }
+
+  return response.json();
+
+}
+
+
+/* =========================
+   LOGIN
+========================= */
+
+async function login(){
+
+  const password =
+    $('loginPassword').value.trim();
+
+  if(!password){
+
+    toast(t('enterPassword'));
+
+    return;
+
+  }
+
+  try{
+
+    const response =
+      await fetch(
+        '/api/login',
+        {
+          method:'POST',
+          headers:{
+            'Content-Type':
+              'application/json'
+          },
+          body:JSON.stringify({
+            password
+          })
+        }
+      );
+
+    const data =
+      await response.json();
+
+    if(!data.ok){
+
+      toast(
+        data.error ||
+        t('loginFailed')
+      );
+
+      return;
+
+    }
+
+    token = data.token;
+
+    localStorage.setItem(
+      'admin_token',
+      token
+    );
+
+    await loadSettings();
+
+    showOnly('mainPage');
+
+    applyLanguage();
+
+  }catch(error){
+
+    toast(
+      error.message ||
+      t('loginFailed')
+    );
+
+  }
+
+}
+
+
+/* =========================
+   NORMALIZE SETTINGS
+========================= */
+
+function normalizeSettings(data){
+
+  const s = data || {};
+
+  if(!s.welcome)
+    s.welcome = {};
+
+  const w = s.welcome;
+
+  w.profilePhoto =
+    !!w.profilePhoto;
+
+  w.mediaType =
+    w.mediaType || 'none';
+
+  w.mediaSource =
+    w.mediaSource || 'upload';
+
+  w.mediaId =
+    w.mediaId || null;
+
+  w.mediaUrl =
+    w.mediaUrl || '';
+
+  w.text =
+    w.text || '';
+
+
+  if(!Array.isArray(s.mainButtons))
+    s.mainButtons = [];
+
+
+  const defaults =
+    defaultMainButtons();
+
+
+  defaults.forEach(def => {
+
+    let existing =
+      s.mainButtons.find(
+        x => x.id === def.id
+      );
+
+    if(!existing){
+
+      s.mainButtons.push(
+        structuredClone(def)
+      );
+
+    }
+
+  });
+
+
+  s.mainButtons =
+    s.mainButtons.map((b,index) => {
+
+      const def =
+        defaults.find(
+          x => x.id === b.id
+        ) || defaults[index] ||
+        defaults[0];
+
+      b.id =
+        b.id || def.id;
+
+      b.enabled =
+        b.enabled !== false;
+
+      b.text =
+        b.text || def.text;
+
+      b.buttonColor =
+        b.buttonColor ||
+        def.buttonColor ||
+        '#6d5dfc';
+
+      b.buttonImageUrl =
+        b.buttonImageUrl ||
+        '';
+
+      b.buttonStyle =
+        b.buttonStyle ||
+        def.buttonStyle ||
+        'primary';
+
+      b.headerMediaType =
+        b.headerMediaType ||
+        'none';
+
+      b.headerMediaSource =
+        b.headerMediaSource ||
+        'upload';
+
+      b.headerMediaId =
+        b.headerMediaId ||
+        null;
+
+      b.headerMediaUrl =
+        b.headerMediaUrl ||
+        '';
+
+      b.headerText =
+        b.headerText ||
+        '';
+
+      if(!Array.isArray(b.slots))
+        b.slots = [];
+
+      b.slots =
+        b.slots.map(slot => {
+
+          slot.enabled =
+            slot.enabled !== false;
+
+          slot.mediaType =
+            slot.mediaType || 'none';
+
+          slot.mediaSource =
+            slot.mediaSource || 'upload';
+
+          slot.mediaId =
+            slot.mediaId || null;
+
+          slot.mediaUrl =
+            slot.mediaUrl || '';
+
+          slot.text =
+            slot.text || '';
+
+          slot.button1 =
+            slot.button1 || {};
+
+          slot.button2 =
+            slot.button2 || {};
+
+          slot.button1.enabled =
+            slot.button1.enabled !== false;
+
+          slot.button1.text =
+            slot.button1.text ||
+            t('openLink');
+
+          slot.button1.url =
+            slot.button1.url || '';
+
+          slot.button1.color =
+            slot.button1.color ||
+            '#6d5dfc';
+
+          slot.button2.enabled =
+            !!slot.button2.enabled;
+
+          slot.button2.text =
+            slot.button2.text ||
+            t('support');
+
+          slot.button2.url =
+            slot.button2.url || '';
+
+          slot.button2.color =
+            slot.button2.color ||
+            '#6d5dfc';
+
+          return slot;
+
+        });
+
+      return b;
+
+    });
+
+
+  if(!s.audio){
+
+    s.audio = {
+
+      enabled:false,
+
+      text:'',
+
+      mediaType:'audio',
+
+      mediaSource:'url',
+
+      mediaId:null,
+
+      mediaUrl:'',
+
+      button1:{
+        enabled:false,
+        text:'',
+        url:'',
+        color:'#6d5dfc'
+      },
+
+      button2:{
+        enabled:false,
+        text:'',
+        url:'',
+        color:'#6d5dfc'
+      }
+
+    };
+
+  }
+
+
+  s.audio.enabled =
+    !!s.audio.enabled;
+
+  s.audio.text =
+    s.audio.text || '';
+
+  s.audio.mediaType =
+    'audio';
+
+  s.audio.mediaSource =
+    s.audio.mediaSource ||
+    'url';
+
+  s.audio.mediaId =
+    s.audio.mediaId || null;
+
+  s.audio.mediaUrl =
+    s.audio.mediaUrl || '';
+
+
+  s.audio.button1 =
+    s.audio.button1 || {};
+
+  s.audio.button2 =
+    s.audio.button2 || {};
+
+
+  s.audio.button1.enabled =
+    !!s.audio.button1.enabled;
+
+  s.audio.button1.text =
+    s.audio.button1.text || '';
+
+  s.audio.button1.url =
+    s.audio.button1.url || '';
+
+  s.audio.button1.color =
+    s.audio.button1.color ||
+    '#6d5dfc';
+
+
+  s.audio.button2.enabled =
+    !!s.audio.button2.enabled;
+
+  s.audio.button2.text =
+    s.audio.button2.text || '';
+
+  s.audio.button2.url =
+    s.audio.button2.url || '';
+
+  s.audio.button2.color =
+    s.audio.button2.color ||
+    '#6d5dfc';
+
+
+  s.autoDelete =
+    Number(s.autoDelete || 0);
+
+
+  return s;
+
+}
+
+
+/* =========================
+   LOAD SETTINGS
+========================= */
+
+async function loadSettings(){
+
+  const data =
+    await api('/api/settings');
+
+  if(!data.ok){
+
+    throw new Error(
+      data.error ||
+      'Unable to load settings'
+    );
+
+  }
+
+  settings =
+    normalizeSettings(
+      data.settings
+    );
+
+}
+
+
+/* =========================
+   PAGE SYSTEM
+========================= */
+
+function showOnly(id){
+
+  document
+    .querySelectorAll('.page')
+    .forEach(page => {
+
+      page.classList.add('hidden');
+
+    });
+
+  const page =
+    $(id);
+
+  if(page){
+
+    page.classList.remove(
+      'hidden'
+    );
+
+    window.scrollTo(
+      0,
+      0
+    );
+
+  }
+
+}
+
+
+function goMain(){
+
+  showOnly('mainPage');
+
+}
+
+
+/* =========================
+   OPEN PAGES
+========================= */
+
+function openWelcomePage(){
+
+  renderWelcome();
+
+  showOnly(
+    'welcomePage'
+  );
+
+  applyLanguage();
+
+}
+
+
+function openMainButtonsPage(){
+
+  renderMainButtons();
+
+  showOnly(
+    'mainButtonsPage'
+  );
+
+  applyLanguage();
+
+}
+
+
+function openAudioPage(){
+
+  renderAudio();
+
+  showOnly(
+    'audioPage'
+  );
+
+  applyLanguage();
+
+}
+
+
+function openSystemSettingsPage(){
+
+  renderSystemSettings();
+
+  showOnly(
+    'systemSettingsPage'
+  );
+
+  applyLanguage();
+
+}
+
+
+function openAllViewPage(){
+
+  renderAllView();
+
+  showOnly(
+    'allViewPage'
+  );
+
+  applyLanguage();
+
+}
+
+
+/* =========================
+   WELCOME
+========================= */
+
+function renderWelcome(){
+
+  const w =
+    settings.welcome || {};
+
+  $('profilePhoto').checked =
+    !!w.profilePhoto;
+
+  $('welcomeMediaType').value =
+    w.mediaType || 'none';
+
+  $('welcomeMediaSource').value =
+    w.mediaSource || 'upload';
+
+  $('welcomeMediaUrl').value =
+    w.mediaUrl || '';
+
+  $('welcomeText').value =
+    w.text || '';
+
+  renderWelcomeView();
+
+}
+
+
+async function saveWelcome(){
+
+  const w =
+    settings.welcome;
+
+  w.profilePhoto =
+    $('profilePhoto').checked;
+
+  w.mediaType =
+    $('welcomeMediaType').value;
+
+  w.mediaSource =
+    $('welcomeMediaSource').value;
+
+  w.mediaUrl =
+    $('welcomeMediaUrl').value.trim();
+
+  w.text =
+    $('welcomeText').value;
+
+
+  const file =
+    $('welcomeFile').files[0];
+
+
+  if(
+    w.mediaSource === 'upload' &&
+    file
+  ){
+
+    const mediaId =
+      await uploadFile(
+        file,
+        w.mediaType
+      );
+
+    if(!mediaId)
+      return;
+
+    w.mediaId =
+      mediaId;
+
+  }
+
+  else if(
+    w.mediaSource === 'url'
+  ){
+
+    w.mediaId = null;
+
+  }
+
+
+  if(
+    await saveSettings()
+  ){
+
+    renderWelcomeView();
+
+    toast(
+      t('welcomeSaved')
+    );
+
+  }
+
+}
+
+
+function renderWelcomeView(){
+
+  const w =
+    settings.welcome || {};
+
+  let html =
+
+    `<div class="preview-title">
+      👁️ ${escapeHtml(
+        t('welcomeSettings')
+      )}
+    </div>`;
+
+
+  if(
+    w.mediaType !== 'none' &&
+    (
+      w.mediaId ||
+      w.mediaUrl
+    )
+  ){
+
+    html +=
+      mediaPreview(
+        w.mediaType,
+        w.mediaSource,
+        w.mediaId,
+        w.mediaUrl
+      );
+
+  }
+
+
+  if(w.text){
+
+    html +=
+      `<div class="preview-text">
+        ${escapeHtml(w.text)}
+      </div>`;
+
+  }
+
+
+  html +=
+    fakeButton(
+      t('mainButtons'),
+      '#6d5dfc',
+      ''
+    );
+
+
+  $('welcomeView').innerHTML =
+    html;
+
+}
+
+
+/* =========================
+   MAIN BUTTON LIST
+========================= */
+
+function renderMainButtons(){
+
+  const box =
+    $('mainButtonsList');
+
+  box.innerHTML = '';
+
+
+  (
+    settings.mainButtons || []
+  ).forEach(button => {
+
+    const el =
+      document.createElement(
+        'button'
+      );
+
+    el.className =
+      'menu-btn';
+
+
+    const imageMark =
+      button.buttonImageUrl
+        ? ' • 🖼️'
+        : '';
+
+
+    el.innerHTML =
+
+      `<div>
+        ${button.enabled
+          ? '🟢'
+          : '🔴'}
+        ${escapeHtml(
+          button.text ||
+          button.id
+        )}
+      </div>
+
+      <div
+        class="small"
+        style="margin-top:5px"
+      >
+        ${escapeHtml(
+          button.buttonColor ||
+          '#6d5dfc'
+        )}
+        ${imageMark}
+      </div>`;
+
+
+    el.onclick =
+      () =>
+        openMainEditor(
+          button.id
+        );
+
+
+    box.appendChild(el);
+
+  });
+
+}
+
+
+/* =========================
+   MAIN EDITOR
+========================= */
+
+function getCurrentButton(){
+
+  return (
+    settings.mainButtons || []
+  ).find(
+    b =>
+      b.id === currentButtonId
+  );
+
+}
+
+
+function openMainEditor(id){
+
+  currentButtonId =
+    id;
+
+  const button =
+    getCurrentButton();
+
+  if(!button)
+    return;
+
+
+  $('mainEditorTitle')
+    .textContent =
+      button.text ||
+      'Main Button';
+
+
+  $('mainEnabled').checked =
+    !!button.enabled;
+
+
+  $('mainButtonText').value =
+    button.text || '';
+
+
+  $('mainButtonColor').value =
+    button.buttonColor ||
+    '#6d5dfc';
+
+
+  $('mainButtonImage').value =
+    button.buttonImageUrl ||
+    '';
+
+
+  $('headerMediaType').value =
+    button.headerMediaType ||
+    'none';
+
+
+  $('headerMediaSource').value =
+    button.headerMediaSource ||
+    'upload';
+
+
+  $('headerMediaUrl').value =
+    button.headerMediaUrl ||
+    '';
+
+
+  $('headerText').value =
+    button.headerText ||
+    '';
+
+
+  updateColorPreview();
+
+  renderSlots(button);
+
+  renderMainSystemView();
+
+  showOnly(
+    'mainEditorPage'
+  );
+
+  applyLanguage();
+
+}
+
+
+/* =========================
+   SLOT CREATOR
+========================= */
+
+function createSlotElement(
+  slot,
+  index
+){
+
+  const element =
+    document.createElement(
+      'div'
+    );
+
+  element.className =
+    'slot';
+
+
+  element.innerHTML = `
+
+    <div class="slot-head">
+
+      <div class="slot-title">
+        ${t('slot')} ${index + 1}
+      </div>
+
+      <button
+        class="remove-slot"
+        type="button"
+      >
+        ${t('remove')}
+      </button>
+
+    </div>
+
+
+    <div class="switch-row">
+
+      <span>
+        ${t('onOff')}
+      </span>
+
+      <label class="switch">
+
+        <input
+          class="slot-enabled"
+          type="checkbox"
+          ${slot.enabled ? 'checked' : ''}
+        >
+
+        <span class="slider"></span>
+
+      </label>
+
+    </div>
+
+
+    <div class="field">
+
+      <label>
+        ${t('mediaType')}
+      </label>
+
+      <select
+        class="slot-media-type"
+      >
+
+        <option
+          value="none"
+          ${slot.mediaType === 'none'
+            ? 'selected'
+            : ''}
+        >
+          ${t('none')}
+        </option>
+
+        <option
+          value="photo"
+          ${slot.mediaType === 'photo'
+            ? 'selected'
+            : ''}
+        >
+          ${t('image')}
+        </option>
+
+        <option
+          value="video"
+          ${slot.mediaType === 'video'
+            ? 'selected'
+            : ''}
+        >
+          ${t('video')}
+        </option>
+
+        <option
+          value="audio"
+          ${slot.mediaType === 'audio'
+            ? 'selected'
+            : ''}
+        >
+          ${t('audio')}
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <div class="field">
+
+      <label>
+        ${t('mediaSource')}
+      </label>
+
+      <select
+        class="slot-media-source"
+      >
+
+        <option
+          value="upload"
+          ${slot.mediaSource === 'upload'
+            ? 'selected'
+            : ''}
+        >
+          ${t('upload')}
+        </option>
+
+        <option
+          value="url"
+          ${slot.mediaSource === 'url'
+            ? 'selected'
+            : ''}
+        >
+          ${t('urlLink')}
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <div class="upload-box">
+
+      <label>
+        ${t('upload')}
+      </label>
+
+      <input
+        class="slot-file"
+        type="file"
+        accept="image/*,video/*,audio/*"
+      >
+
+      <div class="media-note">
+        ${t('max50')}
+      </div>
+
+    </div>
+
+
+    <div class="field">
+
+      <label>
+        ${t('mediaUrl')}
+      </label>
+
+      <input
+        class="slot-url"
+        type="url"
+        value="${escapeAttr(
+          slot.mediaUrl || ''
+        )}"
+        placeholder="${t(
+          'mediaUrlPlaceholder'
+        )}"
+      >
+
+    </div>
+
+
+    <div class="field">
+
+      <label>
+        ${t('welcomeText')}
+      </label>
+
+      <textarea
+        class="slot-text"
+      >${escapeHtml(
+        slot.text || ''
+      )}</textarea>
+
+    </div>
+
+
+    <div class="hr"></div>
+
+
+    <div
+      class="card-title"
+      style="font-size:16px"
+    >
+      ${t('button1')}
+    </div>
+
+
+    <div class="switch-row">
+
+      <span>
+        ${t('onOff')}
+      </span>
+
+      <label class="switch">
+
+        <input
+          class="b1-enabled"
+          type="checkbox"
+          ${slot.button1 &&
+            slot.button1.enabled
+              ? 'checked'
+              : ''}
+        >
+
+        <span class="slider"></span>
+
+      </label>
+
+    </div>
+
+
+    <div class="field">
+
+      <label>
+        ${t('buttonText')}
+      </label>
+
+      <input
+        class="b1-text"
+        type="text"
+        value="${escapeAttr(
+          slot.button1?.text || ''
+        )}"
+      >
+
+    </div>
+
+
+    <div class="field">
+
+      <label>
+        ${t('buttonUrl')}
+      </label>
+
+      <input
+        class="b1-url"
+        type="url"
+        value="${escapeAttr(
+          slot.button1?.url || ''
+        )}"
+      >
+
+    </div>
+
+
+    <div class="field">
+
+      <label>
+        ${t('buttonColor')}
+      </label>
+
+      <input
+        class="b1-color"
+        type="color"
+        value="${slot.button1?.color || '#6d5dfc'}"
+        style="width:100%;height:48px"
+      >
+
+    </div>
+
+
+    <div
+      class="card-title"
+      style="font-size:16px"
+    >
+      ${t('button2')}
+    </div>
+
+
+    <div class="switch-row">
+
+      <span>
+        ${t('onOff')}
+      </span>
+
+      <label class="switch">
+
+        <input
+          class="b2-enabled"
+          type="checkbox"
+          ${slot.button2 &&
+            slot.button2.enabled
+              ? 'checked'
+              : ''}
+        >
+
+        <span class="slider"></span>
+
+      </label>
+
+    </div>
+
+
+    <div class="field">
+
+      <label>
+        ${t('buttonText')}
+      </label>
+
+      <input
+        class="b2-text"
+        type="text"
+        value="${escapeAttr(
+          slot.button2?.text || ''
+        )}"
+      >
+
+    </div>
+
+
+    <div class="field">
+
+      <label>
+        ${t('buttonUrl')}
+      </label>
+
+      <input
+        class="b2-url"
+        type="url"
+        value="${escapeAttr(
+          slot.button2?.url || ''
+        )}"
+      >
+
+    </div>
+
+
+    <div class="field">
+
+      <label>
+        ${t('buttonColor')}
+      </label>
+
+      <input
+        class="b2-color"
+        type="color"
+        value="${slot.button2?.color || '#6d5dfc'}"
+        style="width:100%;height:48px"
+      >
+
+    </div>
+
+  `;
+
+
+  element
+    .querySelector(
+      '.remove-slot'
+    )
+    .onclick = () => {
+
+      const button =
+        getCurrentButton();
+
+      if(!button)
+        return;
+
+      button.slots.splice(
+        index,
+        1
+      );
+
+      renderSlots(button);
+
+      renderMainSystemView();
+
+    };
+
+
+  element
+    .querySelectorAll(
+      'input,textarea,select'
+    )
+    .forEach(input => {
+
+      input.addEventListener(
+        'input',
+        () => {
+
+          updateSlotsFromDOM();
+
+          renderMainSystemView();
+
+        }
+      );
+
+      input.addEventListener(
+        'change',
+        () => {
+
+          updateSlotsFromDOM();
+
+          renderMainSystemView();
+
+        }
+      );
+
+    });
+
+
+  return element;
+
+}
+
+
+/* =========================
+   RENDER SLOTS
+========================= */
+
+function renderSlots(button){
+
+  const container =
+    $('slotsContainer');
+
+  container.innerHTML = '';
+
+
+  (
+    button.slots || []
+  ).forEach(
+    (slot,index) => {
+
+      container.appendChild(
+        createSlotElement(
+          slot,
+          index
+        )
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================
+   ADD SLOT
+========================= */
+
+function addSlot(){
+
+  const button =
+    getCurrentButton();
+
+  if(!button)
+    return;
+
+
+  if(
+    (button.slots || [])
+      .length >= 20
+  ){
+
+    toast(
+      t('maxSlots')
+    );
+
+    return;
+
+  }
+
+
+  button.slots =
+    button.slots || [];
+
+
+  button.slots.push({
+
+    enabled:true,
+
+    mediaType:'none',
+
+    mediaSource:'upload',
+
+    mediaId:null,
+
+    mediaUrl:'',
+
+    text:'',
+
+    button1:{
+
+      enabled:true,
+
+      text:t('openLink'),
+
+      url:'',
+
+      color:'#6d5dfc'
+
+    },
+
+    button2:{
+
+      enabled:false,
+
+      text:t('support'),
+
+      url:'',
+
+      color:'#6d5dfc'
+
+    }
+
+  });
+
+
+  renderSlots(button);
+
+  renderMainSystemView();
+
+}
+
+
+/* =========================
+   SYNC SLOTS
+========================= */
+
+function updateSlotsFromDOM(){
+
+  const button =
+    getCurrentButton();
+
+  if(!button)
+    return;
+
+
+  document
+    .querySelectorAll(
+      '#slotsContainer .slot'
+    )
+    .forEach(
+      (element,index) => {
+
+        const slot =
+          button.slots[index];
+
+        if(!slot)
+          return;
+
+
+        slot.enabled =
+          element
+            .querySelector(
+              '.slot-enabled'
+            )
+            .checked;
+
+
+        slot.mediaType =
+          element
+            .querySelector(
+              '.slot-media-type'
+            )
+            .value;
+
+
+        slot.mediaSource =
+          element
+            .querySelector(
+              '.slot-media-source'
+            )
+            .value;
+
+
+        slot.mediaUrl =
+          element
+            .querySelector(
+              '.slot-url'
+            )
+            .value
+            .trim();
+
+
+        slot.text =
+          element
+            .querySelector(
+              '.slot-text'
+            )
+            .value;
+
+
+        slot.button1 =
+          slot.button1 || {};
+
+
+        slot.button2 =
+          slot.button2 || {};
+
+
+        slot.button1.enabled =
+          element
+            .querySelector(
+              '.b1-enabled'
+            )
+            .checked;
+
+
+        slot.button1.text =
+          element
+            .querySelector(
+              '.b1-text'
+            )
+            .value;
+
+
+        slot.button1.url =
+          element
+            .querySelector(
+              '.b1-url'
+            )
+            .value
+            .trim();
+
+
+        slot.button1.color =
+          element
+            .querySelector(
+              '.b1-color'
+            )
+            .value;
+
+
+        slot.button2.enabled =
+          element
+            .querySelector(
+              '.b2-enabled'
+            )
+            .checked;
+
+
+        slot.button2.text =
+          element
+            .querySelector(
+              '.b2-text'
+            )
+            .value;
+
+
+        slot.button2.url =
+          element
+            .querySelector(
+              '.b2-url'
+            )
+            .value
+            .trim();
+
+
+        slot.button2.color =
+          element
+            .querySelector(
+              '.b2-color'
+            )
+            .value;
+
+      }
+    );
+
+}
+
+
+/* =========================
+   SYNC MAIN EDITOR
+========================= */
+
+function syncMainEditor(){
+
+  const button =
+    getCurrentButton();
+
+  if(!button)
+    return;
+
+
+  button.enabled =
+    $('mainEnabled')
+      .checked;
+
+
+  button.text =
+    $('mainButtonText')
+      .value
+      .trim();
+
+
+  button.buttonColor =
+    $('mainButtonColor')
+      .value ||
+    '#6d5dfc';
+
+
+  button.buttonImageUrl =
+    $('mainButtonImage')
+      .value
+      .trim();
+
+
+  button.headerMediaType =
+    $('headerMediaType')
+      .value;
+
+
+  button.headerMediaSource =
+    $('headerMediaSource')
+      .value;
+
+
+  button.headerMediaUrl =
+    $('headerMediaUrl')
+      .value
+      .trim();
+
+
+  button.headerText =
+    $('headerText')
+      .value;
+
+
+  updateSlotsFromDOM();
+
+  updateColorPreview();
+
+}
+
+
+/* =========================
+   SAVE MAIN BUTTON
+========================= */
+
+async function saveMainButton(){
+
+  const button =
+    getCurrentButton();
+
+  if(!button)
+    return;
+
+
+  syncMainEditor();
+
+
+  const headerFile =
+    $('headerFile')
+      .files[0];
+
+
+  if(
+    button.headerMediaSource ===
+      'upload' &&
+    headerFile
+  ){
+
+    const mediaId =
+      await uploadFile(
+        headerFile,
+        button.headerMediaType
+      );
+
+    if(!mediaId)
+      return;
+
+    button.headerMediaId =
+      mediaId;
+
+  }
+
+  else if(
+    button.headerMediaSource ===
+      'url'
+  ){
+
+    button.headerMediaId =
+      null;
+
+  }
+
+
+  const slots =
+    document.querySelectorAll(
+      '#slotsContainer .slot'
+    );
+
+
+  for(
+    let i=0;
+    i<slots.length;
+    i++
+  ){
+
+    const file =
+      slots[i]
+        .querySelector(
+          '.slot-file'
+        )
+        .files[0];
+
+
+    const slot =
+      button.slots[i];
+
+
+    if(
+      file &&
+      slot &&
+      slot.mediaSource ===
+        'upload'
+    ){
+
+      const mediaId =
+        await uploadFile(
+          file,
+          slot.mediaType
+        );
+
+      if(!mediaId)
+        return;
+
+      slot.mediaId =
+        mediaId;
+
+    }
+
+    else if(
+      slot &&
+      slot.mediaSource ===
+        'url'
+    ){
+
+      slot.mediaId =
+        null;
+
+    }
+
+  }
+
+
+  if(
+    await saveSettings()
+  ){
+
+    renderMainSystemView();
+
+    toast(
+      t('buttonSaved')
+    );
+
+  }
+
+}
+
+
+/* =========================
+   UPLOAD
+========================= */
+
+async function uploadFile(
+  file,
+  kind
+){
+
+  if(!file)
+    return null;
+
+
+  if(
+    file.size >
+    50 * 1024 * 1024
+  ){
+
+    toast(
+      t('max50')
+    );
+
+    return null;
+
+  }
+
+
+  let mediaKind =
+    ['photo','video','audio']
+      .includes(kind)
+      ? kind
+      : (
+          file.type.startsWith(
+            'image/'
+          )
+            ? 'photo'
+            : file.type.startsWith(
+                'video/'
+              )
+                ? 'video'
+                : 'audio'
+        );
+
+
+  const form =
+    new FormData();
+
+  form.append(
+    'kind',
+    mediaKind
+  );
+
+  form.append(
+    'file',
+    file
+  );
+
+
+  toast(
+    t('uploading')
+  );
+
+
+  try{
+
+    const response =
+      await fetch(
+        '/api/upload',
+        {
+          method:'POST',
+          headers:{
+            Authorization:
+              `Bearer ${token}`
+          },
+          body:form
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if(!data.ok){
+
+      toast(
+        data.error ||
+        t('uploadFailed')
+      );
+
+      return null;
+
+    }
+
+
+    toast(
+      t('uploadComplete')
+    );
+
+
+    return data.mediaId;
+
+  }catch(error){
+
+    toast(
+      error.message ||
+      t('uploadFailed')
+    );
+
+    return null;
+
+  }
+
+}
+
+
+/* =========================
+   SAVE SETTINGS
+========================= */
+
+async function saveSettings(){
+
+  try{
+
+    const data =
+      await api(
+        '/api/settings',
+        {
+          method:'POST',
+
+          headers:{
+            'Content-Type':
+              'application/json'
+          },
+
+          body:
+            JSON.stringify(
+              settings
+            )
+
+        }
+      );
+
+
+    if(!data.ok){
+
+      toast(
+        data.error ||
+        t('saveFailed')
+      );
+
+      return false;
+
+    }
+
+
+    settings =
+      normalizeSettings(
+        data.settings
+      );
+
+
+    return true;
+
+  }catch(error){
+
+    toast(
+      error.message ||
+      t('saveFailed')
+    );
+
+    return false;
+
+  }
+
+}
+
+
+/* =========================
+   MEDIA PREVIEW
+========================= */
+
+function mediaPreview(
+  type,
+  source,
+  id,
+  url
+){
+
+  const src =
+    source === 'upload' &&
+    id
+      ? `/media/${id}`
+      : (
+          url || ''
+        );
+
+
+  if(!src){
+
+    return `
+      <div class="preview-media">
+        ${t('noMedia')}
+      </div>
+    `;
+
+  }
+
+
+  if(type === 'photo'){
+
+    return `
+      <div class="preview-media">
+        <img
+          src="${escapeAttr(src)}"
+          alt=""
+        >
+      </div>
+    `;
+
+  }
+
+
+  if(type === 'video'){
+
+    return `
+      <div class="preview-media">
+        <video
+          src="${escapeAttr(src)}"
+          controls
+          playsinline
+        ></video>
+      </div>
+    `;
+
+  }
+
+
+  if(type === 'audio'){
+
+    return `
+      <div style="margin-bottom:10px">
+        <audio
+          src="${escapeAttr(src)}"
+          controls
+          style="width:100%"
+        ></audio>
+      </div>
+    `;
+
+  }
+
+
+  return '';
+
+}
+
+
+/* =========================
+   FAKE TELEGRAM BUTTON
+========================= */
+
+function fakeButton(
+  text,
+  color,
+  image
+){
+
+  let style =
+    `background:${escapeAttr(
+      color || '#6d5dfc'
+    )};`;
+
+
+  if(image){
+
+    style +=
+      `background-image:url('${escapeAttr(
+        image
+      )}');`;
+
+  }
+
+
+  return `
+    <div
+      class="fake-telegram-btn"
+      style="${style}"
+    >
+      ${escapeHtml(
+        text || 'OPEN'
+      )}
+    </div>
+  `;
+
+}
+
+
+/* =========================
+   MAIN SYSTEM VIEW
+========================= */
+
+function renderMainSystemView(){
+
+  const button =
+    getCurrentButton();
+
+  if(!button)
+    return;
+
+
+  let html = `
+
+    <div class="preview-title">
+      👁️ ${t('systemView')}
+    </div>
+
+  `;
+
+
+  if(
+    button.buttonImageUrl
+  ){
+
+    html += `
+
+      <div class="preview-media">
+
+        <img
+          src="${escapeAttr(
+            button.buttonImageUrl
+          )}"
+          alt=""
+        >
+
+      </div>
+
+    `;
+
+  }
+
+
+  if(
+    button.headerMediaType !==
+      'none'
+  ){
+
+    html +=
+      mediaPreview(
+        button.headerMediaType,
+        button.headerMediaSource,
+        button.headerMediaId,
+        button.headerMediaUrl
+      );
+
+  }
+
+
+  if(button.headerText){
+
+    html += `
+
+      <div class="preview-text">
+        ${escapeHtml(
+          button.headerText
+        )}
+      </div>
+
+    `;
+
+  }
+
+
+  html +=
+    fakeButton(
+      button.text,
+      button.buttonColor,
+      ''
+    );
+
+
+  (
+    button.slots || []
+  ).forEach(
+    slot => {
+
+      if(!slot.enabled)
+        return;
+
+
+      html +=
+        `<div class="preview-separator"></div>`;
+
+
+      if(
+        slot.mediaType !==
+          'none'
+      ){
+
+        html +=
+          mediaPreview(
+            slot.mediaType,
+            slot.mediaSource,
+            slot.mediaId,
+            slot.mediaUrl
+          );
+
+      }
+
+
+      if(slot.text){
+
+        html += `
+
+          <div class="preview-text">
+            ${escapeHtml(
+              slot.text
+            )}
+          </div>
+
+        `;
+
+      }
+
+
+      if(
+        slot.button1 &&
+        slot.button1.enabled
+      ){
+
+        html +=
+          fakeButton(
+            slot.button1.text,
+            slot.button1.color,
+            ''
+          );
+
+      }
+
+
+      if(
+        slot.button2 &&
+        slot.button2.enabled
+      ){
+
+        html +=
+          fakeButton(
+            slot.button2.text,
+            slot.button2.color,
+            ''
+          );
+
+      }
+
+    }
+  );
+
+
+  html +=
+    fakeButton(
+      t('backButton'),
+      '#555b6b',
+      ''
+    );
+
+
+  $('mainSystemView')
+    .innerHTML =
+      html;
+
+}
+
+
+/* =========================
+   COLOR PREVIEW
+========================= */
+
+function updateColorPreview(){
+
+  const color =
+    $('mainButtonColor')
+      .value ||
+    '#6d5dfc';
+
+
+  $('buttonColorPreview')
+    .style.background =
+      color;
+
+}
+
+
+/* =========================
+   AUDIO
+========================= */
+
+function renderAudio(){
+
+  const audio =
+    settings.audio || {};
+
+
+  $('audioEnabled').checked =
+    !!audio.enabled;
+
+
+  $('audioText').value =
+    audio.text || '';
+
+
+  $('audioUrl').value =
+    audio.mediaUrl || '';
+
+
+  $('audioB1Enabled').checked =
+    !!audio.button1?.enabled;
+
+
+  $('audioB1Text').value =
+    audio.button1?.text || '';
+
+
+  $('audioB1Url').value =
+    audio.button1?.url || '';
+
+
+  $('audioB1Color').value =
+    audio.button1?.color ||
+    '#6d5dfc';
+
+
+  $('audioB2Enabled').checked =
+    !!audio.button2?.enabled;
+
+
+  $('audioB2Text').value =
+    audio.button2?.text || '';
+
+
+  $('audioB2Url').value =
+    audio.button2?.url || '';
+
+
+  $('audioB2Color').value =
+    audio.button2?.color ||
+    '#6d5dfc';
+
+
+  renderAudioView();
+
+}
+
+
+async function saveAudio(){
+
+  const audio =
+    settings.audio;
+
+
+  audio.enabled =
+    $('audioEnabled')
+      .checked;
+
+
+  audio.text =
+    $('audioText')
+      .value;
+
+
+  audio.mediaUrl =
+    $('audioUrl')
+      .value
+      .trim();
+
+
+  audio.mediaType =
+    'audio';
+
+
+  audio.button1 =
+    audio.button1 || {};
+
+
+  audio.button2 =
+    audio.button2 || {};
+
+
+  audio.button1.enabled =
+    $('audioB1Enabled')
+      .checked;
+
+
+  audio.button1.text =
+    $('audioB1Text')
+      .value;
+
+
+  audio.button1.url =
+    $('audioB1Url')
+      .value
+      .trim();
+
+
+  audio.button1.color =
+    $('audioB1Color')
+      .value;
+
+
+  audio.button2.enabled =
+    $('audioB2Enabled')
+      .checked;
+
+
+  audio.button2.text =
+    $('audioB2Text')
+      .value;
+
+
+  audio.button2.url =
+    $('audioB2Url')
+      .value
+      .trim();
+
+
+  audio.button2.color =
+    $('audioB2Color')
+      .value;
+
+
+  const file =
+    $('audioFile')
+      .files[0];
+
+
+  if(file){
+
+    const mediaId =
+      await uploadFile(
+        file,
+        'audio'
+      );
+
+    if(!mediaId)
+      return;
+
+
+    audio.mediaId =
+      mediaId;
+
+    audio.mediaSource =
+      'upload';
+
+  }
+
+  else if(
+    audio.mediaUrl
+  ){
+
+    audio.mediaId =
+      null;
+
+    audio.mediaSource =
+      'url';
+
+  }
+
+
+  if(
+    await saveSettings()
+  ){
+
+    renderAudioView();
+
+    toast(
+      t('audioSaved')
+    );
+
+  }
+
+}
+
+
+function renderAudioView(){
+
+  const audio =
+    settings.audio || {};
+
+
+  let html = `
+
+    <div class="preview-title">
+      👁️ ${t('systemView')}
+    </div>
+
+  `;
+
+
+  if(
+    audio.mediaId ||
+    audio.mediaUrl
+  ){
+
+    html +=
+      mediaPreview(
+        'audio',
+        audio.mediaSource,
+        audio.mediaId,
+        audio.mediaUrl
+      );
+
+  }
+
+
+  if(audio.text){
+
+    html += `
+
+      <div class="preview-text">
+        ${escapeHtml(
+          audio.text
+        )}
+      </div>
+
+    `;
+
+  }
+
+
+  if(
+    audio.button1?.enabled
+  ){
+
+    html +=
+      fakeButton(
+        audio.button1.text,
+        audio.button1.color,
+        ''
+      );
+
+  }
+
+
+  if(
+    audio.button2?.enabled
+  ){
+
+    html +=
+      fakeButton(
+        audio.button2.text,
+        audio.button2.color,
+        ''
+      );
+
+  }
+
+
+  $('audioView')
+    .innerHTML =
+      html;
+
+}
+
+
+/* =========================
+   SYSTEM SETTINGS
+========================= */
+
+function renderSystemSettings(){
+
+  $('autoDelete').value =
+    String(
+      settings.autoDelete || 0
+    );
+
+}
+
+
+async function saveSystemSettings(){
+
+  settings.autoDelete =
+    Number(
+      $('autoDelete').value
+    );
+
+
+  if(
+    await saveSettings()
+  ){
+
+    toast(
+      t('systemSaved')
+    );
+
+  }
+
+}
+
+
+/* =========================
+   ALL VIEW
+========================= */
+
+function renderAllView(){
+
+  let html = `
+
+    <div class="preview-title">
+      👋 WELCOME
+    </div>
+
+  `;
+
+
+  const welcome =
+    settings.welcome || {};
+
+
+  if(
+    welcome.mediaId ||
+    welcome.mediaUrl
+  ){
+
+    html +=
+      mediaPreview(
+        welcome.mediaType,
+        welcome.mediaSource,
+        welcome.mediaId,
+        welcome.mediaUrl
+      );
+
+  }
+
+
+  if(welcome.text){
+
+    html += `
+
+      <div class="preview-text">
+        ${escapeHtml(
+          welcome.text
+        )}
+      </div>
+
+    `;
+
+  }
+
+
+  (
+    settings.mainButtons || []
+  ).forEach(button => {
+
+    if(!button.enabled)
+      return;
+
+
+    html +=
+      `<div class="preview-separator"></div>`;
+
+
+    html += `
+
+      <div class="preview-title">
+        ${escapeHtml(
+          button.text ||
+          button.id
+        )}
+      </div>
+
+    `;
+
+
+    if(
+      button.buttonImageUrl
+    ){
+
+      html += `
+
+        <div class="preview-media">
+
+          <img
+            src="${escapeAttr(
+              button.buttonImageUrl
+            )}"
+            alt=""
+          >
+
+        </div>
+
+      `;
+
+    }
+
+
+    if(
+      button.headerMediaType !==
+        'none'
+    ){
+
+      html +=
+        mediaPreview(
+          button.headerMediaType,
+          button.headerMediaSource,
+          button.headerMediaId,
+          button.headerMediaUrl
+        );
+
+    }
+
+
+    if(button.headerText){
+
+      html += `
+
+        <div class="preview-text">
+          ${escapeHtml(
+            button.headerText
+          )}
+        </div>
+
+      `;
+
+    }
+
+
+    html +=
+      fakeButton(
+        button.text,
+        button.buttonColor,
+        ''
+      );
+
+
+    (
+      button.slots || []
+    ).forEach(slot => {
+
+      if(!slot.enabled)
+        return;
+
+
+      if(
+        slot.mediaType !==
+          'none'
+      ){
+
+        html +=
+          mediaPreview(
+            slot.mediaType,
+            slot.mediaSource,
+            slot.mediaId,
+            slot.mediaUrl
+          );
+
+      }
+
+
+      if(slot.text){
+
+        html += `
+
+          <div class="preview-text">
+            ${escapeHtml(
+              slot.text
+            )}
+          </div>
+
+        `;
+
+      }
+
+
+      if(
+        slot.button1?.enabled
+      ){
+
+        html +=
+          fakeButton(
+            slot.button1.text,
+            slot.button1.color,
+            ''
+          );
+
+      }
+
+
+      if(
+        slot.button2?.enabled
+      ){
+
+        html +=
+          fakeButton(
+            slot.button2.text,
+            slot.button2.color,
+            ''
+          );
+
+      }
+
+    });
+
+  });
+
+
+  $('allView').innerHTML =
+    html;
+
+}
+
+
+/* =========================
+   RESET
+========================= */
+
+async function resetAll(){
+
+  if(
+    !confirm(
+      t('resetConfirm')
+    )
+  ){
+
+    return;
+
+  }
+
+
+  try{
+
+    const data =
+      await api(
+        '/api/reset',
+        {
+          method:'POST'
+        }
+      );
+
+
+    if(!data.ok){
+
+      toast(
+        data.error ||
+        'Reset failed'
+      );
+
+      return;
+
+    }
+
+
+    settings =
+      normalizeSettings(
+        data.settings
+      );
+
+
+    showOnly(
+      'mainPage'
+    );
+
+
+    toast(
+      t('resetDone')
+    );
+
+  }catch(error){
+
+    toast(
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================
+   THEME
+========================= */
+
+function toggleTheme(){
+
+  document.body
+    .classList
+    .toggle('dark');
+
+
+  localStorage.setItem(
+    'admin_theme',
+    document.body.classList.contains(
+      'dark'
+    )
+      ? 'dark'
+      : 'light'
+  );
+
+}
+
+
+/* =========================
+   LANGUAGE
+========================= */
+
+function toggleLanguage(){
+
+  currentLanguage =
+    currentLanguage === 'bn'
+      ? 'en'
+      : 'bn';
+
+
+  localStorage.setItem(
+    'admin_language',
+    currentLanguage
+  );
+
+
+  applyLanguage();
+
+  rerenderVisible();
+
+
+  toast(
+    currentLanguage === 'bn'
+      ? t('banglaMode')
+      : t('englishMode')
+  );
+
+}
+
+
+function applyLanguage(){
+
+  document
+    .querySelectorAll(
+      '[data-i18n]'
+    )
+    .forEach(element => {
+
+      element.textContent =
+        t(
+          element.dataset.i18n
+        );
+
+    });
+
+
+  document
+    .querySelectorAll(
+      '[data-ph]'
+    )
+    .forEach(element => {
+
+      element.placeholder =
+        t(
+          element.dataset.ph
+        );
+
+    });
+
+
+  $('languageBtn')
+    .textContent =
+      currentLanguage === 'bn'
+        ? '🇧🇩 English'
+        : '🇺🇸 বাংলা';
+
+}
+
+
+/* =========================
+   RERENDER CURRENT PAGE
+========================= */
+
+function rerenderVisible(){
+
+  if(
+    !$('mainPage')
+      .classList
+      .contains('hidden')
+  ){
+
+    return;
+
+  }
+
+
+  if(
+    !$('welcomePage')
+      .classList
+      .contains('hidden')
+  ){
+
+    renderWelcome();
+
+  }
+
+  else if(
+    !$('mainButtonsPage')
+      .classList
+      .contains('hidden')
+  ){
+
+    renderMainButtons();
+
+  }
+
+  else if(
+    !$('mainEditorPage')
+      .classList
+      .contains('hidden')
+  ){
+
+    openMainEditor(
+      currentButtonId
+    );
+
+  }
+
+  else if(
+    !$('audioPage')
+      .classList
+      .contains('hidden')
+  ){
+
+    renderAudio();
+
+  }
+
+  else if(
+    !$('systemSettingsPage')
+      .classList
+      .contains('hidden')
+  ){
+
+    renderSystemSettings();
+
+  }
+
+  else if(
+    !$('allViewPage')
+      .classList
+      .contains('hidden')
+  ){
+
+    renderAllView();
+
+  }
+
+}
+
+
+/* =========================
+   ESCAPE
+========================= */
+
+function escapeHtml(value){
+
+  return String(
+    value ?? ''
+  )
+  .replaceAll(
+    '&',
+    '&amp;'
+  )
+  .replaceAll(
+    '<',
+    '&lt;'
+  )
+  .replaceAll(
+    '>',
+    '&gt;'
+  )
+  .replaceAll(
+    '"',
+    '&quot;'
+  )
+  .replaceAll(
+    "'",
+    '&#039;'
+  );
+
+}
+
+
+function escapeAttr(value){
+
+  return escapeHtml(
+    value
+  );
+
+}
+
+
+/* =========================
+   LIVE MAIN EDITOR
+========================= */
+
+[
+  'mainEnabled',
+  'mainButtonText',
+  'mainButtonColor',
+  'mainButtonImage',
+  'headerMediaType',
+  'headerMediaSource',
+  'headerMediaUrl',
+  'headerText'
+]
+.forEach(id => {
+
+  const element =
+    $(id);
+
+  if(!element)
+    return;
+
+
+  element.addEventListener(
+    'input',
+    () => {
+
+      syncMainEditor();
+
+      renderMainSystemView();
+
+      const button =
+        getCurrentButton();
+
+      if(button){
+
+        $('mainEditorTitle')
+          .textContent =
+            button.text ||
+            'Main Button';
+
+      }
+
+    }
+  );
+
+
+  element.addEventListener(
+    'change',
+    () => {
+
+      syncMainEditor();
+
+      renderMainSystemView();
+
+    }
+  );
+
+});
+
+
+/* =========================
+   THEME RESTORE
+========================= */
+
+(function(){
+
+  if(
+    localStorage.getItem(
+      'admin_theme'
+    ) === 'dark'
+  ){
+
+    document.body
+      .classList
+      .add('dark');
+
+  }
+
+
+  applyLanguage();
+
+})();
+
+
+/* =========================
+   BOOT
+========================= */
+
+async function boot(){
+
+  if(!token){
+
+    showOnly(
+      'loginPage'
+    );
+
+    applyLanguage();
+
+    return;
+
+  }
+
+
+  try{
+
+    await loadSettings();
+
+    showOnly(
+      'mainPage'
+    );
+
+    applyLanguage();
+
+  }catch(error){
+
+    localStorage.removeItem(
+      'admin_token'
+    );
+
+    token = '';
+
+    showOnly(
+      'loginPage'
+    );
+
+    applyLanguage();
+
+  }
+
+}
+
+
 boot();
+
 </script>
+
 </body>
 </html>
